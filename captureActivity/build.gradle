@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.google.zxing.client.android"
+        applicationId "com.mylhyl.zxing.client"
         minSdkVersion 15
         targetSdkVersion 22
         compileOptions {

@@ -71,7 +71,7 @@
         android:label="@string/app_name"
         android:logo="@drawable/launcher_icon" >
         <activity
-            android:name=".CaptureActivity"
+            android:name="com.mylhyl.zxing.client.CaptureActivity"
             android:clearTaskOnLaunch="true"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
