@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Copyright (C) 2008 ZXing authors
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,190 +14,204 @@
  limitations under the License.
  -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools">
 
-  <SurfaceView android:id="@+id/preview_view"
-               android:layout_width="fill_parent"
-               android:layout_height="fill_parent"/>
-
-  <com.google.zxing.client.android.ViewfinderView
-      android:id="@+id/viewfinder_view"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"/>
-
-  <LinearLayout android:id="@+id/result_view"
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="@color/result_view"
-                android:visibility="gone"
-                android:baselineAligned="false">
+    <com.google.zxing.client.android.ScannerView
+        android:id="@+id/capture_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/result_view"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:padding="@dimen/standard_padding">
-
-      <LinearLayout
-          android:orientation="vertical"
-          android:layout_width="wrap_content"
-          android:layout_height="fill_parent"
-          android:gravity="right|center_vertical">
-
-        <ImageView android:id="@+id/barcode_image_view"
-                   android:layout_width="160dip"
-                   android:layout_height="wrap_content"
-                   android:maxWidth="160dip"
-                   android:maxHeight="160dip"
-                   android:layout_marginBottom="@dimen/half_padding"
-                   android:adjustViewBounds="true"
-                   android:scaleType="centerInside"
-                   tools:ignore="ContentDescription"/>
+        android:layout_height="fill_parent"
+        android:background="@color/result_view"
+        android:baselineAligned="false"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
-
-          <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/msg_default_format"
-                    android:textColor="@color/result_minor_text"
-                    android:textStyle="bold"
-                    android:paddingRight="@dimen/half_padding"/>
-
-          <TextView android:id="@+id/format_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/result_minor_text"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
-
-          <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/msg_default_type"
-                    android:textColor="@color/result_minor_text"
-                    android:textStyle="bold"
-                    android:paddingRight="@dimen/half_padding"/>
-
-          <TextView android:id="@+id/type_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/result_minor_text"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
-
-          <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/msg_default_time"
-                    android:textColor="@color/result_minor_text"
-                    android:textStyle="bold"
-                    android:paddingRight="@dimen/half_padding"/>
-
-          <TextView android:id="@+id/time_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/result_minor_text"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
-
-          <TextView android:id="@+id/meta_text_view_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/msg_default_meta"
-                    android:textColor="@color/result_minor_text"
-                    android:textStyle="bold"
-                    android:paddingRight="@dimen/half_padding"/>
-
-          <TextView android:id="@+id/meta_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/result_minor_text"/>
-
-        </LinearLayout>
-
-      </LinearLayout>
-
-      <ScrollView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
-
-        <LinearLayout
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:orientation="vertical">
-
-          <TextView android:id="@+id/contents_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/result_text"
-                    android:textColorLink="@color/result_text"
-                    android:textSize="22sp"
-                    android:paddingLeft="12dip"
-                    android:autoLink="web"
-                    android:textIsSelectable="true"/>
-
-          <TextView android:id="@+id/contents_supplement_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/result_text"
-                    android:textColorLink="@color/result_text"
-                    android:paddingLeft="12dip"
-                    android:autoLink="web"
-                    android:textIsSelectable="true"/>
-
-        </LinearLayout>
-
-      </ScrollView>
-
-    </LinearLayout>
-
-    <LinearLayout android:id="@+id/result_button_view"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:gravity="center">
-
-      <Button style="@style/ResultButton"
-              android:visibility="gone"/>
-
-      <Button style="@style/ResultButton"
-              android:visibility="gone"/>
-
-      <Button style="@style/ResultButton"
-              android:visibility="gone"/>
-
-      <Button style="@style/ResultButton"
-              android:visibility="gone"/>
-
-    </LinearLayout>
-
-  </LinearLayout>
-
-  <TextView android:id="@+id/status_view"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/transparent"
-            android:text="@string/msg_default_status"
-            android:textColor="@color/status_text"/>
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/standard_padding">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="right|center_vertical"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/barcode_image_view"
+                    android:layout_width="160dip"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_padding"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="160dip"
+                    android:maxWidth="160dip"
+                    android:scaleType="centerInside"
+                    tools:ignore="ContentDescription" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="@dimen/half_padding"
+                        android:text="@string/msg_default_format"
+                        android:textColor="@color/result_minor_text"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/format_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/result_minor_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="@dimen/half_padding"
+                        android:text="@string/msg_default_type"
+                        android:textColor="@color/result_minor_text"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/type_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/result_minor_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="@dimen/half_padding"
+                        android:text="@string/msg_default_time"
+                        android:textColor="@color/result_minor_text"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/time_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/result_minor_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/meta_text_view_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="@dimen/half_padding"
+                        android:text="@string/msg_default_meta"
+                        android:textColor="@color/result_minor_text"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/meta_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/result_minor_text" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/contents_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:paddingLeft="12dip"
+                        android:textColor="@color/result_text"
+                        android:textColorLink="@color/result_text"
+                        android:textIsSelectable="true"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/contents_supplement_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:paddingLeft="12dip"
+                        android:textColor="@color/result_text"
+                        android:textColorLink="@color/result_text"
+                        android:textIsSelectable="true" />
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/result_button_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                style="@style/ResultButton"
+                android:visibility="gone" />
+
+            <Button
+                style="@style/ResultButton"
+                android:visibility="gone" />
+
+            <Button
+                style="@style/ResultButton"
+                android:visibility="gone" />
+
+            <Button
+                style="@style/ResultButton"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/status_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@color/transparent"
+        android:text="@string/msg_default_status"
+        android:textColor="@color/status_text" />
 
 </merge>

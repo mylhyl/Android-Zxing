@@ -3,7 +3,7 @@ package com.google.zxing.client.android;
 /**
  * Created by hupei on 2016/7/1.
  */
-public class Capture {
+public class Scanner {
     public static final int RESTART_PREVIEW = 0;
     public static final int DECODE_SUCCEEDED = 1;
     public static final int DECODE_FAILED = 2;

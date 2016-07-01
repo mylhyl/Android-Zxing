@@ -39,11 +39,11 @@ final class DecodeHandler extends Handler {
 
 	private static final String TAG = DecodeHandler.class.getSimpleName();
 
-	private final CaptureActivity scannerView;
+	private final ScannerView scannerView;
 	private final MultiFormatReader multiFormatReader;
 	private boolean running = true;
 
-	DecodeHandler(CaptureActivity scannerView, Map<DecodeHintType, Object> hints) {
+	DecodeHandler(ScannerView scannerView, Map<DecodeHintType, Object> hints) {
 		multiFormatReader = new MultiFormatReader();
 		multiFormatReader.setHints(hints);
 		this.scannerView = scannerView;
@@ -55,10 +55,10 @@ final class DecodeHandler extends Handler {
 			return;
 		}
 		switch (message.what) {
-		case Capture.DECODE:
+		case Scanner.DECODE:
 			decode((byte[]) message.obj, message.arg1, message.arg2);
 			break;
-		case Capture.QUIT:
+		case Scanner.QUIT:
 			running = false;
 			Looper.myLooper().quit();
 			break;
@@ -110,7 +110,7 @@ final class DecodeHandler extends Handler {
 			Log.d(TAG, "Found barcode in " + (end - start) + " ms");
 			if (handler != null) {
 				Message message = Message.obtain(handler,
-						Capture.DECODE_SUCCEEDED, rawResult);
+						Scanner.DECODE_SUCCEEDED, rawResult);
 				Bundle bundle = new Bundle();
 				bundleThumbnail(source, bundle);
 				message.setData(bundle);
@@ -118,7 +118,7 @@ final class DecodeHandler extends Handler {
 			}
 		} else {
 			if (handler != null) {
-				Message message = Message.obtain(handler, Capture.DECODE_FAILED);
+				Message message = Message.obtain(handler, Scanner.DECODE_FAILED);
 				message.sendToTarget();
 			}
 		}

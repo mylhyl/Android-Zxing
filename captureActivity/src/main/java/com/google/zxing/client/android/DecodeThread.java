@@ -40,15 +40,15 @@ final class DecodeThread extends Thread {
 	public static final String BARCODE_BITMAP = "barcode_bitmap";
 	public static final String BARCODE_SCALED_FACTOR = "barcode_scaled_factor";
 
-	private final CaptureActivity scannerView;
+	private final ScannerView scannerView;
 	private final Map<DecodeHintType, Object> hints;
 	private Handler handler;
 	private final CountDownLatch handlerInitLatch;
 
-	DecodeThread(CaptureActivity scannerView,
-			Collection<BarcodeFormat> decodeFormats,
-			Map<DecodeHintType, ?> baseHints, String characterSet,
-			ResultPointCallback resultPointCallback) {
+	DecodeThread(ScannerView scannerView,
+				 Collection<BarcodeFormat> decodeFormats,
+				 Map<DecodeHintType, ?> baseHints, String characterSet,
+				 ResultPointCallback resultPointCallback) {
 
 		this.scannerView = scannerView;
 		handlerInitLatch = new CountDownLatch(1);

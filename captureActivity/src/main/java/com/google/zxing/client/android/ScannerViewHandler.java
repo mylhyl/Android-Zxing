@@ -36,9 +36,9 @@ import com.google.zxing.client.android.camera.CameraManager;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class CaptureActivityHandler extends Handler {
+public final class ScannerViewHandler extends Handler {
 
-	private final CaptureActivity scannerView;
+	private final ScannerView scannerView;
 	private final DecodeThread decodeThread;
 	private State state;
 	private final CameraManager cameraManager;
@@ -47,10 +47,10 @@ public final class CaptureActivityHandler extends Handler {
 		PREVIEW, SUCCESS, DONE
 	}
 
-	CaptureActivityHandler(CaptureActivity scannerView,
-			Collection<BarcodeFormat> decodeFormats,
-			Map<DecodeHintType, ?> baseHints, String characterSet,
-			CameraManager cameraManager) {
+	ScannerViewHandler(ScannerView scannerView,
+					   Collection<BarcodeFormat> decodeFormats,
+					   Map<DecodeHintType, ?> baseHints, String characterSet,
+					   CameraManager cameraManager) {
 		this.scannerView = scannerView;
 		decodeThread = new DecodeThread(scannerView, decodeFormats, baseHints,
 				characterSet, new ViewfinderResultPointCallback(
@@ -67,10 +67,10 @@ public final class CaptureActivityHandler extends Handler {
 	@Override
 	public void handleMessage(Message message) {
 		switch (message.what) {
-		case Capture.RESTART_PREVIEW:
+		case Scanner.RESTART_PREVIEW:
 			restartPreviewAndDecode();
 			break;
-		case Capture.DECODE_SUCCEEDED:
+		case Scanner.DECODE_SUCCEEDED:
 			state = State.SUCCESS;
 			Bundle bundle = message.getData();
 			Bitmap barcode = null;
@@ -90,16 +90,16 @@ public final class CaptureActivityHandler extends Handler {
 			scannerView
 					.handleDecode((Result) message.obj, barcode, scaleFactor);
 			break;
-		case Capture.DECODE_FAILED:
+		case Scanner.DECODE_FAILED:
 			// We're decoding as fast as possible, so when one decode fails,
 			// start another.
 			state = State.PREVIEW;
 			cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-					Capture.DECODE);
+					Scanner.DECODE);
 			break;
-		case Capture.RETURN_SCAN_RESULT:
+		case Scanner.RETURN_SCAN_RESULT:
 			break;
-		case Capture.LAUNCH_PRODUCT_QUERY:
+		case Scanner.LAUNCH_PRODUCT_QUERY:
 			break;
 		}
 	}
@@ -107,7 +107,7 @@ public final class CaptureActivityHandler extends Handler {
 	public void quitSynchronously() {
 		state = State.DONE;
 		cameraManager.stopPreview();
-		Message quit = Message.obtain(decodeThread.getHandler(), Capture.QUIT);
+		Message quit = Message.obtain(decodeThread.getHandler(), Scanner.QUIT);
 		quit.sendToTarget();
 		try {
 			// Wait at most half a second; should be enough time, and onPause()
@@ -118,15 +118,15 @@ public final class CaptureActivityHandler extends Handler {
 		}
 
 		// Be absolutely sure we don't send any queued up messages
-		removeMessages(Capture.DECODE_SUCCEEDED);
-		removeMessages(Capture.DECODE_FAILED);
+		removeMessages(Scanner.DECODE_SUCCEEDED);
+		removeMessages(Scanner.DECODE_FAILED);
 	}
 
 	private void restartPreviewAndDecode() {
 		if (state == State.SUCCESS) {
 			state = State.PREVIEW;
 			cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-					Capture.DECODE);
+					Scanner.DECODE);
 			scannerView.drawViewfinder();
 		}
 	}
