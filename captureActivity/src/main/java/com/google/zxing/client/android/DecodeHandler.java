@@ -55,10 +55,10 @@ final class DecodeHandler extends Handler {
 			return;
 		}
 		switch (message.what) {
-		case R.id.decode:
+		case Capture.DECODE:
 			decode((byte[]) message.obj, message.arg1, message.arg2);
 			break;
-		case R.id.quit:
+		case Capture.QUIT:
 			running = false;
 			Looper.myLooper().quit();
 			break;

@@ -95,7 +95,7 @@ public final class CaptureActivityHandler extends Handler {
 			// start another.
 			state = State.PREVIEW;
 			cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-					R.id.decode);
+					Capture.DECODE);
 			break;
 		case Capture.RETURN_SCAN_RESULT:
 			break;
@@ -107,7 +107,7 @@ public final class CaptureActivityHandler extends Handler {
 	public void quitSynchronously() {
 		state = State.DONE;
 		cameraManager.stopPreview();
-		Message quit = Message.obtain(decodeThread.getHandler(), R.id.quit);
+		Message quit = Message.obtain(decodeThread.getHandler(), Capture.QUIT);
 		quit.sendToTarget();
 		try {
 			// Wait at most half a second; should be enough time, and onPause()
@@ -126,7 +126,7 @@ public final class CaptureActivityHandler extends Handler {
 		if (state == State.SUCCESS) {
 			state = State.PREVIEW;
 			cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-					R.id.decode);
+					Capture.DECODE);
 			scannerView.drawViewfinder();
 		}
 	}
