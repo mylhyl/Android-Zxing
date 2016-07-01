@@ -263,4 +263,5 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     CameraManager getCameraManager() {
         return mCameraManager;
     }
+
 }

@@ -15,7 +15,7 @@ public class Scanner {
     public static class color {
         public static final int VIEWFINDER_MASK = 0x60000000;
         public static final int RESULT_VIEW = 0xb0000000;
-        public static final int VIEWFINDER_LASER = 0xffcc0000;
+        public static final int VIEWFINDER_LASER = 0xff00ff00;
         public static final int POSSIBLE_RESULT_POINTS = 0xc0ffbd21;
         public static final int RESULT_POINTS = 0xc099cc00;
     }

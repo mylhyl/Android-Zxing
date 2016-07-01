@@ -16,12 +16,6 @@
 
 package com.mylhyl.zxing.client;
 
-import java.text.DateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.Map;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -56,6 +50,12 @@ import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
 import com.mylhyl.zxing.scanner.ScannerView;
 import com.mylhyl.zxing.scanner.common.Intents;
 import com.mylhyl.zxing.scanner.common.Scanner;
+
+import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.Map;
 
 /**
  * This activity opens the camera and does the actual scanning on a background
