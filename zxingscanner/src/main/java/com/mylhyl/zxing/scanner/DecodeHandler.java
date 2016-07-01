@@ -16,6 +16,7 @@
 
 package com.mylhyl.zxing.scanner;
 
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -76,16 +77,18 @@ final class DecodeHandler extends Handler {
      * @param height The height of the preview frame.
      */
     private void decode(byte[] data, int width, int height) {
-        byte[] rotatedData = new byte[data.length];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++)
-                rotatedData[x * height + height - y - 1] = data[x + y * width];
+        //竖屏识别一维
+        if (scannerView.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            byte[] rotatedData = new byte[data.length];
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++)
+                    rotatedData[x * height + height - y - 1] = data[x + y * width];
+            }
+            int tmp = width;
+            width = height;
+            height = tmp;
+            data = rotatedData;
         }
-        int tmp = width;
-        width = height;
-        height = tmp;
-        data = rotatedData;
-
         long start = System.currentTimeMillis();
         Result rawResult = null;
         PlanarYUVLuminanceSource source = scannerView.getCameraManager()
@@ -101,7 +104,7 @@ final class DecodeHandler extends Handler {
             }
         }
 
-        Handler handler = scannerView.getHandler();
+        Handler handler = scannerView.getScannerViewHandler();
         if (rawResult != null) {
             // Don't log the barcode contents for security.
             long end = System.currentTimeMillis();

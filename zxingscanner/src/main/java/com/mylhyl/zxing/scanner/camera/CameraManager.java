@@ -17,6 +17,7 @@
 package com.mylhyl.zxing.scanner.camera;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -271,11 +272,19 @@ public final class CameraManager {
                 // Called early, before init even finished
                 return null;
             }
-            rect.left = rect.left * cameraResolution.y / screenResolution.x;
-            rect.right = rect.right * cameraResolution.y / screenResolution.x;
-            rect.top = rect.top * cameraResolution.x / screenResolution.y;
-            rect.bottom = rect.bottom * cameraResolution.x / screenResolution.y;
 
+            //竖屏识别一维
+            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                rect.left = rect.left * cameraResolution.y / screenResolution.x;
+                rect.right = rect.right * cameraResolution.y / screenResolution.x;
+                rect.top = rect.top * cameraResolution.x / screenResolution.y;
+                rect.bottom = rect.bottom * cameraResolution.x / screenResolution.y;
+            } else {
+                rect.left = rect.left * cameraResolution.x / screenResolution.x;
+                rect.right = rect.right * cameraResolution.x / screenResolution.x;
+                rect.top = rect.top * cameraResolution.y / screenResolution.y;
+                rect.bottom = rect.bottom * cameraResolution.y / screenResolution.y;
+            }
             framingRectInPreview = rect;
         }
         return framingRectInPreview;

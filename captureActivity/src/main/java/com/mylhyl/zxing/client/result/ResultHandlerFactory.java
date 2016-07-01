@@ -41,8 +41,6 @@ public final class ResultHandlerFactory {
         return new ProductResultHandler(activity, result, rawResult);
       case URI:
         return new URIResultHandler(activity, result);
-      case WIFI:
-        return new WifiResultHandler(activity, result);
       case GEO:
         return new GeoResultHandler(activity, result);
       case TEL:

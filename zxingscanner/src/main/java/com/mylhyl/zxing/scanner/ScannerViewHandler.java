@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class ScannerViewHandler extends Handler {
+final class ScannerViewHandler extends Handler {
 
 	private final ScannerView scannerView;
 	private final DecodeThread decodeThread;
