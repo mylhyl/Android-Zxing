@@ -31,12 +31,12 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.zxing.Result;
-import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.LocaleManager;
 import com.google.zxing.client.android.R;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 import com.google.zxing.client.result.ResultParser;
+import com.mylhyl.zxing.scanner.common.Contents;
 
 /**
  * A base class for the Android-specific barcode handlers. These allow the app

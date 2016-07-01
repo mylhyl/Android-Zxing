@@ -51,6 +51,10 @@ import com.google.zxing.client.android.result.ResultButtonListener;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.android.result.ResultHandlerFactory;
 import com.google.zxing.client.android.result.supplement.SupplementalInfoRetriever;
+import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
+import com.mylhyl.zxing.scanner.ScannerView;
+import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.common.Scanner;
 
 /**
  * This activity opens the camera and does the actual scanning on a background
@@ -103,7 +107,8 @@ public final class CaptureActivity extends Activity implements OnScannerCompleti
         scannerView = (ScannerView) findViewById(R.id.capture_view);
         resultView = findViewById(R.id.result_view);
         statusView = (TextView) findViewById(R.id.status_view);
-
+        
+        scannerView.setMediaResId(R.raw.beep);
         scannerView.setOnScannerCompletionListener(this);
 
         scannerView.onResume();

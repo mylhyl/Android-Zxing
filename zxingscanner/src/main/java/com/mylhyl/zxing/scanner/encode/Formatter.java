@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package com.google.zxing.client.android;
+package com.mylhyl.zxing.scanner.encode;
 
-enum IntentSource {
-    /**
-     * 本地app向BS(Barcode Scanner)发起的启动指令
-     * 比如在androidtest项目中，利用整合的android-integration对BS发起调用指令：com.google.zxing.client.android.SCAN
-     * BS中该启动命令对应的Source类型便是NATIVE_APP_INTENT
-     */
-    NATIVE_APP_INTENT,
+/**
+ * Encapsulates some simple formatting logic, to aid refactoring in {@link ContactEncoder}.
+ *
+ * @author Sean Owen
+ */
+interface Formatter {
 
-    /**
-     * 打开BS的时候传入查询商品的url，与最终扫描到的product id结合进行查询
-     * 两种url的形式不同
-     */
-    PRODUCT_SEARCH_LINK,
-    ZXING_LINK,
-    /**
-     * 直接打开BS
-     */
-    NONE
-
+  /**
+   * @param value value to format
+   * @param index index of value in a list of values to be formatted
+   * @return formatted value
+   */
+  CharSequence format(CharSequence value, int index);
+  
 }

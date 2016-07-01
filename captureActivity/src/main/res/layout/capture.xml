@@ -16,7 +16,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.zxing.client.android.ScannerView
+    <com.mylhyl.zxing.scanner.ScannerView
         android:id="@+id/capture_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
