@@ -635,7 +635,7 @@ public final class CaptureActivity extends Activity implements
 					}
 				}
 			}
-			sendReplyMessage(R.id.return_scan_result, intent, resultDurationMS);
+			sendReplyMessage(Capture.RETURN_SCAN_RESULT, intent, resultDurationMS);
 
 		} else if (source == IntentSource.PRODUCT_SEARCH_LINK) {
 
@@ -645,7 +645,7 @@ public final class CaptureActivity extends Activity implements
 			int end = sourceUrl.lastIndexOf("/scan");
 			String replyURL = sourceUrl.substring(0, end) + "?q="
 					+ resultHandler.getDisplayContents() + "&source=zxing";
-			sendReplyMessage(R.id.launch_product_query, replyURL,
+			sendReplyMessage(Capture.LAUNCH_PRODUCT_QUERY, replyURL,
 					resultDurationMS);
 
 		} else if (source == IntentSource.ZXING_LINK) {
@@ -655,7 +655,7 @@ public final class CaptureActivity extends Activity implements
 				String replyURL = scanFromWebPageManager.buildReplyURL(
 						rawResult, resultHandler);
 				scanFromWebPageManager = null;
-				sendReplyMessage(R.id.launch_product_query, replyURL,
+				sendReplyMessage(Capture.LAUNCH_PRODUCT_QUERY, replyURL,
 						resultDurationMS);
 			}
 
@@ -712,7 +712,7 @@ public final class CaptureActivity extends Activity implements
 
 	public void restartPreviewAfterDelay(long delayMS) {
 		if (handler != null) {
-			handler.sendEmptyMessageDelayed(R.id.restart_preview, delayMS);
+			handler.sendEmptyMessageDelayed(Capture.RESTART_PREVIEW, delayMS);
 		}
 		resetStatusView();
 	}

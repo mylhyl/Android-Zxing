@@ -67,10 +67,10 @@ public final class CaptureActivityHandler extends Handler {
 	@Override
 	public void handleMessage(Message message) {
 		switch (message.what) {
-		case R.id.restart_preview:
+		case Capture.RESTART_PREVIEW:
 			restartPreviewAndDecode();
 			break;
-		case R.id.decode_succeeded:
+		case Capture.DECODE_SUCCEEDED:
 			state = State.SUCCESS;
 			Bundle bundle = message.getData();
 			Bitmap barcode = null;
@@ -90,16 +90,16 @@ public final class CaptureActivityHandler extends Handler {
 			scannerView
 					.handleDecode((Result) message.obj, barcode, scaleFactor);
 			break;
-		case R.id.decode_failed:
+		case Capture.DECODE_FAILED:
 			// We're decoding as fast as possible, so when one decode fails,
 			// start another.
 			state = State.PREVIEW;
 			cameraManager.requestPreviewFrame(decodeThread.getHandler(),
 					R.id.decode);
 			break;
-		case R.id.return_scan_result:
+		case Capture.RETURN_SCAN_RESULT:
 			break;
-		case R.id.launch_product_query:
+		case Capture.LAUNCH_PRODUCT_QUERY:
 			break;
 		}
 	}
@@ -118,8 +118,8 @@ public final class CaptureActivityHandler extends Handler {
 		}
 
 		// Be absolutely sure we don't send any queued up messages
-		removeMessages(R.id.decode_succeeded);
-		removeMessages(R.id.decode_failed);
+		removeMessages(Capture.DECODE_SUCCEEDED);
+		removeMessages(Capture.DECODE_FAILED);
 	}
 
 	private void restartPreviewAndDecode() {

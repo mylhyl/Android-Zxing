@@ -110,7 +110,7 @@ final class DecodeHandler extends Handler {
 			Log.d(TAG, "Found barcode in " + (end - start) + " ms");
 			if (handler != null) {
 				Message message = Message.obtain(handler,
-						R.id.decode_succeeded, rawResult);
+						Capture.DECODE_SUCCEEDED, rawResult);
 				Bundle bundle = new Bundle();
 				bundleThumbnail(source, bundle);
 				message.setData(bundle);
@@ -118,7 +118,7 @@ final class DecodeHandler extends Handler {
 			}
 		} else {
 			if (handler != null) {
-				Message message = Message.obtain(handler, R.id.decode_failed);
+				Message message = Message.obtain(handler, Capture.DECODE_FAILED);
 				message.sendToTarget();
 			}
 		}
