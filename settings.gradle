@@ -1,2 +1,2 @@
 include ':zxing', ':zxingscanner'
-include ':captureActivity'
+include ':sample'
