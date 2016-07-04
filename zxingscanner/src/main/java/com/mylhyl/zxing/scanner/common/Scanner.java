@@ -1,5 +1,9 @@
 package com.mylhyl.zxing.scanner.common;
 
+import com.google.zxing.Result;
+import com.google.zxing.client.result.ParsedResult;
+import com.google.zxing.client.result.ResultParser;
+
 /**
  * Created by hupei on 2016/7/1.
  */
@@ -18,5 +22,8 @@ public class Scanner {
         public static final int VIEWFINDER_LASER = 0xff00ff00;
         public static final int POSSIBLE_RESULT_POINTS = 0xc0ffbd21;
         public static final int RESULT_POINTS = 0xc099cc00;
+    }
+    public static ParsedResult parseResult(Result rawResult) {
+        return ResultParser.parseResult(rawResult);
     }
 }

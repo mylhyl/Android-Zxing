@@ -1,2 +1,1 @@
-include ':zxing', ':zxingscanner'
-include ':sample'
+include ':zxing', ':zxingscanner', ':sample'

@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
+import com.google.zxing.client.result.ParsedResult;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
 
@@ -129,8 +130,16 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param barcode     A greyscale bitmap of the camera data which was decoded.
      */
     public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
-        if (mScannerCompletionListener != null)
-            mScannerCompletionListener.OnCompletion(rawResult, barcode);
+        //扫描成功
+        if (mScannerCompletionListener != null) {
+            //转换结果
+            ParsedResult parsedResult = Scanner.parseResult(rawResult);
+            mScannerCompletionListener.OnScannerCompletion(rawResult, parsedResult, barcode);
+        }
+        //设置扫描结果图片
+        if (barcode != null) {
+            mViewfinderView.drawResultBitmap(barcode);
+        }
         boolean fromLiveScan = barcode != null;
         if (fromLiveScan) {
             mBeepManager.playBeepSoundAndVibrate();
@@ -210,6 +219,73 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
+     * 设置扫描线颜色
+     *
+     * @param laserColor
+     */
+    public void setLaserColor(int laserColor) {
+        mViewfinderView.setLaserColor(laserColor);
+    }
+
+    /**
+     * 设置扫描线图片
+     *
+     * @param laserLineResId resId
+     */
+    public void setLaserLineResId(int laserLineResId) {
+        mViewfinderView.setLaserLineResId(laserLineResId);
+    }
+
+    /**
+     * 设置扫描线高度
+     *
+     * @param laserLineHeight px
+     */
+    public void setLaserLineHeight(int laserLineHeight) {
+        mViewfinderView.setLaserLineHeight(laserLineHeight);
+    }
+
+    /**
+     * 设置扫描框4角颜色
+     *
+     * @param laserFrameBoundColor
+     */
+    public void setLaserFrameBoundColor(int laserFrameBoundColor) {
+        mViewfinderView.setLaserFrameBoundColor(laserFrameBoundColor);
+    }
+
+    /**
+     * 设置扫描框4角长度
+     *
+     * @param laserFrameBoundsLength px
+     */
+    public void setLaserFrameBoundsLength(int laserFrameBoundsLength) {
+        mViewfinderView.setLaserFrameBoundsLength(laserFrameBoundsLength);
+    }
+
+    /**
+     * 设置扫描框4角宽度
+     *
+     * @param laserFrameBoundsWidth px
+     */
+    public void setLaserFrameBoundsWidth(int laserFrameBoundsWidth) {
+        mViewfinderView.setLaserFrameBoundsWidth(laserFrameBoundsWidth);
+    }
+
+    /**
+     * 设置文字
+     *
+     * @param text
+     * @param textSize   文字大小 sp
+     * @param textColor  文字颜色
+     * @param isBottom   是否在扫描框下方
+     * @param textMargin 离扫描框间距 px
+     */
+    public void setDrawText(String text, int textSize, int textColor, boolean isBottom, int textMargin) {
+        mViewfinderView.setDrawText(text, textSize, textColor, isBottom, textMargin);
+    }
+
+    /**
      * 设置扫描完成播放声音
      *
      * @param mediaResId
@@ -227,6 +303,10 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mCameraManager.setTorch(mode);
     }
 
+    public void setLaserFrameSize(int width, int height) {
+        mViewfinderView.setLaserFrameSize(width, height);
+    }
+
     public void sendReplyMessage(int id, Object arg, long delayMS) {
         if (mScannerViewHandler != null) {
             Message message = Message.obtain(mScannerViewHandler, id, arg);
@@ -238,13 +318,18 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * 重新扫描
+     *
+     * @param delayMS
+     */
     public void restartPreviewAfterDelay(long delayMS) {
         if (mScannerViewHandler != null) {
             mScannerViewHandler.sendEmptyMessageDelayed(Scanner.RESTART_PREVIEW, delayMS);
         }
     }
 
-    public ViewfinderView getViewfinderView() {
+    ViewfinderView getViewfinderView() {
         return mViewfinderView;
     }
 
