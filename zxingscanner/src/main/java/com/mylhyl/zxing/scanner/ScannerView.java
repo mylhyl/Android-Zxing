@@ -34,7 +34,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private CameraManager mCameraManager;
     private ScannerViewHandler mScannerViewHandler;
     private BeepManager mBeepManager;
-    private AmbientLightManager mAmbientLightManager;
     private OnScannerCompletionListener mScannerCompletionListener;
 
     public ScannerView(Context context) {
@@ -53,7 +52,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private void init(Context context, AttributeSet attrs, int defStyle) {
         hasSurface = false;
         mBeepManager = new BeepManager(context);
-        mAmbientLightManager = new AmbientLightManager(context);
 
         mSurfaceView = new SurfaceView(context, attrs, defStyle);
         addView(mSurfaceView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -69,7 +67,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mScannerViewHandler = null;
 
         mBeepManager.updatePrefs();
-        mAmbientLightManager.start(mCameraManager);
         SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
         if (hasSurface) {
             // The activity was paused but not stopped, so the surface still
@@ -88,7 +85,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             mScannerViewHandler.quitSynchronously();
             mScannerViewHandler = null;
         }
-        mAmbientLightManager.stop();
         mBeepManager.close();
         mCameraManager.closeDriver();
         // historyManager = null; // Keep for onActivityResult
@@ -225,7 +221,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     /**
      * 切换闪光灯
      *
-     * @param mode
+     * @param mode true开；false关
      */
     public void toggleLight(boolean mode) {
         mCameraManager.setTorch(mode);

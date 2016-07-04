@@ -169,7 +169,7 @@ final class CameraConfigurationManager {
 					"In camera config safe mode -- most settings will not be honored");
 		}
 
-		// 关闪光灯
+		// 默认关闪光灯
 		initializeTorch(parameters, FrontLightMode.OFF, safeMode);
 		// 自动对焦
 		boolean autoFocus = true;

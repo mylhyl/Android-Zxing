@@ -23,8 +23,6 @@ package com.mylhyl.zxing.scanner.camera;
 public enum FrontLightMode {
 	/** Always on. */
 	ON,
-	/** On only when ambient light is low. */
-	AUTO,
 	/** Always off. */
 	OFF
 }
