@@ -60,6 +60,7 @@ public final class CameraManager {
      * clear the handler so it will only receive one message.
      */
     private final PreviewCallback previewCallback;
+    private int laserFrameTopMargin;//扫描框离屏幕上方距离
 
     public CameraManager(Context context) {
         this.context = context;
@@ -238,7 +239,12 @@ public final class CameraManager {
             int statusBarHeight = getStatusBarHeight();//状态栏高度
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 2 - statusBarHeight;
-            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
+            if (laserFrameTopMargin == 0)
+                laserFrameTopMargin = topOffset;
+            else {
+                laserFrameTopMargin += statusBarHeight;
+            }
+            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width, laserFrameTopMargin + height);
             //  Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;
@@ -319,9 +325,15 @@ public final class CameraManager {
             if (height > screenResolution.y) {
                 height = screenResolution.y;
             }
+            int statusBarHeight = getStatusBarHeight();//状态栏高度
             int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2;
-            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
+            int topOffset = (screenResolution.y - height) / 2 - statusBarHeight;
+            if (laserFrameTopMargin == 0)
+                laserFrameTopMargin = topOffset;
+            else {
+                laserFrameTopMargin += statusBarHeight;
+            }
+            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width, laserFrameTopMargin + height);
             //   Log.d(TAG, "Calculated manual framing rect: " + framingRect);
             framingRectInPreview = null;
         } else {
@@ -361,5 +373,14 @@ public final class CameraManager {
             result = context.getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    /**
+     * 设置扫描框与屏幕上方距离
+     *
+     * @param laserFrameTopMargin
+     */
+    public void setLaserFrameTopMargin(int laserFrameTopMargin) {
+        this.laserFrameTopMargin = laserFrameTopMargin;
     }
 }

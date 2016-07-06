@@ -38,6 +38,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private OnScannerCompletionListener mScannerCompletionListener;
 
     private int laserFrameWidth, laserFrameHeight;//扫描框大小
+    private int laserFrameTopMargin;//扫描框离屏幕上方距离
 
     public ScannerView(Context context) {
         this(context, null);
@@ -65,6 +66,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
     public void onResume() {
         mCameraManager = new CameraManager(getContext());
+        mCameraManager.setLaserFrameTopMargin(laserFrameTopMargin);//扫描框与屏幕距离
         mViewfinderView.setCameraManager(mCameraManager);
         mBeepManager.updatePrefs();
 
@@ -314,7 +316,8 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param mode true开；false关
      */
     public void toggleLight(boolean mode) {
-        mCameraManager.setTorch(mode);
+        if (mCameraManager != null)
+            mCameraManager.setTorch(mode);
     }
 
     /**
@@ -326,6 +329,10 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     public void setLaserFrameSize(int width, int height) {
         this.laserFrameWidth = Scanner.dp2px(getContext(), width);
         this.laserFrameHeight = Scanner.dp2px(getContext(), height);
+    }
+
+    public void setLaserFrameTopMargin(int laserFrameTopMargin) {
+        this.laserFrameTopMargin = Scanner.dp2px(getContext(), laserFrameTopMargin);
     }
 
     /**

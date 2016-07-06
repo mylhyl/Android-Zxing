@@ -7,9 +7,12 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Surface;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.google.zxing.Result;
 import com.google.zxing.client.result.ParsedResult;
@@ -32,22 +35,34 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            returnScanResult = extras.getBoolean(EXTRA_RETURN_SCANNER_RESULT);
-        }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ToggleButton toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                scannerView.toggleLight(isChecked);
+            }
+        });
+
         scannerView = (ScannerView) findViewById(R.id.capture_view);
+//        scannerView.setLaserFrameTopMargin(100);
 //        scannerView.setLaserFrameSize(200,200);
 //        scannerView.setLaserFrameCornerLength(25);//设置4角长度
         scannerView.setMediaResId(R.raw.beep);//设置扫描成功的声音
 //        scannerView.setLaserLineHeight(5);//设置扫描线高度
 
-
-//        scannerView.setLaserLineResId(R.mipmap.wx_scan_line);//线图
-        scannerView.setLaserLineResId(R.mipmap.zfb_grid_scan_line, true);//网格图
-        scannerView.setLaserFrameBoundColor(0xFF26CEFF);//支付宝颜色
+        scannerView.setLaserLineResId(R.mipmap.wx_scan_line);//线图
+//        scannerView.setLaserLineResId(R.mipmap.zfb_grid_scan_line, true);//网格图
+//        scannerView.setLaserFrameBoundColor(0xFF26CEFF);//支付宝颜色
 
         scannerView.setOnScannerCompletionListener(this);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            returnScanResult = extras.getBoolean(EXTRA_RETURN_SCANNER_RESULT);
+        }
     }
 
     @Override
@@ -76,44 +91,9 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
     @Override
     protected void onResume() {
         super.onResume();
-
         scannerView.onResume();
         lastResult = null;
-//        setCurrentOrientation();
         resetStatusView();
-    }
-
-    private void setCurrentOrientation() {
-        // 不自动旋转
-        boolean autoOrientation = true;
-        if (autoOrientation) {
-            int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                switch (rotation) {
-                    case Surface.ROTATION_0:
-                    case Surface.ROTATION_90:
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    default:
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                }
-            } else {
-                switch (rotation) {
-                    case Surface.ROTATION_0:
-                    case Surface.ROTATION_270:
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    default:
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-                }
-            }
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-//        scannerView.onPause();
-        super.onPause();
     }
 
     @Override
