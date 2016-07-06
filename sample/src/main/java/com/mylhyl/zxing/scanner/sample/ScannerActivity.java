@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.Surface;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.zxing.Result;
@@ -68,17 +69,29 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
     @Override
     public void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
         lastResult = rawResult;
-        if (returnScanResult) {
-            onReturnScanResult(rawResult);
-        } else {
-            ParsedResultType type = parsedResult.getType();
-            switch (type) {
-                case ADDRESSBOOK:
-                    break;
-                case TEXT:
-                    break;
-            }
+
+        ParsedResultType type = parsedResult.getType();
+        switch (type) {
+            case ADDRESSBOOK:
+                break;
+            case PRODUCT:
+                break;
+            case URI:
+                break;
+            case TEXT:
+//                returnScanResult = true;
+//                if (returnScanResult) {
+//                    onReturnScanResult(rawResult);
+//                }
+                break;
+            case GEO:
+                break;
+            case TEL:
+                break;
+            case SMS:
+                break;
         }
+        Toast.makeText(ScannerActivity.this, type.toString(), Toast.LENGTH_SHORT).show();
     }
 
     private void onReturnScanResult(Result rawResult) {

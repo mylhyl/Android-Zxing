@@ -19,6 +19,7 @@ package com.mylhyl.zxing.scanner.encode;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
@@ -26,6 +27,7 @@ import android.view.WindowManager;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
+import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.common.Contents;
 
 import java.io.File;
@@ -41,24 +43,26 @@ import java.util.regex.Pattern;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class QREncode {
-
-//    private static final String TAG = QREncode.class.getSimpleName();
-
-    private static final int MAX_BARCODE_FILENAME_LENGTH = 24;
-    private static final Pattern NOT_ALPHANUMERIC = Pattern
-            .compile("[^A-Za-z0-9]");
-
-    private QRCodeEncoder qrCodeEncoder;
+    private QREncode() {
+    }
 
     /**
      * @param context
-     * @param type     {@linkplain Contents.Type Contents.Type}
-     * @param data
-     * @param useVCard
+     * @param codeEncoder {@linkplain Builder#build() QREncode.Builder().build()}
+     * @return
      */
-    public QREncode(Context context, String type, Object data,
-                    boolean useVCard) {
+    public static Bitmap encodeQR(Context context, QRCodeEncoder codeEncoder) {
         // This assumes the view is full screen, which is a good assumption
+        int smallerDimension = getSmallerDimension(context.getApplicationContext());
+        try {
+            return codeEncoder.encodeAsBitmap(smallerDimension);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static int getSmallerDimension(Context context) {
         WindowManager manager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
@@ -68,102 +72,86 @@ public final class QREncode {
         int height = displaySize.y;
         int smallerDimension = width < height ? width : height;
         smallerDimension = smallerDimension * 7 / 8;
+        return smallerDimension;
+    }
 
-        try {
-            qrCodeEncoder = new QRCodeEncoder(null, type, data,
-                    smallerDimension, useVCard);
-            Bitmap bitmap = qrCodeEncoder.encodeAsBitmap();
-            if (bitmap == null) {
-//                Log.w(TAG, "Could not encode barcode");
-                qrCodeEncoder = null;
-                return;
+    public static class Builder {
+        private BarcodeFormat barcodeFormat;
+        private ParsedResultType parsedResultType;
+        private Bundle bundle;
+        private String contents;
+        private String displayContents;
+        private int color;
+        private boolean useVCard;
+
+        public BarcodeFormat getBarcodeFormat() {
+            return barcodeFormat;
+        }
+
+        public Builder setBarcodeFormat(BarcodeFormat barcodeFormat) {
+            this.barcodeFormat = barcodeFormat;
+            return this;
+        }
+
+        public ParsedResultType getParsedResultType() {
+            return parsedResultType;
+        }
+
+        public Builder setParsedResultType(ParsedResultType parsedResultType) {
+            this.parsedResultType = parsedResultType;
+            return this;
+        }
+
+        public Bundle getBundle() {
+            return bundle;
+        }
+
+        public Builder setBundle(Bundle bundle) {
+            this.bundle = bundle;
+            return this;
+        }
+
+        public String getContents() {
+            return contents;
+        }
+
+        public Builder setContents(String contents) {
+            this.contents = contents;
+            return this;
+        }
+
+        public String getDisplayContents() {
+            return displayContents;
+        }
+
+        public Builder setDisplayContents(String displayContents) {
+            this.displayContents = displayContents;
+            return this;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public Builder setColor(int color) {
+            this.color = color;
+            return this;
+        }
+
+        public boolean isUseVCard() {
+            return useVCard;
+        }
+
+        public Builder setUseVCard(boolean useVCard) {
+            this.useVCard = useVCard;
+            return this;
+        }
+
+        public QRCodeEncoder build() {
+            if (this.parsedResultType == null) {
+                throw new IllegalArgumentException("parsedResultType no found...");
             }
-        } catch (WriterException e) {
-//            Log.w(TAG, "Could not encode barcode", e);
-            qrCodeEncoder = null;
+            return new QRCodeEncoder(this);
         }
-    }
-
-    public Bitmap encodeAsBitmap() {
-        QRCodeEncoder encoder = qrCodeEncoder;
-        if (encoder == null) { // Odd
-//            Log.w(TAG, "No existing barcode to send?");
-            return null;
-        }
-
-        String contents = encoder.getContents();
-        if (contents == null) {
-//            Log.w(TAG, "No existing barcode to send?");
-            return null;
-        }
-
-        try {
-            return encoder.encodeAsBitmap();
-        } catch (WriterException we) {
-//            Log.w(TAG, we);
-            return null;
-        }
-    }
-
-    public void saveQR() {
-        QRCodeEncoder encoder = qrCodeEncoder;
-        if (encoder == null) { // Odd
-//            Log.w(TAG, "No existing barcode to send?");
-            return;
-        }
-
-        String contents = encoder.getContents();
-        if (contents == null) {
-//            Log.w(TAG, "No existing barcode to send?");
-            return;
-        }
-
-        Bitmap bitmap;
-        try {
-            bitmap = encoder.encodeAsBitmap();
-        } catch (WriterException we) {
-//            Log.w(TAG, we);
-            return;
-        }
-        if (bitmap == null) {
-            return;
-        }
-
-        File bsRoot = new File(Environment.getExternalStorageDirectory(),
-                "BarcodeScanner");
-        File barcodesRoot = new File(bsRoot, "Barcodes");
-        if (!barcodesRoot.exists() && !barcodesRoot.mkdirs()) {
-//            Log.w(TAG, "Couldn't make dir " + barcodesRoot);
-            return;
-        }
-        File barcodeFile = new File(barcodesRoot, makeBarcodeFileName(contents) + ".png");
-        if (!barcodeFile.delete()) {
-//            Log.w(TAG, "Could not delete " + barcodeFile);
-            // continue anyway
-        }
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(barcodeFile);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
-        } catch (FileNotFoundException fnfe) {
-//            Log.w(TAG, "Couldn't access file " + barcodeFile + " due to " + fnfe);
-            return;
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException ioe) {
-                    // do nothing
-                }
-            }
-        }
-    }
-
-    private static CharSequence makeBarcodeFileName(CharSequence contents) {
-        String fileName = NOT_ALPHANUMERIC.matcher(contents).replaceAll("_");
-        if (fileName.length() > MAX_BARCODE_FILENAME_LENGTH) {
-            fileName = fileName.substring(0, MAX_BARCODE_FILENAME_LENGTH);
-        }
-        return fileName;
     }
 }
