@@ -31,7 +31,7 @@ import java.io.IOException;
  */
 final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
 
-    private static final String TAG = BeepManager.class.getSimpleName();
+//    private static final String TAG = BeepManager.class.getSimpleName();
 
     private static final float BEEP_VOLUME = 0.10f;
     private static final long VIBRATE_DURATION = 200L;
@@ -110,7 +110,7 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
             mediaPlayer.prepare();
             return mediaPlayer;
         } catch (IOException ioe) {
-            Log.w(TAG, ioe);
+//            Log.w(TAG, ioe);
             mediaPlayer.release();
             return null;
         }

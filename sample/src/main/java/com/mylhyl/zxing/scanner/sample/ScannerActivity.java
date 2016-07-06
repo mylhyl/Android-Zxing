@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.widget.TextView;
@@ -38,18 +37,15 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
             returnScanResult = extras.getBoolean(EXTRA_RETURN_SCANNER_RESULT);
         }
         scannerView = (ScannerView) findViewById(R.id.capture_view);
-//        scannerView.setLaserFrameSize(800,200);
-
+        scannerView.setLaserFrameSize(600,600);
+        scannerView.setLaserFrameCornerLength(80);//设置4角长度
         scannerView.setMediaResId(R.raw.beep);//设置扫描成功的声音
 //        scannerView.setLaserLineHeight(10);//设置扫描线高度
 
-//        scannerView.setLaserLineResId(R.mipmap.wx_scan_line);//设置扫描线图片
 
-
-        scannerView.setLaserLineResId(R.mipmap.tb_scan_line);//设置扫描线图片
-        scannerView.setLaserFrameBoundColor(0xFF26CEFF);//tb_scan_line 相同颜色
-
-        scannerView.setLaserFrameBoundsLength(80);//设置4角长度
+//        scannerView.setLaserLineResId(R.mipmap.wx_scan_line);//线图
+        scannerView.setLaserLineResId(R.mipmap.zfb_grid_scan_line, true);//网格图
+        scannerView.setLaserFrameBoundColor(0xFF26CEFF);//支付宝颜色
 
         scannerView.setOnScannerCompletionListener(this);
     }
@@ -144,7 +140,7 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
         return super.onKeyDown(keyCode, event);
     }
 
-    public void restartPreviewAfterDelay(long delayMS) {
+    private void restartPreviewAfterDelay(long delayMS) {
         scannerView.restartPreviewAfterDelay(delayMS);
         resetStatusView();
     }

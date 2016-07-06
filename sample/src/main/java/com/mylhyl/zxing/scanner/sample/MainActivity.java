@@ -17,17 +17,11 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ScannerActivity.class));
-            }
-        });
-
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 startActivityForResult(new Intent(MainActivity.this, ScannerActivity.class)
                         .putExtra(ScannerActivity.EXTRA_RETURN_SCANNER_RESULT, true), ScannerActivity.REQUEST_CODE_SCANNER);
             }
         });
+
     }
 
     @Override

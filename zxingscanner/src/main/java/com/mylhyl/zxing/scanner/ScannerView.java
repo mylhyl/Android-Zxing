@@ -37,6 +37,8 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private BeepManager mBeepManager;
     private OnScannerCompletionListener mScannerCompletionListener;
 
+    private int laserFrameWidth, laserFrameHeight;//扫描框大小
+
     public ScannerView(Context context) {
         this(context, null);
     }
@@ -62,12 +64,13 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     public void onResume() {
-        mCameraManager = new CameraManager(getContext());
-        mViewfinderView.setCameraManager(mCameraManager);
-
+        if (mCameraManager == null) {
+            mCameraManager = new CameraManager(getContext());
+            mViewfinderView.setCameraManager(mCameraManager);
+            mBeepManager.updatePrefs();
+        }
         mScannerViewHandler = null;
 
-        mBeepManager.updatePrefs();
         SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
         if (hasSurface) {
             // The activity was paused but not stopped, so the surface still
@@ -88,7 +91,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         }
         mBeepManager.close();
         mCameraManager.closeDriver();
-        // historyManager = null; // Keep for onActivityResult
         if (!hasSurface) {
             SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
             surfaceHolder.removeCallback(this);
@@ -112,6 +114,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
                 mScannerViewHandler = new ScannerViewHandler(this, null,
                         null, null, mCameraManager);
             }
+            //设置扫描框大小
+            if (laserFrameWidth > 0 && laserFrameHeight > 0)
+                mCameraManager.setManualFramingRect(laserFrameWidth, laserFrameHeight);
         } catch (IOException ioe) {
             Log.w(TAG, ioe);
         } catch (RuntimeException e) {
@@ -237,6 +242,16 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
+     * 设置扫描线图片
+     *
+     * @param laserLineResId  resId
+     * @param isLaserGridLine 是否为网络图片
+     */
+    public void setLaserLineResId(int laserLineResId, boolean isLaserGridLine) {
+        mViewfinderView.setLaserLineResId(laserLineResId, isLaserGridLine);
+    }
+
+    /**
      * 设置扫描线高度
      *
      * @param laserLineHeight px
@@ -257,19 +272,19 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     /**
      * 设置扫描框4角长度
      *
-     * @param laserFrameBoundsLength px
+     * @param laserFrameCornerLength px
      */
-    public void setLaserFrameBoundsLength(int laserFrameBoundsLength) {
-        mViewfinderView.setLaserFrameBoundsLength(laserFrameBoundsLength);
+    public void setLaserFrameCornerLength(int laserFrameCornerLength) {
+        mViewfinderView.setLaserFrameCornerLength(laserFrameCornerLength);
     }
 
     /**
      * 设置扫描框4角宽度
      *
-     * @param laserFrameBoundsWidth px
+     * @param laserFrameCornerWidth px
      */
-    public void setLaserFrameBoundsWidth(int laserFrameBoundsWidth) {
-        mViewfinderView.setLaserFrameBoundsWidth(laserFrameBoundsWidth);
+    public void setLaserFrameCornerWidth(int laserFrameCornerWidth) {
+        mViewfinderView.setLaserFrameCornerWidth(laserFrameCornerWidth);
     }
 
     /**
@@ -303,8 +318,15 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mCameraManager.setTorch(mode);
     }
 
+    /**
+     * 设置扫描框大小
+     *
+     * @param width
+     * @param height
+     */
     public void setLaserFrameSize(int width, int height) {
-        mViewfinderView.setLaserFrameSize(width, height);
+        this.laserFrameWidth = width;
+        this.laserFrameHeight = height;
     }
 
     public void sendReplyMessage(int id, Object arg, long delayMS) {
@@ -319,9 +341,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
-     * 重新扫描
+     * 重新扫描，支持延时
      *
-     * @param delayMS
+     * @param delayMS 毫秒
      */
     public void restartPreviewAfterDelay(long delayMS) {
         if (mScannerViewHandler != null) {

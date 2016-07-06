@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
@@ -37,8 +36,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
 final class DecodeHandler extends Handler {
-
-    private static final String TAG = DecodeHandler.class.getSimpleName();
 
     private final ScannerView scannerView;
     private final MultiFormatReader multiFormatReader;
@@ -89,7 +86,6 @@ final class DecodeHandler extends Handler {
             height = tmp;
             data = rotatedData;
         }
-        long start = System.currentTimeMillis();
         Result rawResult = null;
         PlanarYUVLuminanceSource source = scannerView.getCameraManager()
                 .buildLuminanceSource(data, width, height);
@@ -106,9 +102,6 @@ final class DecodeHandler extends Handler {
 
         Handler handler = scannerView.getScannerViewHandler();
         if (rawResult != null) {
-            // Don't log the barcode contents for security.
-            long end = System.currentTimeMillis();
-            Log.d(TAG, "Found barcode in " + (end - start) + " ms");
             if (handler != null) {
                 //会向 ScannerViewHandler 发消息
                 Message message = Message.obtain(handler,

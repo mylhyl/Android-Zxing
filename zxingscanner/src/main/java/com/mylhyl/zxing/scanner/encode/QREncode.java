@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
  */
 public final class QREncode {
 
-    private static final String TAG = QREncode.class.getSimpleName();
+//    private static final String TAG = QREncode.class.getSimpleName();
 
     private static final int MAX_BARCODE_FILENAME_LENGTH = 24;
     private static final Pattern NOT_ALPHANUMERIC = Pattern
@@ -74,12 +74,12 @@ public final class QREncode {
                     smallerDimension, useVCard);
             Bitmap bitmap = qrCodeEncoder.encodeAsBitmap();
             if (bitmap == null) {
-                Log.w(TAG, "Could not encode barcode");
+//                Log.w(TAG, "Could not encode barcode");
                 qrCodeEncoder = null;
                 return;
             }
         } catch (WriterException e) {
-            Log.w(TAG, "Could not encode barcode", e);
+//            Log.w(TAG, "Could not encode barcode", e);
             qrCodeEncoder = null;
         }
     }
@@ -87,20 +87,20 @@ public final class QREncode {
     public Bitmap encodeAsBitmap() {
         QRCodeEncoder encoder = qrCodeEncoder;
         if (encoder == null) { // Odd
-            Log.w(TAG, "No existing barcode to send?");
+//            Log.w(TAG, "No existing barcode to send?");
             return null;
         }
 
         String contents = encoder.getContents();
         if (contents == null) {
-            Log.w(TAG, "No existing barcode to send?");
+//            Log.w(TAG, "No existing barcode to send?");
             return null;
         }
 
         try {
             return encoder.encodeAsBitmap();
         } catch (WriterException we) {
-            Log.w(TAG, we);
+//            Log.w(TAG, we);
             return null;
         }
     }
@@ -108,13 +108,13 @@ public final class QREncode {
     public void saveQR() {
         QRCodeEncoder encoder = qrCodeEncoder;
         if (encoder == null) { // Odd
-            Log.w(TAG, "No existing barcode to send?");
+//            Log.w(TAG, "No existing barcode to send?");
             return;
         }
 
         String contents = encoder.getContents();
         if (contents == null) {
-            Log.w(TAG, "No existing barcode to send?");
+//            Log.w(TAG, "No existing barcode to send?");
             return;
         }
 
@@ -122,7 +122,7 @@ public final class QREncode {
         try {
             bitmap = encoder.encodeAsBitmap();
         } catch (WriterException we) {
-            Log.w(TAG, we);
+//            Log.w(TAG, we);
             return;
         }
         if (bitmap == null) {
@@ -133,13 +133,12 @@ public final class QREncode {
                 "BarcodeScanner");
         File barcodesRoot = new File(bsRoot, "Barcodes");
         if (!barcodesRoot.exists() && !barcodesRoot.mkdirs()) {
-            Log.w(TAG, "Couldn't make dir " + barcodesRoot);
+//            Log.w(TAG, "Couldn't make dir " + barcodesRoot);
             return;
         }
-        File barcodeFile = new File(barcodesRoot, makeBarcodeFileName(contents)
-                + ".png");
+        File barcodeFile = new File(barcodesRoot, makeBarcodeFileName(contents) + ".png");
         if (!barcodeFile.delete()) {
-            Log.w(TAG, "Could not delete " + barcodeFile);
+//            Log.w(TAG, "Could not delete " + barcodeFile);
             // continue anyway
         }
         FileOutputStream fos = null;
@@ -147,8 +146,7 @@ public final class QREncode {
             fos = new FileOutputStream(barcodeFile);
             bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
         } catch (FileNotFoundException fnfe) {
-            Log.w(TAG, "Couldn't access file " + barcodeFile + " due to "
-                    + fnfe);
+//            Log.w(TAG, "Couldn't access file " + barcodeFile + " due to " + fnfe);
             return;
         } finally {
             if (fos != null) {
