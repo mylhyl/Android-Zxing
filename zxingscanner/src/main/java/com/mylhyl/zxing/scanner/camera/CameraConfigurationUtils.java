@@ -102,7 +102,7 @@ public final class CameraConfigurationUtils {
                     supportedFlashModes,
                     Camera.Parameters.FLASH_MODE_OFF);
         }
-        if (flashMode != null && flashMode.equals(parameters.getFlashMode())) {
+        if (flashMode != null && !flashMode.equals(parameters.getFlashMode())) {
 //            if (flashMode.equals(parameters.getFlashMode())) {
 //                Log.i(TAG, "Flash mode already set to " + flashMode);
 //            } else {
