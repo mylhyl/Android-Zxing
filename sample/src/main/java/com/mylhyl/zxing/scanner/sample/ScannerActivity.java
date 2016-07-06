@@ -37,10 +37,10 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
             returnScanResult = extras.getBoolean(EXTRA_RETURN_SCANNER_RESULT);
         }
         scannerView = (ScannerView) findViewById(R.id.capture_view);
-        scannerView.setLaserFrameSize(600,600);
-        scannerView.setLaserFrameCornerLength(80);//设置4角长度
+//        scannerView.setLaserFrameSize(200,200);
+//        scannerView.setLaserFrameCornerLength(25);//设置4角长度
         scannerView.setMediaResId(R.raw.beep);//设置扫描成功的声音
-//        scannerView.setLaserLineHeight(10);//设置扫描线高度
+//        scannerView.setLaserLineHeight(5);//设置扫描线高度
 
 
 //        scannerView.setLaserLineResId(R.mipmap.wx_scan_line);//线图
@@ -79,7 +79,7 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
 
         scannerView.onResume();
         lastResult = null;
-        setCurrentOrientation();
+//        setCurrentOrientation();
         resetStatusView();
     }
 
@@ -112,7 +112,7 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
 
     @Override
     protected void onPause() {
-        scannerView.onPause();
+//        scannerView.onPause();
         super.onPause();
     }
 

@@ -227,12 +227,17 @@ public final class CameraManager {
                 // Called early, before init even finished
                 return null;
             }
-
+            int height;
             int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
-            int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
-
+            //竖屏则为正方形
+            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                height = width;
+            } else {
+                height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
+            }
+            int statusBarHeight = getStatusBarHeight();//状态栏高度
             int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2;
+            int topOffset = (screenResolution.y - height) / 2 - statusBarHeight;
             framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
             //  Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
@@ -344,4 +349,17 @@ public final class CameraManager {
                 rect.width(), rect.height(), false);
     }
 
+    /**
+     * 获取状态栏高度
+     *
+     * @return
+     */
+    private int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
 }

@@ -26,7 +26,7 @@ import java.io.IOException;
  */
 public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
-    private static final String TAG = ScannerView.class.getSimpleName();
+//    private static final String TAG = ScannerView.class.getSimpleName();
 
     private SurfaceView mSurfaceView;
     private ViewfinderView mViewfinderView;
@@ -64,11 +64,10 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     public void onResume() {
-        if (mCameraManager == null) {
-            mCameraManager = new CameraManager(getContext());
-            mViewfinderView.setCameraManager(mCameraManager);
-            mBeepManager.updatePrefs();
-        }
+        mCameraManager = new CameraManager(getContext());
+        mViewfinderView.setCameraManager(mCameraManager);
+        mBeepManager.updatePrefs();
+
         mScannerViewHandler = null;
 
         SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
@@ -84,7 +83,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         }
     }
 
-    public void onPause() {
+    private void onPause() {
         if (mScannerViewHandler != null) {
             mScannerViewHandler.quitSynchronously();
             mScannerViewHandler = null;
@@ -95,6 +94,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
             surfaceHolder.removeCallback(this);
         }
+        mViewfinderView.laserLineBitmapRecycle();
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
@@ -102,8 +102,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             throw new IllegalStateException("No SurfaceHolder provided");
         }
         if (mCameraManager.isOpen()) {
-            Log.w(TAG,
-                    "initCamera() while already open -- late SurfaceView callback?");
+//            Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
             return;
         }
         try {
@@ -118,11 +117,11 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             if (laserFrameWidth > 0 && laserFrameHeight > 0)
                 mCameraManager.setManualFramingRect(laserFrameWidth, laserFrameHeight);
         } catch (IOException ioe) {
-            Log.w(TAG, ioe);
+//            Log.w(TAG, ioe);
         } catch (RuntimeException e) {
             // Barcode Scanner has seen crashes in the wild of this variety:
             // java.?lang.?RuntimeException: Fail to connect to camera service
-            Log.w(TAG, "Unexpected error initializing camera", e);
+//            Log.w(TAG, "Unexpected error initializing camera", e);
         }
     }
 
@@ -199,10 +198,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        if (surfaceHolder == null) {
-            Log.e(TAG,
-                    "*** WARNING *** surfaceCreated() gave us a null surface!");
-        }
+//        if (surfaceHolder == null) {
+//            Log.e(TAG, "*** WARNING *** surfaceCreated() gave us a null surface!");
+//        }
         if (!hasSurface) {
             hasSurface = true;
             initCamera(surfaceHolder);
@@ -217,6 +215,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         hasSurface = false;
+        onPause();
     }
 
     public void setOnScannerCompletionListener(OnScannerCompletionListener listener) {
@@ -254,7 +253,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     /**
      * 设置扫描线高度
      *
-     * @param laserLineHeight px
+     * @param laserLineHeight dp
      */
     public void setLaserLineHeight(int laserLineHeight) {
         mViewfinderView.setLaserLineHeight(laserLineHeight);
@@ -272,7 +271,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     /**
      * 设置扫描框4角长度
      *
-     * @param laserFrameCornerLength px
+     * @param laserFrameCornerLength dp
      */
     public void setLaserFrameCornerLength(int laserFrameCornerLength) {
         mViewfinderView.setLaserFrameCornerLength(laserFrameCornerLength);
@@ -281,7 +280,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     /**
      * 设置扫描框4角宽度
      *
-     * @param laserFrameCornerWidth px
+     * @param laserFrameCornerWidth dp
      */
     public void setLaserFrameCornerWidth(int laserFrameCornerWidth) {
         mViewfinderView.setLaserFrameCornerWidth(laserFrameCornerWidth);
@@ -294,7 +293,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param textSize   文字大小 sp
      * @param textColor  文字颜色
      * @param isBottom   是否在扫描框下方
-     * @param textMargin 离扫描框间距 px
+     * @param textMargin 离扫描框间距 dp
      */
     public void setDrawText(String text, int textSize, int textColor, boolean isBottom, int textMargin) {
         mViewfinderView.setDrawText(text, textSize, textColor, isBottom, textMargin);
@@ -321,23 +320,12 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     /**
      * 设置扫描框大小
      *
-     * @param width
-     * @param height
+     * @param width  dp
+     * @param height dp
      */
     public void setLaserFrameSize(int width, int height) {
-        this.laserFrameWidth = width;
-        this.laserFrameHeight = height;
-    }
-
-    public void sendReplyMessage(int id, Object arg, long delayMS) {
-        if (mScannerViewHandler != null) {
-            Message message = Message.obtain(mScannerViewHandler, id, arg);
-            if (delayMS > 0L) {
-                mScannerViewHandler.sendMessageDelayed(message, delayMS);
-            } else {
-                mScannerViewHandler.sendMessage(message);
-            }
-        }
+        this.laserFrameWidth = Scanner.dp2px(getContext(), width);
+        this.laserFrameHeight = Scanner.dp2px(getContext(), height);
     }
 
     /**
@@ -355,7 +343,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         return mViewfinderView;
     }
 
-    public void drawViewfinder() {
+    void drawViewfinder() {
         mViewfinderView.drawViewfinder();
     }
 

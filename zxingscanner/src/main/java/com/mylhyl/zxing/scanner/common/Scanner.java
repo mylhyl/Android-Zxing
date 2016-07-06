@@ -1,5 +1,8 @@
 package com.mylhyl.zxing.scanner.common;
 
+import android.content.Context;
+import android.util.TypedValue;
+
 import com.google.zxing.Result;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ResultParser;
@@ -23,7 +26,16 @@ public class Scanner {
         public static final int POSSIBLE_RESULT_POINTS = 0xc0ffbd21;
         public static final int RESULT_POINTS = 0xc099cc00;
     }
+
     public static ParsedResult parseResult(Result rawResult) {
         return ResultParser.parseResult(rawResult);
+    }
+
+    public static int dp2px(Context context, float dpValue) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
+    }
+
+    public static int sp2px(Context context, float spValue) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spValue, context.getResources().getDisplayMetrics());
     }
 }

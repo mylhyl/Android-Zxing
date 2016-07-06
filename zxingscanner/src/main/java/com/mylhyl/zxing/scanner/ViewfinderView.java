@@ -67,22 +67,20 @@ public final class ViewfinderView extends View {
     private int laserMoveSpeed = DEFAULT_LASER_VELOCITY;
     private int animationDelay = 0;
     //扫描框4角宽与高
-    private int laserFrameCornerWidth = 6;
-    private int laserFrameCornerLength = 25;
+    private int laserFrameCornerWidth = 3;
+    private int laserFrameCornerLength = 20;
     private int laserLineResId;
     private Bitmap laserLineBitmap;
-    private float density;
     private String drawText = "将二维码放入框内，即可自动扫描";
     private int drawTextSize = 16;
     private int drawTextColor = Color.WHITE;
     private boolean drawTextGravityBottom = true;
-    private int drawTextMargin = 80;
+    private int drawTextMargin = 20;
     private boolean isLaserGridLine;
 
     // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        density = context.getResources().getDisplayMetrics().density;
         // Initialize these once for performance rather than calling them every time in onDraw().
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         maskColor = Scanner.color.VIEWFINDER_MASK;
@@ -92,6 +90,8 @@ public final class ViewfinderView extends View {
         laserFrameBoundColor = laserColor;
         possibleResultPoints = new ArrayList<>(5);
         lastPossibleResultPoints = null;
+        drawTextSize = Scanner.sp2px(context, 16f);
+        drawTextMargin = Scanner.dp2px(context, 20f);
     }
 
     void setCameraManager(CameraManager cameraManager) {
@@ -109,30 +109,17 @@ public final class ViewfinderView extends View {
         if (frame == null || previewFrame == null) {
             return;
         }
-
-        // 绘制扫描框以外4个区域
-        drawMask(canvas, frame);
-
+        drawMask(canvas, frame);// 绘制扫描框以外4个区域
         if (resultBitmap != null) {
-            // 如果有二维码结果的Bitmap，在扫取景框内绘制不透明的result Bitmap
-            paint.setAlpha(CURRENT_POINT_OPACITY);
+            paint.setAlpha(CURRENT_POINT_OPACITY);// 如果有二维码结果的Bitmap，在扫取景框内绘制不透明的result Bitmap
             canvas.drawBitmap(resultBitmap, null, frame, paint);
         } else {
             drawFrame(canvas, frame);//绘制扫描框
-
             drawFrameCorner(canvas, frame);//绘制扫描框4角
-
-            moveLaserSpeed(frame);//计算移动位置
-
             drawLaserLine(canvas, frame);//绘制扫描线
-
             drawText(canvas, frame);// 画扫描框下面的字
-
             drawResultPoint(canvas, frame, previewFrame);
-
-            // 只刷新扫描框的内容，其他地方不刷新
-            postInvalidateDelayed(animationDelay, frame.left - POINT_SIZE, frame.top - POINT_SIZE
-                    , frame.right + POINT_SIZE, frame.bottom + POINT_SIZE);
+            moveLaserSpeed(frame);//计算移动位置
         }
     }
 
@@ -149,6 +136,10 @@ public final class ViewfinderView extends View {
         if (animationDelay == 0) {
             animationDelay = (int) ((1.0f * 1000 * laserMoveSpeed) / (frame.bottom - frame.top));
         }
+
+        // 只刷新扫描框的内容，其他地方不刷新
+        postInvalidateDelayed(animationDelay, frame.left - POINT_SIZE, frame.top - POINT_SIZE
+                , frame.right + POINT_SIZE, frame.bottom + POINT_SIZE);
     }
 
     /**
@@ -170,8 +161,7 @@ public final class ViewfinderView extends View {
     private void drawText(Canvas canvas, Rect frame) {
         int width = canvas.getWidth();
         paint.setColor(drawTextColor);
-        paint.setTextSize(drawTextSize * density);
-        paint.setAlpha(SCANNER_ALPHA[2]);
+        paint.setTextSize(drawTextSize);
         drawText = "将二维码放入框内，即可自动扫描";
         final float textWidth = paint.measureText(drawText);
         float x = (width - textWidth) / 2;
@@ -239,7 +229,7 @@ public final class ViewfinderView extends View {
             if (laserLineBitmap == null)
                 laserLineBitmap = BitmapFactory.decodeResource(getResources(), laserLineResId);
             int height = laserLineBitmap.getHeight();
-            //网络图片
+            //网格图片
             if (isLaserGridLine) {
                 RectF dstRectF = new RectF(frame.left, frame.top, frame.right, laserLineTop);
                 Rect srcRect = new Rect(0, (int) (height - dstRectF.height()), laserLineBitmap.getWidth(), height);
@@ -336,7 +326,7 @@ public final class ViewfinderView extends View {
     }
 
     public void setLaserLineHeight(int laserLineHeight) {
-        this.laserLineHeight = laserLineHeight;
+        this.laserLineHeight = Scanner.dp2px(getContext(), laserLineHeight);
     }
 
     public void setLaserFrameBoundColor(int laserFrameBoundColor) {
@@ -344,22 +334,29 @@ public final class ViewfinderView extends View {
     }
 
     public void setLaserFrameCornerLength(int laserFrameCornerLength) {
-        this.laserFrameCornerLength = laserFrameCornerLength;
+        this.laserFrameCornerLength = Scanner.dp2px(getContext(), laserFrameCornerLength);
     }
 
     public void setLaserFrameCornerWidth(int laserFrameCornerWidth) {
-        this.laserFrameCornerWidth = laserFrameCornerWidth;
+        this.laserFrameCornerWidth = Scanner.dp2px(getContext(), laserFrameCornerWidth);
     }
 
     public void setDrawText(String text, int textSize, int textColor, boolean isBottom, int textMargin) {
         if (!TextUtils.isEmpty(text))
             drawText = text;
         if (textSize > 0)
-            drawTextSize = textSize;
+            drawTextSize = Scanner.sp2px(getContext(), textSize);
         if (textColor > 0)
             drawTextColor = textColor;
         drawTextGravityBottom = isBottom;
         if (textMargin > 0)
-            drawTextMargin = textMargin;
+            drawTextMargin = Scanner.dp2px(getContext(), textMargin);
+    }
+
+    public void laserLineBitmapRecycle() {
+        if (laserLineBitmap != null) {
+            laserLineBitmap.recycle();
+            laserLineBitmap = null;
+        }
     }
 }
