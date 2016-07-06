@@ -2,26 +2,22 @@ package com.mylhyl.zxing.scanner.sample;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.Surface;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.zxing.Result;
+import com.google.zxing.client.result.AddressBookParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
 import com.mylhyl.zxing.scanner.ScannerView;
 
-public class ScannerActivity extends AppCompatActivity implements OnScannerCompletionListener {
+public class ScannerActivity extends BasicActivity implements OnScannerCompletionListener {
     public static final int REQUEST_CODE_SCANNER = 188;
     public static final String EXTRA_RETURN_SCANNER_RESULT = "return_scanner_result";
     public static final String EXTRA_SCANNER_RESULT_Text = "scanner_result_text";
@@ -35,9 +31,6 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         ToggleButton toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -69,20 +62,23 @@ public class ScannerActivity extends AppCompatActivity implements OnScannerCompl
     @Override
     public void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
         lastResult = rawResult;
-
+        if (returnScanResult) {
+            onReturnScanResult(rawResult);
+            return;
+        }
         ParsedResultType type = parsedResult.getType();
         switch (type) {
             case ADDRESSBOOK:
+                AddressBookParsedResult addressResult = (AddressBookParsedResult) parsedResult;
+                startActivity(new Intent(ScannerActivity.this, AddressBookActivity.class));
                 break;
             case PRODUCT:
                 break;
             case URI:
+                startActivity(new Intent(ScannerActivity.this, UriActivity.class).putExtra("uri", rawResult.getText()));
                 break;
             case TEXT:
-//                returnScanResult = true;
-//                if (returnScanResult) {
-//                    onReturnScanResult(rawResult);
-//                }
+                onReturnScanResult(rawResult);
                 break;
             case GEO:
                 break;

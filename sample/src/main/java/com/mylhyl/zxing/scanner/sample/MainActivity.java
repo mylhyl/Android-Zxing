@@ -9,9 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,23 +19,22 @@ import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.common.Contents;
 import com.mylhyl.zxing.scanner.encode.QREncode;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BasicActivity implements CompoundButton.OnCheckedChangeListener {
     private static final int PICK_CONTACT = 1;
     private ImageView imageView;
+    private CheckBox checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
         imageView = (ImageView) findViewById(R.id.imageView);
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(MainActivity.this, ScannerActivity.class)
-                        .putExtra(ScannerActivity.EXTRA_RETURN_SCANNER_RESULT, true), ScannerActivity.REQUEST_CODE_SCANNER);
+                        .putExtra(ScannerActivity.EXTRA_RETURN_SCANNER_RESULT, checkBox.isChecked()), ScannerActivity.REQUEST_CODE_SCANNER);
             }
         });
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
@@ -56,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, PICK_CONTACT);
             }
         });
+        checkBox = (CheckBox) findViewById(R.id.checkBox);
+        checkBox.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (buttonView == checkBox) {
+
+        }
     }
 
     @Override
@@ -78,11 +86,8 @@ public class MainActivity extends AppCompatActivity {
      * @param contactUri content://contacts/people/17
      */
     private void showContactAsBarcode(Uri contactUri) {
-        if (contactUri == null) {
-            return; // Show error?
-        }
+        if (contactUri == null) return;
         ContentResolver resolver = getContentResolver();
-
         Cursor cursor;
         try {
             cursor = resolver.query(contactUri, null, null, null, null);
@@ -92,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
         if (cursor == null) {
             return;
         }
-
         String id;
         String name;
         boolean hasPhone;
@@ -100,17 +104,14 @@ public class MainActivity extends AppCompatActivity {
             if (!cursor.moveToFirst()) {
                 return;
             }
-
             id = cursor.getString(cursor.getColumnIndex(BaseColumns._ID));
             name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
             hasPhone = cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0;
-
 
         } finally {
             cursor.close();
         }
 
-        // Don't require a name to be present, this contact might be just a phone number.
         Bundle bundle = new Bundle();
         if (name != null && !name.isEmpty()) {
             bundle.putString(ContactsContract.Intents.Insert.NAME, massageContactData(name));
