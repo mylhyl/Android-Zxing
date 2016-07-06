@@ -14,6 +14,7 @@ import com.google.zxing.Result;
 import com.google.zxing.client.result.AddressBookParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
+import com.google.zxing.client.result.URIParsedResult;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
 import com.mylhyl.zxing.scanner.ScannerView;
 
@@ -70,12 +71,17 @@ public class ScannerActivity extends BasicActivity implements OnScannerCompletio
         switch (type) {
             case ADDRESSBOOK:
                 AddressBookParsedResult addressResult = (AddressBookParsedResult) parsedResult;
-                startActivity(new Intent(ScannerActivity.this, AddressBookActivity.class));
+                Bundle bundle = new Bundle();
+                bundle.putStringArray("name", addressResult.getNames());
+                bundle.putStringArray("phoneNumber", addressResult.getPhoneNumbers());
+                bundle.putStringArray("email", addressResult.getEmails());
+                startActivity(new Intent(ScannerActivity.this, AddressBookActivity.class).putExtras(bundle));
                 break;
             case PRODUCT:
                 break;
             case URI:
-                startActivity(new Intent(ScannerActivity.this, UriActivity.class).putExtra("uri", rawResult.getText()));
+                URIParsedResult uriParsedResult = (URIParsedResult) parsedResult;
+                startActivity(new Intent(ScannerActivity.this, UriActivity.class).putExtra("uri", uriParsedResult.getURI()));
                 break;
             case TEXT:
                 onReturnScanResult(rawResult);
