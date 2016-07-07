@@ -1,0 +1,14 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.mylhyl.zxing.scanner.sample.picture.PickPictureTotalActivity">
+
+    <include layout="@layout/include_toolbar" />
+
+    <ListView
+        android:id="@+id/pick_picture_total_listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

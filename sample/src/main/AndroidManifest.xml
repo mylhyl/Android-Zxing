@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
+        android:name=".APP"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -21,9 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".ScannerActivity"
+            android:name=".QRenCodeActivity"
             android:label="扫一扫" />
         <activity
             android:name=".UriActivity"
@@ -34,6 +34,15 @@
         <activity
             android:name=".TextActivity"
             android:label="text" />
+        <activity
+            android:name=".picture.PickPictureTotalActivity"
+            android:label="选择相册" />
+        <activity
+            android:name=".picture.PickPictureActivity"
+            android:label="照片" />
+        <activity
+            android:name=".DeCodeActivity"
+            android:theme="@style/Theme.Transparent"/>
     </application>
 
 </manifest>

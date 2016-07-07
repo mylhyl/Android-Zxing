@@ -154,8 +154,16 @@ public final class QREncode {
         }
 
         public QRCodeEncoder build() {
-            if (parsedResultType == null || contents == null) {
+            if (parsedResultType == null) {
                 throw new IllegalArgumentException("parsedResultType no found...");
+            }
+            if (parsedResultType != ParsedResultType.ADDRESSBOOK && parsedResultType != ParsedResultType.GEO && contents == null) {
+                throw new IllegalArgumentException("parsedResultType not" +
+                        " ParsedResultType.ADDRESSBOOK and ParsedResultType.GEO, contents can not null");
+            }
+            if ((parsedResultType == ParsedResultType.ADDRESSBOOK || parsedResultType == ParsedResultType.GEO) && bundle == null) {
+                throw new IllegalArgumentException("parsedResultType yes" +
+                        " ParsedResultType.ADDRESSBOOK and ParsedResultType.GEO, bundle can not null");
             }
             return new QRCodeEncoder(this);
         }

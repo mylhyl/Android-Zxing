@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_pick_picture_grid_item_image"
+    android:layout_width="match_parent"
+    android:layout_height="100dip"
+    android:background="@mipmap/ic_pictures_failure"
+    android:scaleType="centerCrop" />
+

@@ -1,7 +1,11 @@
 package com.mylhyl.zxing.scanner.sample;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import com.mylhyl.zxing.scanner.common.Scanner;
 
 public class AddressBookActivity extends BasicActivity {
 
@@ -14,9 +18,9 @@ public class AddressBookActivity extends BasicActivity {
 
         Bundle extras = getIntent().getExtras();
 
-        String[] names = extras.getStringArray("name");
-        String[] phoneNumbers = extras.getStringArray("phoneNumber");
-        String[] emails = extras.getStringArray("email");
+        String[] names = extras.getStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_NAME);
+        String[] phoneNumbers = extras.getStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_PHONE_NUMBER);
+        String[] emails = extras.getStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_EMAIL);
 
         StringBuffer sb = new StringBuffer();
 
@@ -33,5 +37,9 @@ public class AddressBookActivity extends BasicActivity {
         }
 
         textView.setText(sb.toString());
+    }
+
+    public static void gotoActivity(Activity activity, Bundle bundle) {
+        activity.startActivity(new Intent(activity, AddressBookActivity.class).putExtras(bundle));
     }
 }

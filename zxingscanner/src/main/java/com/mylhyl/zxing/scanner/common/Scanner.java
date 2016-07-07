@@ -27,7 +27,18 @@ public class Scanner {
         public static final int RESULT_POINTS = 0xc099cc00;
     }
 
+    public static class result {
+        //联系人
+        public static final String EXTRA_RESULT_ADDRESS_BOOK_NAME = "result_address_book_name";
+        public static final String EXTRA_RESULT_ADDRESS_BOOK_PHONE_NUMBER = "result_address_book_phone_number";
+        public static final String EXTRA_RESULT_ADDRESS_BOOK_EMAIL = "result_address_book_email";
+
+        public static final String EXTRA_RESULT_URI = "result_uri";
+        public static final String EXTRA_RESULT_TEXT = "result_text";
+    }
+
     public static ParsedResult parseResult(Result rawResult) {
+        if (rawResult == null) return null;
         return ResultParser.parseResult(rawResult);
     }
 

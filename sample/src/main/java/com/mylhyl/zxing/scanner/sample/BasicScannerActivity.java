@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
@@ -16,7 +14,7 @@ import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 import com.google.zxing.client.result.URIParsedResult;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
-import com.mylhyl.zxing.scanner.ScannerView;
+import com.mylhyl.zxing.scanner.common.Scanner;
 
 /**
  * Created by hupei on 2016/7/7.
@@ -24,31 +22,28 @@ import com.mylhyl.zxing.scanner.ScannerView;
 public abstract class BasicScannerActivity extends AppCompatActivity implements OnScannerCompletionListener {
     public static final int REQUEST_CODE_SCANNER = 188;
     public static final String EXTRA_RETURN_SCANNER_RESULT = "return_scanner_result";
-    public static final String EXTRA_SCANNER_RESULT_Text = "scanner_result_text";
+    public static final String EXTRA_RETURN_SCANNER_RESULT_TEXT = "return_scanner_result_text";
 
-    ScannerView mScannerView;
-    private Result lastResult;
-    private boolean returnScanResult;
+    private boolean mReturnScanResult;
 
-    abstract int findScannerViewId();
-
-    abstract void gotoScannerActivity(ParsedResultType type, Bundle bundle);
+    abstract void onResultActivity(Result result, ParsedResultType type, Bundle bundle);
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
-        mScannerView = (ScannerView) findViewById(findScannerViewId());
-        mScannerView.setOnScannerCompletionListener(this);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            returnScanResult = extras.getBoolean(EXTRA_RETURN_SCANNER_RESULT);
+            mReturnScanResult = extras.getBoolean(EXTRA_RETURN_SCANNER_RESULT);
         }
     }
 
     @Override
     public void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
-        lastResult = rawResult;
-        if (returnScanResult) {
+        if (rawResult == null) {
+            Toast.makeText(this, "未发现二维码", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (mReturnScanResult) {
             onReturnScanResult(rawResult);
             return;
         }
@@ -57,18 +52,18 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
         switch (type) {
             case ADDRESSBOOK:
                 AddressBookParsedResult addressResult = (AddressBookParsedResult) parsedResult;
-                bundle.putStringArray("name", addressResult.getNames());
-                bundle.putStringArray("phoneNumber", addressResult.getPhoneNumbers());
-                bundle.putStringArray("email", addressResult.getEmails());
+                bundle.putStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_NAME, addressResult.getNames());
+                bundle.putStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_PHONE_NUMBER, addressResult.getPhoneNumbers());
+                bundle.putStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_EMAIL, addressResult.getEmails());
                 break;
             case PRODUCT:
                 break;
             case URI:
                 URIParsedResult uriParsedResult = (URIParsedResult) parsedResult;
-                bundle.putString("uri", uriParsedResult.getURI());
+                bundle.putString(Scanner.result.EXTRA_RESULT_URI, uriParsedResult.getURI());
                 break;
             case TEXT:
-                bundle.putString("text", rawResult.getText());
+                bundle.putString(Scanner.result.EXTRA_RESULT_TEXT, rawResult.getText());
                 break;
             case GEO:
                 break;
@@ -77,42 +72,13 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
             case SMS:
                 break;
         }
-        gotoScannerActivity(type, bundle);
+        onResultActivity(rawResult, type, bundle);
     }
 
     private void onReturnScanResult(Result rawResult) {
         Intent intent = getIntent();
-        intent.putExtra(EXTRA_SCANNER_RESULT_Text, rawResult.getText());
+        intent.putExtra(EXTRA_RETURN_SCANNER_RESULT_TEXT, rawResult.getText());
         setResult(Activity.RESULT_OK, intent);
         finish();
-    }
-
-    @Override
-    protected void onResume() {
-        mScannerView.onResume();
-        resetStatusView();
-        super.onResume();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (lastResult != null) {
-                    restartPreviewAfterDelay(0L);
-                    return true;
-                }
-                break;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    private void restartPreviewAfterDelay(long delayMS) {
-        mScannerView.restartPreviewAfterDelay(delayMS);
-        resetStatusView();
-    }
-
-    private void resetStatusView() {
-        lastResult = null;
     }
 }

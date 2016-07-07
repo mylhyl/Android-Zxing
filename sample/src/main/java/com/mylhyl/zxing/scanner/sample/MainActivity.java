@@ -5,6 +5,8 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -14,10 +16,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.ViewTarget;
 import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.common.Contents;
 import com.mylhyl.zxing.scanner.encode.QREncode;
+
+import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends BasicActivity implements CompoundButton.OnCheckedChangeListener {
     private static final int PICK_CONTACT = 1;
@@ -33,8 +40,8 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(MainActivity.this, ScannerActivity.class)
-                        .putExtra(ScannerActivity.EXTRA_RETURN_SCANNER_RESULT, checkBox.isChecked()), ScannerActivity.REQUEST_CODE_SCANNER);
+                startActivityForResult(new Intent(MainActivity.this, QRenCodeActivity.class)
+                        .putExtra(QRenCodeActivity.EXTRA_RETURN_SCANNER_RESULT, checkBox.isChecked()), QRenCodeActivity.REQUEST_CODE_SCANNER);
             }
         });
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
@@ -44,7 +51,11 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
                         new QREncode.Builder().setParsedResultType(ParsedResultType.URI)
                                 .setColor(getResources().getColor(R.color.colorPrimary))
                                 .setContents("https://github.com/mylhyl").build());
-                imageView.setImageBitmap(bitmap);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                Glide.with(MainActivity.this).load(baos.toByteArray()).into(imageView);
+
             }
         });
         findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
@@ -57,6 +68,20 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
         });
         checkBox = (CheckBox) findViewById(R.id.checkBox);
         checkBox.setOnCheckedChangeListener(this);
+
+//        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+////                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
+////                Bitmap bitmap = bitmapDrawable.getBitmap();
+//                imageView.setDrawingCacheEnabled(true);
+//                Bitmap b = imageView.getDrawingCache();
+//                Bitmap bitmap = b.copy(b.getConfig(), true);
+//                DeCodeActivity.gotoActivity(MainActivity.this, bitmap);
+////                imageView.setDrawingCacheEnabled(false);
+//                return true;
+//            }
+//        });
     }
 
     @Override
@@ -70,9 +95,9 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_CANCELED && resultCode == Activity.RESULT_OK) {
-            if (requestCode == ScannerActivity.REQUEST_CODE_SCANNER) {
+            if (requestCode == QRenCodeActivity.REQUEST_CODE_SCANNER) {
                 if (data != null) {
-                    String stringExtra = data.getStringExtra(ScannerActivity.EXTRA_SCANNER_RESULT_Text);
+                    String stringExtra = data.getStringExtra(QRenCodeActivity.EXTRA_RETURN_SCANNER_RESULT_TEXT);
                     ((TextView) findViewById(R.id.textView)).setText(stringExtra);
                 }
             } else if (requestCode == PICK_CONTACT) {
@@ -186,7 +211,9 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
         Bitmap bitmap = QREncode.encodeQR(MainActivity.this, new QREncode.Builder()
                 .setParsedResultType(ParsedResultType.ADDRESSBOOK)
                 .setBundle(bundle).build());
-        imageView.setImageBitmap(bitmap);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        Glide.with(MainActivity.this).load(baos.toByteArray()).into(imageView);
     }
 
     private static String massageContactData(String data) {

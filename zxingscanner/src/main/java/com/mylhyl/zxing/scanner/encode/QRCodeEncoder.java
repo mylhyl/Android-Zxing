@@ -61,6 +61,30 @@ final class QRCodeEncoder {
 
     private void encodeQRCodeContents(QREncode.Builder build) {
         switch (build.getParsedResultType()) {
+            case WIFI:
+                encodeBuild.setEncodeContents(build.getContents());
+                break;
+
+            case CALENDAR:
+                encodeBuild.setEncodeContents(build.getContents());
+                break;
+
+            case ISBN:
+                encodeBuild.setEncodeContents(build.getContents());
+                break;
+
+            case PRODUCT:
+                encodeBuild.setEncodeContents(build.getContents());
+                break;
+
+            case VIN:
+                encodeBuild.setEncodeContents(build.getContents());
+                break;
+
+            case URI:
+                encodeBuild.setEncodeContents(build.getContents());
+                break;
+
             case TEXT:
                 encodeBuild.setEncodeContents(build.getContents());
                 break;
