@@ -41,6 +41,7 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
     public void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
         if (rawResult == null) {
             Toast.makeText(this, "未发现二维码", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
         if (mReturnScanResult) {

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.WindowManager;
@@ -48,16 +49,19 @@ public class DeCodeActivity extends BasicScannerActivity {
         progressDialog.setMessage("请稍候...");
         progressDialog.show();
 
-//        Bundle extras = getIntent().getExtras();
-//        if (extras != null) {
-//            Bitmap bitmap = extras.getParcelable("bitmap");
-//            if (bitmap != null) {
-//                QRDecode.decodeQR(bitmap, this);
-//            }
-//        }
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            byte[] bytes = extras.getByteArray("bytes");
+            if (bytes != null && bytes.length > 0) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                if (bitmap != null) {
+                    QRDecode.decodeQR(bitmap, this);
+                }
+            }
+        }
     }
 
-    public static void gotoActivity(Activity activity, Bitmap bitmap) {
-        activity.startActivity(new Intent(activity, DeCodeActivity.class).putExtra("bitmap", bitmap));
+    public static void gotoActivity(Activity activity, byte[] bytes) {
+        activity.startActivity(new Intent(activity, DeCodeActivity.class).putExtra("bytes", bytes));
     }
 }

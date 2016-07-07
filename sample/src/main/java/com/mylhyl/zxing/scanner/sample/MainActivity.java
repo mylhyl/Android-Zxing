@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends BasicActivity implements CompoundButton.OnCheckedChangeListener {
     private static final int PICK_CONTACT = 1;
+    private TextView tvResult;
     private ImageView imageView;
     private CheckBox checkBox;
 
@@ -35,7 +36,7 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        tvResult = (TextView) findViewById(R.id.textView);
         imageView = (ImageView) findViewById(R.id.imageView);
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,10 +52,8 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
                         new QREncode.Builder().setParsedResultType(ParsedResultType.URI)
                                 .setColor(getResources().getColor(R.color.colorPrimary))
                                 .setContents("https://github.com/mylhyl").build());
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                Glide.with(MainActivity.this).load(baos.toByteArray()).into(imageView);
+                imageView.setImageBitmap(bitmap);
+                tvResult.setText("单击二维码图片有识别");
 
             }
         });
@@ -69,19 +68,19 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
         checkBox = (CheckBox) findViewById(R.id.checkBox);
         checkBox.setOnCheckedChangeListener(this);
 
-//        imageView.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-////                BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
-////                Bitmap bitmap = bitmapDrawable.getBitmap();
-//                imageView.setDrawingCacheEnabled(true);
-//                Bitmap b = imageView.getDrawingCache();
-//                Bitmap bitmap = b.copy(b.getConfig(), true);
-//                DeCodeActivity.gotoActivity(MainActivity.this, bitmap);
-////                imageView.setDrawingCacheEnabled(false);
-//                return true;
-//            }
-//        });
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageView.setDrawingCacheEnabled(true);//step 1
+                Bitmap bitmap = imageView.getDrawingCache();//step 2
+                //step 3 转bytes
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+
+                DeCodeActivity.gotoActivity(MainActivity.this, baos.toByteArray());//step 4
+                imageView.setDrawingCacheEnabled(false);//step 5
+            }
+        });
     }
 
     @Override
@@ -98,7 +97,7 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
             if (requestCode == QRenCodeActivity.REQUEST_CODE_SCANNER) {
                 if (data != null) {
                     String stringExtra = data.getStringExtra(QRenCodeActivity.EXTRA_RETURN_SCANNER_RESULT_TEXT);
-                    ((TextView) findViewById(R.id.textView)).setText(stringExtra);
+                    tvResult.setText(stringExtra);
                 }
             } else if (requestCode == PICK_CONTACT) {
                 // Data field is content://contacts/people/984
@@ -211,9 +210,8 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
         Bitmap bitmap = QREncode.encodeQR(MainActivity.this, new QREncode.Builder()
                 .setParsedResultType(ParsedResultType.ADDRESSBOOK)
                 .setBundle(bundle).build());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        Glide.with(MainActivity.this).load(baos.toByteArray()).into(imageView);
+        imageView.setImageBitmap(bitmap);
+        tvResult.setText("单击二维码图片识别");
     }
 
     private static String massageContactData(String data) {
