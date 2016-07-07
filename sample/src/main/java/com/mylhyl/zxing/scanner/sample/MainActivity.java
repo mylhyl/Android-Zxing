@@ -5,32 +5,27 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.ViewTarget;
 import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.common.Contents;
 import com.mylhyl.zxing.scanner.encode.QREncode;
 
 import java.io.ByteArrayOutputStream;
 
-public class MainActivity extends BasicActivity implements CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends BasicActivity {
     private static final int PICK_CONTACT = 1;
     private TextView tvResult;
     private ImageView imageView;
-    private CheckBox checkBox;
+    private int laserMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +33,34 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
         setContentView(R.layout.activity_main);
         tvResult = (TextView) findViewById(R.id.textView);
         imageView = (ImageView) findViewById(R.id.imageView);
+
+        final CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioButton:
+                        laserMode = QRenCodeActivity.EXTRA_LASER_LINE_MODE_0;
+                        break;
+                    case R.id.radioButton2:
+                        laserMode = QRenCodeActivity.EXTRA_LASER_LINE_MODE_1;
+                        break;
+                    case R.id.radioButton3:
+                        laserMode = QRenCodeActivity.EXTRA_LASER_LINE_MODE_2;
+                        break;
+                }
+            }
+        });
+
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(MainActivity.this, QRenCodeActivity.class)
-                        .putExtra(QRenCodeActivity.EXTRA_RETURN_SCANNER_RESULT, checkBox.isChecked()), QRenCodeActivity.REQUEST_CODE_SCANNER);
+                QRenCodeActivity.gotoActivity(MainActivity.this,
+                        checkBox.isChecked(), laserMode);
             }
         });
+
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,6 +73,7 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
 
             }
         });
+
         findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,8 +82,6 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
                 startActivityForResult(intent, PICK_CONTACT);
             }
         });
-        checkBox = (CheckBox) findViewById(R.id.checkBox);
-        checkBox.setOnCheckedChangeListener(this);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,13 +96,6 @@ public class MainActivity extends BasicActivity implements CompoundButton.OnChec
                 imageView.setDrawingCacheEnabled(false);//step 5
             }
         });
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (buttonView == checkBox) {
-
-        }
     }
 
     @Override

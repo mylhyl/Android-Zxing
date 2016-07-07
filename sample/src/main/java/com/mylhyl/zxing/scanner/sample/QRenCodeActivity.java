@@ -2,6 +2,7 @@ package com.mylhyl.zxing.scanner.sample;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -16,6 +17,11 @@ import com.mylhyl.zxing.scanner.decode.QRDecode;
 import com.mylhyl.zxing.scanner.sample.picture.PickPictureTotalActivity;
 
 public class QRenCodeActivity extends BasicScannerActivity {
+
+    public static final String EXTRA_LASER_LINE_MODE = "laser_line_mode";
+    public static final int EXTRA_LASER_LINE_MODE_0 = 0;
+    public static final int EXTRA_LASER_LINE_MODE_1 = 1;
+    public static final int EXTRA_LASER_LINE_MODE_2 = 2;
 
     @Override
     void onResultActivity(Result result, ParsedResultType type, Bundle bundle) {
@@ -44,6 +50,7 @@ public class QRenCodeActivity extends BasicScannerActivity {
 
     private ScannerView mScannerView;
     private Result mLastResult;
+    private int laserMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +76,29 @@ public class QRenCodeActivity extends BasicScannerActivity {
             }
         });
 
-//        scannerView.setLaserFrameTopMargin(100);
-//        scannerView.setLaserFrameSize(200,200);
-//        scannerView.setLaserFrameCornerLength(25);//设置4角长度
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            laserMode = extras.getInt(EXTRA_LASER_LINE_MODE);
+        }
         mScannerView.setMediaResId(R.raw.beep);//设置扫描成功的声音
-//        scannerView.setLaserLineHeight(5);//设置扫描线高度
 
-        mScannerView.setLaserLineResId(R.mipmap.wx_scan_line);//线图
-//        scannerView.setLaserLineResId(R.mipmap.zfb_grid_scan_line, true);//网格图
-//        scannerView.setLaserFrameBoundColor(0xFF26CEFF);//支付宝颜色
+//        mScannerView.setLaserFrameTopMargin(100);//扫描框与屏幕上方距离
+//        mScannerView.setLaserFrameSize(200, 200);//扫描框大小
+//        mScannerView.setLaserFrameCornerLength(25);//设置4角长度
+//        mScannerView.setLaserLineHeight(5);//设置扫描线高度
+
+        switch (laserMode) {
+            case EXTRA_LASER_LINE_MODE_0:
+                mScannerView.setLaserLineResId(R.mipmap.wx_scan_line);//线图
+                break;
+            case EXTRA_LASER_LINE_MODE_1:
+                mScannerView.setLaserLineResId(R.mipmap.zfb_grid_scan_line, true);//网格图
+                mScannerView.setLaserFrameBoundColor(0xFF26CEFF);//支付宝颜色
+                break;
+            case EXTRA_LASER_LINE_MODE_2:
+                mScannerView.setLaserColor(Color.RED);
+                break;
+        }
     }
 
     @Override
@@ -118,5 +139,12 @@ public class QRenCodeActivity extends BasicScannerActivity {
                 QRDecode.decodeQR(picturePath, this);
             }
         }
+    }
+
+    public static void gotoActivity(Activity activity, boolean isBackResult, int laserMode) {
+        activity.startActivityForResult(new Intent(activity, QRenCodeActivity.class)
+                        .putExtra(QRenCodeActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
+                        .putExtra(EXTRA_LASER_LINE_MODE, laserMode)
+                , QRenCodeActivity.REQUEST_CODE_SCANNER);
     }
 }
