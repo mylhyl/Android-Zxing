@@ -23,16 +23,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".QRenCodeActivity"
+            android:name=".QrEnCodeActivity"
             android:label="扫一扫" />
         <activity
-            android:name=".UriActivity"
+            android:name=".result.UriActivity"
             android:label="uri" />
         <activity
-            android:name=".AddressBookActivity"
+            android:name=".result.AddressBookActivity"
             android:label="addressBook" />
         <activity
-            android:name=".TextActivity"
+            android:name=".result.TextActivity"
             android:label="text" />
         <activity
             android:name=".picture.PickPictureTotalActivity"
@@ -41,7 +41,7 @@
             android:name=".picture.PickPictureActivity"
             android:label="照片" />
         <activity
-            android:name=".DeCodeActivity"
+            android:name=".QrDeCodeActivity"
             android:theme="@style/Theme.Transparent"/>
     </application>
 

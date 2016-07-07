@@ -11,42 +11,19 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.google.zxing.Result;
-import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.ScannerView;
 import com.mylhyl.zxing.scanner.decode.QRDecode;
 import com.mylhyl.zxing.scanner.sample.picture.PickPictureTotalActivity;
 
-public class QRenCodeActivity extends BasicScannerActivity {
+/**
+ * 扫描
+ */
+public class QrEnCodeActivity extends QrDeCodeActivity {
 
     public static final String EXTRA_LASER_LINE_MODE = "laser_line_mode";
     public static final int EXTRA_LASER_LINE_MODE_0 = 0;
     public static final int EXTRA_LASER_LINE_MODE_1 = 1;
     public static final int EXTRA_LASER_LINE_MODE_2 = 2;
-
-    @Override
-    void onResultActivity(Result result, ParsedResultType type, Bundle bundle) {
-        mLastResult = result;
-        switch (type) {
-            case ADDRESSBOOK:
-                AddressBookActivity.gotoActivity(QRenCodeActivity.this, bundle);
-                break;
-            case PRODUCT:
-                break;
-            case URI:
-                UriActivity.gotoActivity(QRenCodeActivity.this, bundle);
-                break;
-            case TEXT:
-                TextActivity.gotoActivity(QRenCodeActivity.this, bundle);
-                break;
-            case GEO:
-                break;
-            case TEL:
-                break;
-            case SMS:
-                break;
-        }
-        finish();
-    }
 
     private ScannerView mScannerView;
     private Result mLastResult;
@@ -72,7 +49,7 @@ public class QRenCodeActivity extends BasicScannerActivity {
         findViewById(R.id.button4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PickPictureTotalActivity.gotoActivity(QRenCodeActivity.this);
+                PickPictureTotalActivity.gotoActivity(QrEnCodeActivity.this);
             }
         });
 
@@ -142,9 +119,9 @@ public class QRenCodeActivity extends BasicScannerActivity {
     }
 
     public static void gotoActivity(Activity activity, boolean isBackResult, int laserMode) {
-        activity.startActivityForResult(new Intent(activity, QRenCodeActivity.class)
-                        .putExtra(QRenCodeActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
+        activity.startActivityForResult(new Intent(activity, QrEnCodeActivity.class)
+                        .putExtra(QrEnCodeActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
                         .putExtra(EXTRA_LASER_LINE_MODE, laserMode)
-                , QRenCodeActivity.REQUEST_CODE_SCANNER);
+                , QrEnCodeActivity.REQUEST_CODE_SCANNER);
     }
 }

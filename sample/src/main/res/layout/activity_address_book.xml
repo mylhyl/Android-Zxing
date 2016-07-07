@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.mylhyl.zxing.scanner.sample.AddressBookActivity">
+    tools:context=".result.AddressBookActivity">
 
     <include layout="@layout/include_toolbar" />
 

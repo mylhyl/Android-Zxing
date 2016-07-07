@@ -9,8 +9,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -41,13 +43,13 @@ public class MainActivity extends BasicActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.radioButton:
-                        laserMode = QRenCodeActivity.EXTRA_LASER_LINE_MODE_0;
+                        laserMode = QrEnCodeActivity.EXTRA_LASER_LINE_MODE_0;
                         break;
                     case R.id.radioButton2:
-                        laserMode = QRenCodeActivity.EXTRA_LASER_LINE_MODE_1;
+                        laserMode = QrEnCodeActivity.EXTRA_LASER_LINE_MODE_1;
                         break;
                     case R.id.radioButton3:
-                        laserMode = QRenCodeActivity.EXTRA_LASER_LINE_MODE_2;
+                        laserMode = QrEnCodeActivity.EXTRA_LASER_LINE_MODE_2;
                         break;
                 }
             }
@@ -56,20 +58,25 @@ public class MainActivity extends BasicActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                QRenCodeActivity.gotoActivity(MainActivity.this,
+                QrEnCodeActivity.gotoActivity(MainActivity.this,
                         checkBox.isChecked(), laserMode);
             }
         });
 
+        final EditText editText = (EditText) findViewById(R.id.editText);
+
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String qrContent = editText.getText().toString();
                 Bitmap bitmap = QREncode.encodeQR(MainActivity.this,
-                        new QREncode.Builder().setParsedResultType(ParsedResultType.URI)
+                        new QREncode.Builder()
                                 .setColor(getResources().getColor(R.color.colorPrimary))
-                                .setContents("https://github.com/mylhyl").build());
+                                .setParsedResultType(TextUtils.isEmpty(qrContent) ? ParsedResultType.URI : ParsedResultType.TEXT)
+                                .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" : qrContent)
+                                .build());
                 imageView.setImageBitmap(bitmap);
-                tvResult.setText("单击二维码图片有识别");
+                tvResult.setText("单击识别图中二维码");
 
             }
         });
@@ -92,7 +99,7 @@ public class MainActivity extends BasicActivity {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
-                DeCodeActivity.gotoActivity(MainActivity.this, baos.toByteArray());//step 4
+                QrDeCodeActivity.gotoActivity(MainActivity.this, baos.toByteArray());//step 4
                 imageView.setDrawingCacheEnabled(false);//step 5
             }
         });
@@ -102,9 +109,9 @@ public class MainActivity extends BasicActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_CANCELED && resultCode == Activity.RESULT_OK) {
-            if (requestCode == QRenCodeActivity.REQUEST_CODE_SCANNER) {
+            if (requestCode == QrEnCodeActivity.REQUEST_CODE_SCANNER) {
                 if (data != null) {
-                    String stringExtra = data.getStringExtra(QRenCodeActivity.EXTRA_RETURN_SCANNER_RESULT_TEXT);
+                    String stringExtra = data.getStringExtra(QrEnCodeActivity.EXTRA_RETURN_SCANNER_RESULT_TEXT);
                     tvResult.setText(stringExtra);
                 }
             } else if (requestCode == PICK_CONTACT) {

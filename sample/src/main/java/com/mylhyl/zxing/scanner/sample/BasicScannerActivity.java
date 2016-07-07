@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -26,11 +27,18 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
 
     private boolean mReturnScanResult;
 
+    /**
+     * 子类实现，根据 ParsedResultType 处理业务
+     *
+     * @param result
+     * @param type
+     * @param bundle
+     */
     abstract void onResultActivity(Result result, ParsedResultType type, Bundle bundle);
 
     @Override
-    public void setContentView(@LayoutRes int layoutResID) {
-        super.setContentView(layoutResID);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             mReturnScanResult = extras.getBoolean(EXTRA_RETURN_SCANNER_RESULT);

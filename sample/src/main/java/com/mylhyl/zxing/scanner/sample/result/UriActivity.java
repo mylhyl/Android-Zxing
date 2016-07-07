@@ -1,4 +1,4 @@
-package com.mylhyl.zxing.scanner.sample;
+package com.mylhyl.zxing.scanner.sample.result;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,7 +8,12 @@ import android.webkit.WebViewClient;
 
 import com.mylhyl.crlayout.SwipeRefreshWebView;
 import com.mylhyl.zxing.scanner.common.Scanner;
+import com.mylhyl.zxing.scanner.sample.BasicActivity;
+import com.mylhyl.zxing.scanner.sample.R;
 
+/**
+ * URI显示
+ */
 public class UriActivity extends BasicActivity {
     private SwipeRefreshWebView swipeRefreshWebView;
 
