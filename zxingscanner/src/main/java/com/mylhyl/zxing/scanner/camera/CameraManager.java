@@ -68,6 +68,10 @@ public final class CameraManager {
         previewCallback = new PreviewCallback(configManager);
     }
 
+    public Context getContext() {
+        return context;
+    }
+
     /**
      * Opens the camera driver and initializes the hardware parameters.
      *

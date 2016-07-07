@@ -353,13 +353,4 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     void drawViewfinder() {
         mViewfinderView.drawViewfinder();
     }
-
-    Handler getScannerViewHandler() {
-        return mScannerViewHandler;
-    }
-
-    CameraManager getCameraManager() {
-        return mCameraManager;
-    }
-
 }

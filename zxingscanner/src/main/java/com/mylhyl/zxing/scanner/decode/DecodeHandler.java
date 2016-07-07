@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mylhyl.zxing.scanner;
+package com.mylhyl.zxing.scanner.decode;
 
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -30,6 +30,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
 
 import java.io.ByteArrayOutputStream;
@@ -37,14 +38,16 @@ import java.util.Map;
 
 final class DecodeHandler extends Handler {
 
-    private final ScannerView scannerView;
+    private final CameraManager cameraManager;
+    private final Handler scannerViewHandler;
     private final MultiFormatReader multiFormatReader;
     private boolean running = true;
 
-    DecodeHandler(ScannerView scannerView, Map<DecodeHintType, Object> hints) {
+    DecodeHandler(CameraManager cameraManager, Handler scannerViewHandler, Map<DecodeHintType, Object> hints) {
+        this.cameraManager = cameraManager;
+        this.scannerViewHandler = scannerViewHandler;
         multiFormatReader = new MultiFormatReader();
         multiFormatReader.setHints(hints);
-        this.scannerView = scannerView;
     }
 
     @Override
@@ -75,7 +78,7 @@ final class DecodeHandler extends Handler {
      */
     private void decode(byte[] data, int width, int height) {
         //竖屏识别一维
-        if (scannerView.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (cameraManager.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             byte[] rotatedData = new byte[data.length];
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++)
@@ -87,8 +90,7 @@ final class DecodeHandler extends Handler {
             data = rotatedData;
         }
         Result rawResult = null;
-        PlanarYUVLuminanceSource source = scannerView.getCameraManager()
-                .buildLuminanceSource(data, width, height);
+        PlanarYUVLuminanceSource source = cameraManager.buildLuminanceSource(data, width, height);
         if (source != null) {
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
             try {
@@ -100,7 +102,7 @@ final class DecodeHandler extends Handler {
             }
         }
 
-        Handler handler = scannerView.getScannerViewHandler();
+        Handler handler = scannerViewHandler;
         if (rawResult != null) {
             if (handler != null) {
                 //会向 ScannerViewHandler 发消息

@@ -79,12 +79,12 @@ public final class QREncode {
         private BarcodeFormat barcodeFormat;
         private ParsedResultType parsedResultType;
         private Bundle bundle;
-        private String contents;
-        private String displayContents;
+        private String contents;//原内容
+        private String encodeContents;//编码内容
         private int color;
         private boolean useVCard;
 
-        public BarcodeFormat getBarcodeFormat() {
+        BarcodeFormat getBarcodeFormat() {
             return barcodeFormat;
         }
 
@@ -93,7 +93,7 @@ public final class QREncode {
             return this;
         }
 
-        public ParsedResultType getParsedResultType() {
+        ParsedResultType getParsedResultType() {
             return parsedResultType;
         }
 
@@ -102,7 +102,7 @@ public final class QREncode {
             return this;
         }
 
-        public Bundle getBundle() {
+        Bundle getBundle() {
             return bundle;
         }
 
@@ -111,25 +111,31 @@ public final class QREncode {
             return this;
         }
 
-        public String getContents() {
+        String getContents() {
             return contents;
         }
 
+        /**
+         * 二维码内容
+         *
+         * @param contents tel、email等不需要前缀
+         * @return
+         */
         public Builder setContents(String contents) {
             this.contents = contents;
             return this;
         }
 
-        public String getDisplayContents() {
-            return displayContents;
+        String getEncodeContents() {
+            return encodeContents;
         }
 
-        public Builder setDisplayContents(String displayContents) {
-            this.displayContents = displayContents;
+        Builder setEncodeContents(String encodeContents) {
+            this.encodeContents = encodeContents;
             return this;
         }
 
-        public int getColor() {
+        int getColor() {
             return color;
         }
 
@@ -138,7 +144,7 @@ public final class QREncode {
             return this;
         }
 
-        public boolean isUseVCard() {
+        boolean isUseVCard() {
             return useVCard;
         }
 
@@ -148,7 +154,7 @@ public final class QREncode {
         }
 
         public QRCodeEncoder build() {
-            if (this.parsedResultType == null) {
+            if (parsedResultType == null || contents == null) {
                 throw new IllegalArgumentException("parsedResultType no found...");
             }
             return new QRCodeEncoder(this);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mylhyl.zxing.scanner;
+package com.mylhyl.zxing.scanner.decode;
 
 import android.content.Intent;
 import android.net.Uri;

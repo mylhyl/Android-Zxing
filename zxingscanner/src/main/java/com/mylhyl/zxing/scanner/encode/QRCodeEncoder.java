@@ -51,18 +51,6 @@ final class QRCodeEncoder {
         encodeContentsFromZXing(build);
     }
 
-    String getContents() {
-        return encodeBuild.getContents();
-    }
-
-    String getDisplayContents() {
-        return encodeBuild.getDisplayContents();
-    }
-
-    boolean isUseVCard() {
-        return encodeBuild.isUseVCard();
-    }
-
     private void encodeContentsFromZXing(QREncode.Builder build) {
         if (build.getBarcodeFormat() == null
                 || build.getBarcodeFormat() == BarcodeFormat.QR_CODE) {
@@ -74,22 +62,19 @@ final class QRCodeEncoder {
     private void encodeQRCodeContents(QREncode.Builder build) {
         switch (build.getParsedResultType()) {
             case TEXT:
-                encodeBuild.setDisplayContents(build.getContents());
+                encodeBuild.setEncodeContents(build.getContents());
                 break;
 
             case EMAIL_ADDRESS:
-                encodeBuild.setDisplayContents(build.getContents());
-                encodeBuild.setContents("mailto:" + build.getContents());
+                encodeBuild.setEncodeContents("mailto:" + build.getContents());
                 break;
 
             case TEL:
-                encodeBuild.setDisplayContents(PhoneNumberUtils.formatNumber(build.getContents()));
-                encodeBuild.setContents("tel:" + build.getContents());
+                encodeBuild.setEncodeContents("tel:" + build.getContents());
                 break;
 
             case SMS:
-                encodeBuild.setDisplayContents(PhoneNumberUtils.formatNumber(build.getContents()));
-                encodeBuild.setContents("sms:" + build.getContents());
+                encodeBuild.setEncodeContents("sms:" + build.getContents());
                 break;
             case ADDRESSBOOK:
                 Bundle contactBundle = build.getBundle();
@@ -110,8 +95,7 @@ final class QRCodeEncoder {
                             Collections.singletonList(address), phones, phoneTypes, emails, urls, note);
                     // Make sure we've encoded at least one field.
                     if (!encoded[1].isEmpty()) {
-                        encodeBuild.setContents(encoded[0]);
-                        encodeBuild.setDisplayContents(encoded[1]);
+                        encodeBuild.setEncodeContents(encoded[0]);
                     }
                 }
                 break;
@@ -121,8 +105,7 @@ final class QRCodeEncoder {
                     float latitude = locationBundle.getFloat("LAT", Float.MAX_VALUE);
                     float longitude = locationBundle.getFloat("LONG", Float.MAX_VALUE);
                     if (latitude != Float.MAX_VALUE && longitude != Float.MAX_VALUE) {
-                        encodeBuild.setDisplayContents(latitude + "," + longitude);
-                        encodeBuild.setContents("geo:" + latitude + ',' + longitude);
+                        encodeBuild.setEncodeContents("geo:" + latitude + ',' + longitude);
                     }
                 }
                 break;
@@ -141,7 +124,7 @@ final class QRCodeEncoder {
     Bitmap encodeAsBitmap(int dimension) throws WriterException {
         if (encodeBuild.getColor() == 0)
             encodeBuild.setColor(BLACK);
-        String contentsToEncode = encodeBuild.getContents();
+        String contentsToEncode = encodeBuild.getEncodeContents();
         if (contentsToEncode == null) {
             return null;
         }

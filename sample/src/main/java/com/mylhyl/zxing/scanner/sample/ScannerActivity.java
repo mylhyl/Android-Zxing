@@ -1,90 +1,34 @@
 package com.mylhyl.zxing.scanner.sample;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.support.v7.widget.Toolbar;
 import android.widget.CompoundButton;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.google.zxing.Result;
-import com.google.zxing.client.result.AddressBookParsedResult;
-import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
-import com.google.zxing.client.result.URIParsedResult;
-import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
 import com.mylhyl.zxing.scanner.ScannerView;
 
-public class ScannerActivity extends BasicActivity implements OnScannerCompletionListener {
-    public static final int REQUEST_CODE_SCANNER = 188;
-    public static final String EXTRA_RETURN_SCANNER_RESULT = "return_scanner_result";
-    public static final String EXTRA_SCANNER_RESULT_Text = "scanner_result_text";
-
-    private ScannerView scannerView;
-    private TextView statusView;
-    private Result lastResult;
-    private boolean returnScanResult;
+public class ScannerActivity extends BasicScannerActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scanner);
-
-        ToggleButton toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                scannerView.toggleLight(isChecked);
-            }
-        });
-
-        scannerView = (ScannerView) findViewById(R.id.capture_view);
-//        scannerView.setLaserFrameTopMargin(100);
-//        scannerView.setLaserFrameSize(200,200);
-//        scannerView.setLaserFrameCornerLength(25);//设置4角长度
-        scannerView.setMediaResId(R.raw.beep);//设置扫描成功的声音
-//        scannerView.setLaserLineHeight(5);//设置扫描线高度
-
-        scannerView.setLaserLineResId(R.mipmap.wx_scan_line);//线图
-//        scannerView.setLaserLineResId(R.mipmap.zfb_grid_scan_line, true);//网格图
-//        scannerView.setLaserFrameBoundColor(0xFF26CEFF);//支付宝颜色
-
-        scannerView.setOnScannerCompletionListener(this);
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            returnScanResult = extras.getBoolean(EXTRA_RETURN_SCANNER_RESULT);
-        }
+    int findScannerViewId() {
+        return R.id.capture_view;
     }
 
     @Override
-    public void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
-        lastResult = rawResult;
-        if (returnScanResult) {
-            onReturnScanResult(rawResult);
-            return;
-        }
-        ParsedResultType type = parsedResult.getType();
+    void gotoScannerActivity(ParsedResultType type, Bundle bundle) {
         switch (type) {
             case ADDRESSBOOK:
-                AddressBookParsedResult addressResult = (AddressBookParsedResult) parsedResult;
-                Bundle bundle = new Bundle();
-                bundle.putStringArray("name", addressResult.getNames());
-                bundle.putStringArray("phoneNumber", addressResult.getPhoneNumbers());
-                bundle.putStringArray("email", addressResult.getEmails());
                 startActivity(new Intent(ScannerActivity.this, AddressBookActivity.class).putExtras(bundle));
                 break;
             case PRODUCT:
                 break;
             case URI:
-                URIParsedResult uriParsedResult = (URIParsedResult) parsedResult;
-                startActivity(new Intent(ScannerActivity.this, UriActivity.class).putExtra("uri", uriParsedResult.getURI()));
+                startActivity(new Intent(ScannerActivity.this, UriActivity.class).putExtras(bundle));
                 break;
             case TEXT:
-                onReturnScanResult(rawResult);
+                startActivity(new Intent(ScannerActivity.this, TextActivity.class).putExtras(bundle));
                 break;
             case GEO:
                 break;
@@ -93,54 +37,30 @@ public class ScannerActivity extends BasicActivity implements OnScannerCompletio
             case SMS:
                 break;
         }
-        Toast.makeText(ScannerActivity.this, type.toString(), Toast.LENGTH_SHORT).show();
-    }
-
-    private void onReturnScanResult(Result rawResult) {
-        Intent intent = getIntent();
-        intent.putExtra(EXTRA_SCANNER_RESULT_Text, rawResult.getText());
-        setResult(Activity.RESULT_OK, intent);
-        finish();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        scannerView.onResume();
-        lastResult = null;
-        resetStatusView();
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_scanner);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (lastResult != null) {
-                    restartPreviewAfterDelay(0L);
-                    return true;
-                }
-                break;
-            case KeyEvent.KEYCODE_FOCUS:
-            case KeyEvent.KEYCODE_CAMERA:
-                // Handle these events so they don't launch the Camera app
-                return true;
-            // Use volume up/down to turn on light
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                scannerView.toggleLight(false);
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                scannerView.toggleLight(true);
-                return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+        ToggleButton toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mScannerView.toggleLight(isChecked);
+            }
+        });
 
-    private void restartPreviewAfterDelay(long delayMS) {
-        scannerView.restartPreviewAfterDelay(delayMS);
-        resetStatusView();
-    }
+//        scannerView.setLaserFrameTopMargin(100);
+//        scannerView.setLaserFrameSize(200,200);
+//        scannerView.setLaserFrameCornerLength(25);//设置4角长度
+        mScannerView.setMediaResId(R.raw.beep);//设置扫描成功的声音
+//        scannerView.setLaserLineHeight(5);//设置扫描线高度
 
-    private void resetStatusView() {
-        lastResult = null;
+        mScannerView.setLaserLineResId(R.mipmap.wx_scan_line);//线图
+//        scannerView.setLaserLineResId(R.mipmap.zfb_grid_scan_line, true);//网格图
+//        scannerView.setLaserFrameBoundColor(0xFF26CEFF);//支付宝颜色
     }
 }

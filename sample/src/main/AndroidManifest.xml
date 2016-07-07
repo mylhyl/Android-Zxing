@@ -21,6 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ScannerActivity"
             android:label="扫一扫" />
@@ -30,7 +31,9 @@
         <activity
             android:name=".AddressBookActivity"
             android:label="addressBook" />
-        <activity android:name=".BasicActivity"></activity>
+        <activity
+            android:name=".TextActivity"
+            android:label="text" />
     </application>
 
 </manifest>
