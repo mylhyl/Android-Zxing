@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".QrEnCodeActivity"
+            android:name=".EnCodeActivity"
             android:label="扫一扫" />
         <activity
             android:name=".result.UriActivity"
@@ -41,7 +41,7 @@
             android:name=".picture.PickPictureActivity"
             android:label="照片" />
         <activity
-            android:name=".QrDeCodeActivity"
+            android:name=".DeCodeActivity"
             android:theme="@style/Theme.Transparent"/>
     </application>
 

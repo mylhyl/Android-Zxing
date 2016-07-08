@@ -317,12 +317,13 @@ final class ViewfinderView extends View {
     }
 
     public void setLaserLineResId(int laserLineResId) {
-        setLaserLineResId(laserLineResId, false);
+        this.laserLineResId = laserLineResId;
+        this.isLaserGridLine = false;
     }
 
-    public void setLaserLineResId(int laserLineResId, boolean isLaserGridLine) {
+    public void setLaserGridLineResId(int laserLineResId) {
         this.laserLineResId = laserLineResId;
-        this.isLaserGridLine = isLaserGridLine;
+        this.isLaserGridLine = true;
     }
 
     public void setLaserLineHeight(int laserLineHeight) {

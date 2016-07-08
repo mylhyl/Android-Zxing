@@ -4,10 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
@@ -234,7 +231,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
-     * 设置扫描线图片
+     * 设置线形扫描线资源
      *
      * @param laserLineResId resId
      */
@@ -243,13 +240,12 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
-     * 设置扫描线图片
+     * 设置网格扫描线资源
      *
-     * @param laserLineResId  resId
-     * @param isLaserGridLine 是否为网络图片
+     * @param laserLineResId resId
      */
-    public void setLaserLineResId(int laserLineResId, boolean isLaserGridLine) {
-        mViewfinderView.setLaserLineResId(laserLineResId, isLaserGridLine);
+    public void setLaserGridLineResId(int laserLineResId) {
+        mViewfinderView.setLaserGridLineResId(laserLineResId);
     }
 
     /**

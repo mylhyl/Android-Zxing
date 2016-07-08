@@ -18,7 +18,7 @@ import com.mylhyl.zxing.scanner.sample.picture.PickPictureTotalActivity;
 /**
  * 扫描
  */
-public class QrEnCodeActivity extends QrDeCodeActivity {
+public class EnCodeActivity extends DeCodeActivity {
 
     public static final String EXTRA_LASER_LINE_MODE = "laser_line_mode";
     public static final int EXTRA_LASER_LINE_MODE_0 = 0;
@@ -35,7 +35,7 @@ public class QrEnCodeActivity extends QrDeCodeActivity {
         setContentView(R.layout.activity_qr_encode);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        mScannerView = (ScannerView) findViewById(R.id.capture_view);
+        mScannerView = (ScannerView) findViewById(R.id.scanner_view);
         mScannerView.setOnScannerCompletionListener(this);
 
         ToggleButton toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
@@ -49,7 +49,7 @@ public class QrEnCodeActivity extends QrDeCodeActivity {
         findViewById(R.id.button4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PickPictureTotalActivity.gotoActivity(QrEnCodeActivity.this);
+                PickPictureTotalActivity.gotoActivity(EnCodeActivity.this);
             }
         });
 
@@ -69,7 +69,7 @@ public class QrEnCodeActivity extends QrDeCodeActivity {
                 mScannerView.setLaserLineResId(R.mipmap.wx_scan_line);//线图
                 break;
             case EXTRA_LASER_LINE_MODE_1:
-                mScannerView.setLaserLineResId(R.mipmap.zfb_grid_scan_line, true);//网格图
+                mScannerView.setLaserGridLineResId(R.mipmap.zfb_grid_scan_line);//网格图
                 mScannerView.setLaserFrameBoundColor(0xFF26CEFF);//支付宝颜色
                 break;
             case EXTRA_LASER_LINE_MODE_2:
@@ -119,9 +119,9 @@ public class QrEnCodeActivity extends QrDeCodeActivity {
     }
 
     public static void gotoActivity(Activity activity, boolean isBackResult, int laserMode) {
-        activity.startActivityForResult(new Intent(activity, QrEnCodeActivity.class)
-                        .putExtra(QrEnCodeActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
+        activity.startActivityForResult(new Intent(activity, EnCodeActivity.class)
+                        .putExtra(EnCodeActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
                         .putExtra(EXTRA_LASER_LINE_MODE, laserMode)
-                , QrEnCodeActivity.REQUEST_CODE_SCANNER);
+                , EnCodeActivity.REQUEST_CODE_SCANNER);
     }
 }

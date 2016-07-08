@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".QrEnCodeActivity">
+    tools:context=".EnCodeActivity">
 
 
     <com.mylhyl.zxing.scanner.ScannerView
-        android:id="@+id/capture_view"
+        android:id="@+id/scanner_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

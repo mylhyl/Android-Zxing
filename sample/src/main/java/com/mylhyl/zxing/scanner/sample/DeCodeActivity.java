@@ -18,20 +18,20 @@ import com.mylhyl.zxing.scanner.sample.result.UriActivity;
 /**
  * 单击解析图片
  */
-public class QrDeCodeActivity extends BasicScannerActivity {
+public class DeCodeActivity extends BasicScannerActivity {
     @Override
     void onResultActivity(Result result, ParsedResultType type, Bundle bundle) {
         switch (type) {
             case ADDRESSBOOK:
-                AddressBookActivity.gotoActivity(QrDeCodeActivity.this, bundle);
+                AddressBookActivity.gotoActivity(DeCodeActivity.this, bundle);
                 break;
             case PRODUCT:
                 break;
             case URI:
-                UriActivity.gotoActivity(QrDeCodeActivity.this, bundle);
+                UriActivity.gotoActivity(DeCodeActivity.this, bundle);
                 break;
             case TEXT:
-                TextActivity.gotoActivity(QrDeCodeActivity.this, bundle);
+                TextActivity.gotoActivity(DeCodeActivity.this, bundle);
                 break;
             case GEO:
                 break;
@@ -69,6 +69,6 @@ public class QrDeCodeActivity extends BasicScannerActivity {
     }
 
     public static void gotoActivity(Activity activity, byte[] bytes) {
-        activity.startActivity(new Intent(activity, QrDeCodeActivity.class).putExtra("bytes", bytes));
+        activity.startActivity(new Intent(activity, DeCodeActivity.class).putExtra("bytes", bytes));
     }
 }
