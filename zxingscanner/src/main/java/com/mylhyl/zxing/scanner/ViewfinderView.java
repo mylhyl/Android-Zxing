@@ -46,7 +46,7 @@ final class ViewfinderView extends View {
     private static final int CURRENT_POINT_OPACITY = 0xA0;
     private static final int MAX_RESULT_POINTS = 20;
     private static final int POINT_SIZE = 6;
-    private static final int DEFAULT_LASER_LINE_HEIGHT = 6;//扫描线默认高度
+    private static final int DEFAULT_LASER_LINE_HEIGHT = 2;//扫描线默认高度
 
     private CameraManager cameraManager;
     private final Paint paint;
@@ -63,16 +63,16 @@ final class ViewfinderView extends View {
     private int laserColor = Scanner.color.VIEWFINDER_LASER;//扫描线颜色
     private int laserFrameBoundColor = laserColor;//扫描框4角颜色
     private int laserLineTop;// 扫描线最顶端位置
-    private int laserLineHeight = DEFAULT_LASER_LINE_HEIGHT;//扫描线默认高度
-    private int laserMoveSpeed = 6;// 扫描线默认移动距离
-    private int laserFrameCornerWidth = 3;//扫描框4角宽
-    private int laserFrameCornerLength = 20;//扫描框4角高
+    private int laserLineHeight;//扫描线默认高度
+    private int laserMoveSpeed;// 扫描线默认移动距离px
+    private int laserFrameCornerWidth;//扫描框4角宽
+    private int laserFrameCornerLength;//扫描框4角高
     private int laserLineResId;//扫描线图片资源
     private String drawText = "将二维码放入框内，即可自动扫描";//提示文字
-    private int drawTextSize = 16;//提示文字大小
+    private int drawTextSize;//提示文字大小
     private int drawTextColor = Color.WHITE;//提示文字颜色
     private boolean drawTextGravityBottom = true;//提示文字位置
-    private int drawTextMargin = 20;//提示文字与扫描框距离
+    private int drawTextMargin;//提示文字与扫描框距离
     private boolean isLaserGridLine;
 
     // This constructor is used when the class is built from an XML resource.
@@ -82,6 +82,10 @@ final class ViewfinderView extends View {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         possibleResultPoints = new ArrayList<>(5);
         lastPossibleResultPoints = null;
+        laserMoveSpeed = Scanner.dp2px(context, 3f);
+        laserLineHeight = Scanner.dp2px(context, DEFAULT_LASER_LINE_HEIGHT);
+        laserFrameCornerWidth = Scanner.dp2px(context, 2f);
+        laserFrameCornerLength = Scanner.dp2px(context, 10f);
         drawTextSize = Scanner.sp2px(context, 16f);
         drawTextMargin = Scanner.dp2px(context, 20f);
     }
@@ -227,7 +231,7 @@ final class ViewfinderView extends View {
                 Rect srcRect = new Rect(0, (int) (height - dstRectF.height()), laserLineBitmap.getWidth(), height);
                 canvas.drawBitmap(laserLineBitmap, srcRect, dstRectF, paint);
             } else {//线条图片
-                if (laserLineHeight == DEFAULT_LASER_LINE_HEIGHT) {
+                if (laserLineHeight == Scanner.dp2px(getContext(), DEFAULT_LASER_LINE_HEIGHT)) {
                     laserLineHeight = laserLineBitmap.getHeight() / 2;
                 }
                 Rect laserRect = new Rect(frame.left, laserLineTop, frame.right, laserLineTop + laserLineHeight);
