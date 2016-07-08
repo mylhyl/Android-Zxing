@@ -2,15 +2,17 @@ package com.mylhyl.zxing.scanner.decode;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
+import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
-import com.google.zxing.MultiFormatReader;
+import com.google.zxing.FormatException;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Result;
-import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.common.GlobalHistogramBinarizer;
+import com.google.zxing.qrcode.QRCodeReader;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
@@ -29,26 +31,9 @@ public final class QRDecode {
     public static final Map<DecodeHintType, Object> HINTS = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
 
     static {
-        List<BarcodeFormat> allFormats = new ArrayList<BarcodeFormat>();
-        allFormats.add(BarcodeFormat.AZTEC);
-        allFormats.add(BarcodeFormat.CODABAR);
-        allFormats.add(BarcodeFormat.CODE_39);
-        allFormats.add(BarcodeFormat.CODE_93);
-        allFormats.add(BarcodeFormat.CODE_128);
-        allFormats.add(BarcodeFormat.DATA_MATRIX);
-        allFormats.add(BarcodeFormat.EAN_8);
-        allFormats.add(BarcodeFormat.EAN_13);
-        allFormats.add(BarcodeFormat.ITF);
-        allFormats.add(BarcodeFormat.MAXICODE);
-        allFormats.add(BarcodeFormat.PDF_417);
-        allFormats.add(BarcodeFormat.QR_CODE);
-        allFormats.add(BarcodeFormat.RSS_14);
-        allFormats.add(BarcodeFormat.RSS_EXPANDED);
-        allFormats.add(BarcodeFormat.UPC_A);
-        allFormats.add(BarcodeFormat.UPC_E);
-        allFormats.add(BarcodeFormat.UPC_EAN_EXTENSION);
-
-        HINTS.put(DecodeHintType.POSSIBLE_FORMATS, allFormats);
+        List<BarcodeFormat> formats = new ArrayList<BarcodeFormat>();
+        formats.add(BarcodeFormat.QR_CODE);
+        HINTS.put(DecodeHintType.POSSIBLE_FORMATS, formats);
         HINTS.put(DecodeHintType.CHARACTER_SET, "utf-8");
     }
 
@@ -78,36 +63,34 @@ public final class QRDecode {
      * @return
      */
     public static void decodeQR(Bitmap srcBitmap, final OnScannerCompletionListener listener) {
-        new AsyncTask<Bitmap, Void, Result>() {
-
-            @Override
-            protected Result doInBackground(Bitmap... params) {
-                try {
-                    Bitmap bitmap = params[0];
-                    int width = bitmap.getWidth();
-                    int height = bitmap.getHeight();
-                    int[] pixels = new int[width * height];
-                    bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-                    RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
-                    return new MultiFormatReader().decode(new BinaryBitmap(new HybridBinarizer(source)), HINTS);
-                } catch (Exception e) {
-                    return null;
-                }
+        Result result = null;
+        if (srcBitmap != null) {
+            int width = srcBitmap.getWidth();
+            int height = srcBitmap.getHeight();
+            int[] pixels = new int[width * height];
+            srcBitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+            RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);//新建一个RGBLuminanceSource对象
+            BinaryBitmap binaryBitmap = new BinaryBitmap(new GlobalHistogramBinarizer(source));//将图片转换成二进制图片
+            QRCodeReader reader = new QRCodeReader();//初始化解析对象
+            try {
+                result = reader.decode(binaryBitmap, HINTS);//开始解析
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            } catch (ChecksumException e) {
+                e.printStackTrace();
+            } catch (FormatException e) {
+                e.printStackTrace();
             }
+        }
+        if (listener != null)
+            listener.OnScannerCompletion(result, Scanner.parseResult(result), srcBitmap);
 
-            @Override
-            protected void onPostExecute(Result result) {
-                if (listener != null)
-                    listener.OnScannerCompletion(result, Scanner.parseResult(result), null);
-            }
-        }.execute(srcBitmap);
     }
 
     private static Bitmap loadBitmap(String picturePath) throws FileNotFoundException {
-        Bitmap bitmap;
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inJustDecodeBounds = true;
-        bitmap = BitmapFactory.decodeFile(picturePath, opt);
+        Bitmap bitmap = BitmapFactory.decodeFile(picturePath, opt);
         // 获取到这个图片的原始宽度和高度
         int picWidth = opt.outWidth;
         int picHeight = opt.outHeight;
