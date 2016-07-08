@@ -327,6 +327,11 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         this.laserFrameHeight = Scanner.dp2px(getContext(), height);
     }
 
+    /**
+     * 设置扫描框与屏幕距离
+     *
+     * @param laserFrameTopMargin
+     */
     public void setLaserFrameTopMargin(int laserFrameTopMargin) {
         this.laserFrameTopMargin = Scanner.dp2px(getContext(), laserFrameTopMargin);
     }

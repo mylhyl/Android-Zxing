@@ -85,7 +85,7 @@ final class ViewfinderView extends View {
         laserMoveSpeed = Scanner.dp2px(context, 3f);
         laserLineHeight = Scanner.dp2px(context, DEFAULT_LASER_LINE_HEIGHT);
         laserFrameCornerWidth = Scanner.dp2px(context, 2f);
-        laserFrameCornerLength = Scanner.dp2px(context, 10f);
+        laserFrameCornerLength = Scanner.dp2px(context, 15f);
         drawTextSize = Scanner.sp2px(context, 16f);
         drawTextMargin = Scanner.dp2px(context, 20f);
     }
