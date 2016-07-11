@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion 23
@@ -8,7 +10,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
-        versionName "4.7.6"
+        versionName version
     }
     buildTypes {
         release {
@@ -16,6 +18,96 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+        abortOnError false
+    }
+}
+def siteUrl = 'https://github.com/mylhyl/Android-Zxing'
+def gitUrl = 'https://github.com/mylhyl/Android-Zxing.git'
+group = "com.mylhyl"
+version = "1.1.1"
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                artifactId 'zxingscanner'
+                name 'android zxing style' //添加项目描述
+                url siteUrl
+                //设置开源证书信息
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                //填写开发者基本信息
+                developers {
+                    developer {
+                        id 'mylhyl'
+                        name 'mylhylAndroid'
+                        email 'hupei132@qq.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    options.encoding = "UTF-8"
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+//配置上传bintray相关信息
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    //读取bintray帐号和密码。
+    //一般的为了保密和安全性，在项目的local.properties文件中添加两行句话即可：
+    user = properties.getProperty("BINTRAY_USER")
+    key = properties.getProperty("BINTRAY_KEY")
+    configurations = ['archives']
+    pkg {
+        repo = "maven" //上传的中央仓库名称
+        name = "zxingscanner" //上传的项目的名字
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true //是否发布
+    }
+}
+
+task makeJar(type: Copy) {
+    def jarName = 'zxingscanner-' + version + '.jar'
+    delete 'build/libs/' + jarName
+    from('build/intermediates/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename('classes.jar', jarName)
+    exclude('test/', 'androidTest/', 'BuildConfig.class', 'R.class')
+    exclude { it.name.startsWith('R$'); }
 }
 
 dependencies {

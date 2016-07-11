@@ -14,7 +14,15 @@
 ###二、效果图
 ![这里写图片描述](http://img.blog.csdn.net/20160708110951092)
 
-###三、使用
+###三、引用
+- 使用Gradle构建时添加一下依赖即可:
+```javascript
+compile 'com.mylhyl:zxingscanner:1.1.1'
+```
+- 也可以运行Gradle命令
+![这里写图片描述](http://img.blog.csdn.net/20160711135615587)
+
+###四、使用
 直接在`layout xml`使用`ScannerView`即可
 
 ```xml
@@ -77,14 +85,15 @@ switch (type) {
 
 ```java
 Bitmap bitmap = QREncode.encodeQR(MainActivity.this,
-        new QREncode.Builder()                .setColor(getResources().getColor(R.color.colorPrimary))//二维码颜色
+        new QREncode.Builder()                
+                .setColor(getResources().getColor(R.color.colorPrimary))//二维码颜色
                 .setParsedResultType(ParsedResultType.URI)//二维码类型
                 .setContents("https://github.com/mylhyl")//二维码内容
                 .build());
 imageView.setImageBitmap(bitmap);
 ```
 
-###四、样式设置
+###五、样式设置
 <table class="table table-bordered table-striped table-condensed">
 <tr>
 <td>方法名</td>
