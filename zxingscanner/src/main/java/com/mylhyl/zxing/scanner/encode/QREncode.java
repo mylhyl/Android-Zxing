@@ -20,21 +20,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.result.ParsedResultType;
-import com.mylhyl.zxing.scanner.common.Contents;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.regex.Pattern;
 
 /**
  * This class encodes data from an Intent into a QR code, and then displays it
@@ -81,14 +72,14 @@ public final class QREncode {
         private Bundle bundle;
         private String contents;//原内容
         private String encodeContents;//编码内容
-        private int color;
-        private boolean useVCard;
+        private int color;//颜色
+        private boolean useVCard = true;
 
         BarcodeFormat getBarcodeFormat() {
             return barcodeFormat;
         }
 
-        public Builder setBarcodeFormat(BarcodeFormat barcodeFormat) {
+        Builder setBarcodeFormat(BarcodeFormat barcodeFormat) {
             this.barcodeFormat = barcodeFormat;
             return this;
         }
@@ -97,6 +88,12 @@ public final class QREncode {
             return parsedResultType;
         }
 
+        /**
+         * 设置二维码类型
+         *
+         * @param parsedResultType {@linkplain ParsedResultType ParsedResultType}
+         * @return
+         */
         public Builder setParsedResultType(ParsedResultType parsedResultType) {
             this.parsedResultType = parsedResultType;
             return this;
@@ -106,6 +103,12 @@ public final class QREncode {
             return bundle;
         }
 
+        /**
+         * 设置内容，当 ParsedResultType 是 ADDRESSBOOK 、GEO 类型
+         *
+         * @param bundle
+         * @return
+         */
         public Builder setBundle(Bundle bundle) {
             this.bundle = bundle;
             return this;
@@ -139,6 +142,12 @@ public final class QREncode {
             return color;
         }
 
+        /**
+         * 设置二维码颜色
+         *
+         * @param color
+         * @return
+         */
         public Builder setColor(int color) {
             this.color = color;
             return this;
@@ -148,6 +157,12 @@ public final class QREncode {
             return useVCard;
         }
 
+        /**
+         * 设置vCard格式，默认true
+         *
+         * @param useVCard
+         * @return
+         */
         public Builder setUseVCard(boolean useVCard) {
             this.useVCard = useVCard;
             return this;

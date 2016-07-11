@@ -71,8 +71,11 @@ public class MainActivity extends BasicActivity {
                 String qrContent = editText.getText().toString();
                 Bitmap bitmap = QREncode.encodeQR(MainActivity.this,
                         new QREncode.Builder()
+                                //二维码颜色
                                 .setColor(getResources().getColor(R.color.colorPrimary))
+                                //二维码类型
                                 .setParsedResultType(TextUtils.isEmpty(qrContent) ? ParsedResultType.URI : ParsedResultType.TEXT)
+                                //二维码内容
                                 .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" : qrContent)
                                 .build());
                 imageView.setImageBitmap(bitmap);
