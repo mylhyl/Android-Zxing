@@ -15,6 +15,7 @@ import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 import com.google.zxing.client.result.URIParsedResult;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
+import com.mylhyl.zxing.scanner.common.Intents;
 import com.mylhyl.zxing.scanner.common.Scanner;
 
 /**
@@ -23,7 +24,6 @@ import com.mylhyl.zxing.scanner.common.Scanner;
 public abstract class BasicScannerActivity extends AppCompatActivity implements OnScannerCompletionListener {
     public static final int REQUEST_CODE_SCANNER = 188;
     public static final String EXTRA_RETURN_SCANNER_RESULT = "return_scanner_result";
-    public static final String EXTRA_RETURN_SCANNER_RESULT_TEXT = "return_scanner_result_text";
 
     private boolean mReturnScanResult;
 
@@ -61,18 +61,18 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
         switch (type) {
             case ADDRESSBOOK:
                 AddressBookParsedResult addressResult = (AddressBookParsedResult) parsedResult;
-                bundle.putStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_NAME, addressResult.getNames());
-                bundle.putStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_PHONE_NUMBER, addressResult.getPhoneNumbers());
-                bundle.putStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_EMAIL, addressResult.getEmails());
+                bundle.putStringArray(Intents.AddressBookConnect.NAME, addressResult.getNames());
+                bundle.putStringArray(Intents.AddressBookConnect.NUMBER, addressResult.getPhoneNumbers());
+                bundle.putStringArray(Intents.AddressBookConnect.EMAIL, addressResult.getEmails());
                 break;
             case PRODUCT:
                 break;
             case URI:
                 URIParsedResult uriParsedResult = (URIParsedResult) parsedResult;
-                bundle.putString(Scanner.result.EXTRA_RESULT_URI, uriParsedResult.getURI());
+                bundle.putString(Intents.URIContents.URI, uriParsedResult.getURI());
                 break;
             case TEXT:
-                bundle.putString(Scanner.result.EXTRA_RESULT_TEXT, rawResult.getText());
+                bundle.putString(Intents.Scan.RESULT, rawResult.getText());
                 break;
             case GEO:
                 break;
@@ -86,7 +86,7 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
 
     private void onReturnScanResult(Result rawResult) {
         Intent intent = getIntent();
-        intent.putExtra(EXTRA_RETURN_SCANNER_RESULT_TEXT, rawResult.getText());
+        intent.putExtra(Intents.Scan.RESULT, rawResult.getText());
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

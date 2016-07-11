@@ -85,7 +85,6 @@ final class ScannerViewHandler extends Handler {
                     if (compressedBitmap != null) {
                         barcode = BitmapFactory.decodeByteArray(compressedBitmap,
                                 0, compressedBitmap.length, null);
-                        // Mutable copy:
                         barcode = barcode.copy(Bitmap.Config.ARGB_8888, true);
                     }
                     scaleFactor = bundle
@@ -95,8 +94,6 @@ final class ScannerViewHandler extends Handler {
                         .handleDecode((Result) message.obj, barcode, scaleFactor);
                 break;
             case Scanner.DECODE_FAILED:
-                // We're decoding as fast as possible, so when one decode fails,
-                // start another.
                 state = State.PREVIEW;
                 cameraManager.requestPreviewFrame(decodeThread.getHandler(),
                         Scanner.DECODE);
@@ -114,14 +111,11 @@ final class ScannerViewHandler extends Handler {
         Message quit = Message.obtain(decodeThread.getHandler(), Scanner.QUIT);
         quit.sendToTarget();
         try {
-            // Wait at most half a second; should be enough time, and onPause()
-            // will timeout quickly
             decodeThread.join(500L);
         } catch (InterruptedException e) {
-            // continue
+            e.printStackTrace();
         }
 
-        // Be absolutely sure we don't send any queued up messages
         removeMessages(Scanner.DECODE_SUCCEEDED);
         removeMessages(Scanner.DECODE_FAILED);
     }

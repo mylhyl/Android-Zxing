@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.mylhyl.zxing.scanner.common.Scanner;
+import com.mylhyl.zxing.scanner.common.Intents;
 import com.mylhyl.zxing.scanner.sample.BasicActivity;
 import com.mylhyl.zxing.scanner.sample.R;
 
@@ -23,9 +23,9 @@ public class AddressBookActivity extends BasicActivity {
 
         Bundle extras = getIntent().getExtras();
 
-        String[] names = extras.getStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_NAME);
-        String[] phoneNumbers = extras.getStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_PHONE_NUMBER);
-        String[] emails = extras.getStringArray(Scanner.result.EXTRA_RESULT_ADDRESS_BOOK_EMAIL);
+        String[] names = extras.getStringArray(Intents.AddressBookConnect.NAME);
+        String[] phoneNumbers = extras.getStringArray(Intents.AddressBookConnect.NUMBER);
+        String[] emails = extras.getStringArray(Intents.AddressBookConnect.EMAIL);
 
         StringBuffer sb = new StringBuffer();
 

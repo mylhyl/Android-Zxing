@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.common.Contents;
+import com.mylhyl.zxing.scanner.common.Intents;
 import com.mylhyl.zxing.scanner.encode.QREncode;
 
 import java.io.ByteArrayOutputStream;
@@ -114,7 +115,7 @@ public class MainActivity extends BasicActivity {
         if (resultCode != Activity.RESULT_CANCELED && resultCode == Activity.RESULT_OK) {
             if (requestCode == EnCodeActivity.REQUEST_CODE_SCANNER) {
                 if (data != null) {
-                    String stringExtra = data.getStringExtra(EnCodeActivity.EXTRA_RETURN_SCANNER_RESULT_TEXT);
+                    String stringExtra = data.getStringExtra(Intents.Scan.RESULT);
                     tvResult.setText(stringExtra);
                 }
             } else if (requestCode == PICK_CONTACT) {

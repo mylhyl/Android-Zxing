@@ -21,7 +21,6 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Vibrator;
-import android.util.Log;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -30,8 +29,6 @@ import java.io.IOException;
  * Manages beeps and vibrations
  */
 final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
-
-//    private static final String TAG = BeepManager.class.getSimpleName();
 
     private static final float BEEP_VOLUME = 0.10f;
     private static final long VIBRATE_DURATION = 200L;
@@ -110,7 +107,6 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
             mediaPlayer.prepare();
             return mediaPlayer;
         } catch (IOException ioe) {
-//            Log.w(TAG, ioe);
             mediaPlayer.release();
             return null;
         }
@@ -121,7 +117,6 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
         if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
             //播放错误
         } else {
-            // possibly media player error, so release and recreate
             close();
             updatePrefs();
         }

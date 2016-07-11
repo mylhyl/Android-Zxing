@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.mylhyl.zxing.scanner.common.Scanner;
+import com.mylhyl.zxing.scanner.common.Intents;
 import com.mylhyl.zxing.scanner.sample.BasicActivity;
 import com.mylhyl.zxing.scanner.sample.R;
 
@@ -20,7 +20,7 @@ public class TextActivity extends BasicActivity {
         setContentView(R.layout.activity_text);
         Bundle extras = getIntent().getExtras();
         if (extras != null)
-            ((TextView) findViewById(R.id.textView3)).setText(extras.getString(Scanner.result.EXTRA_RESULT_TEXT));
+            ((TextView) findViewById(R.id.textView3)).setText(extras.getString(Intents.Scan.RESULT));
     }
 
     public static void gotoActivity(Activity activity, Bundle bundle) {

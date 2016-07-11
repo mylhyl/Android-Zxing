@@ -73,12 +73,9 @@ final class ViewfinderView extends View {
     private boolean drawTextGravityBottom = true;//提示文字位置
     private int drawTextMargin;//提示文字与扫描框距离
     private boolean isLaserGridLine;//是否为网格资源文件
-    private boolean isDraw;//是否绘制过（扫描框、扫描框4角、扫描提示文字）
 
-    // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // Initialize these once for performance rather than calling them every time in onDraw().
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         possibleResultPoints = new ArrayList<>(5);
         lastPossibleResultPoints = null;
@@ -293,7 +290,6 @@ final class ViewfinderView extends View {
         if (resultBitmap != null) {
             resultBitmap.recycle();
         }
-        isDraw = false;
         invalidate();
     }
 
