@@ -103,10 +103,10 @@ task makeJar(type: Copy) {
     def jarName = 'zxingscanner-' + version + '.jar'
     delete 'build/libs/' + jarName
     from('build/intermediates/bundles/release/')
-    into('build/libs/')
+    into('../preview')
     include('classes.jar')
     rename('classes.jar', jarName)
-    exclude('test/', 'androidTest/', 'BuildConfig.class', 'R.class')
+    exclude('BuildConfig.class', 'R.class')
     exclude { it.name.startsWith('R$'); }
 }
 

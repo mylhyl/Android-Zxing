@@ -14,15 +14,28 @@
 ###二、效果图
 ![这里写图片描述](http://img.blog.csdn.net/20160708110951092)
 
-###三、引用
-- 使用Gradle构建时添加一下依赖即可:
+###三、[下载APK体验](preview/sample-debug.apk)
+
+###四、引用
+- 本库依赖使用Gradle构建时添加一下即可:
+
 ```javascript
 compile 'com.mylhyl:zxingscanner:1.1.1'
 ```
-- 也可以运行Gradle命令
+
+- [最新Zxing核心库点击查看](http://jcenter.bintray.com/com/google/zxing/core/)，使用Gradle构建时如下:
+
+```javascript
+compile 'com.google.zxing:core:3.2.1'
+```
+
+- Gradle命令编译：[gradle makeJar](http://blog.csdn.net/hupei/article/details/51886221) 或者参考下图，在android studio中执行
+
 ![这里写图片描述](http://img.blog.csdn.net/20160711135615587)
 
-###四、使用
+- [直接下载jar](preview)
+
+###五、使用
 直接在`layout xml`使用`ScannerView`即可
 
 ```xml
@@ -93,7 +106,7 @@ Bitmap bitmap = QREncode.encodeQR(MainActivity.this,
 imageView.setImageBitmap(bitmap);
 ```
 
-###五、样式设置
+###六、样式设置
 <table class="table table-bordered table-striped table-condensed">
 <tr>
 <td>方法名</td>

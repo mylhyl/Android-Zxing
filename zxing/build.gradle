@@ -33,7 +33,7 @@ task makeJar(type: Copy) {
     def jarName = 'code-' + version + '.jar'
     delete 'build/libs/' + jarName
     from('build/intermediates/bundles/release/')
-    into('build/libs/')
+    into('../preview')
     include('classes.jar')
     rename('classes.jar', jarName)
 }
