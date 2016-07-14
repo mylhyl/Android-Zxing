@@ -12,12 +12,8 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.bumptech.glide.Glide;
-import com.joanzapata.android.BaseAdapterHelper;
-import com.joanzapata.android.QuickAdapter;
 import com.mylhyl.zxing.scanner.sample.BasicActivity;
 import com.mylhyl.zxing.scanner.sample.R;
 
@@ -44,7 +40,7 @@ public class PickPictureTotalActivity extends BasicActivity {
     private final static int SCAN_OK = 1;
     private final static int SCAN_ERROR = 2;
     private ProgressDialog mProgressDialog;
-    private QuickAdapter<Picture> mAdapter;
+    private PickPictureTotalAdapter mAdapter;
     private ListView mListView;
     private final MyHandler myHandler = new MyHandler(this);
 
@@ -64,19 +60,8 @@ public class PickPictureTotalActivity extends BasicActivity {
                     case SCAN_OK:
                         //关闭进度条
                         activity.mProgressDialog.dismiss();
-                        activity.mAdapter = new QuickAdapter<Picture>(activity,
-                                R.layout.activity_pick_picture_total_list_item,
-                                activity.list = activity.subGroupOfPicture(activity.mGroupMap)) {
-
-                            @Override
-                            protected void convert(BaseAdapterHelper helper, Picture item) {
-                                helper.setText(R.id.pick_picture_total_list_item_group_title, item.getFolderName());
-                                helper.setText(R.id.pick_picture_total_list_item_group_count
-                                        , "(" + Integer.toString(item.getPictureCount()) + ")");
-                                ImageView imageView = helper.getView(R.id.pick_picture_total_list_item_group_image);
-                                Glide.with(context).load(item.getTopPicturePath()).into(imageView);
-                            }
-                        };
+                        activity.mAdapter = new PickPictureTotalAdapter(activity,
+                                activity.list = activity.subGroupOfPicture(activity.mGroupMap));
                         activity.mListView.setAdapter(activity.mAdapter);
                         break;
                     case SCAN_ERROR:
