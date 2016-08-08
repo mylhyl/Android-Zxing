@@ -20,7 +20,7 @@
 - 本库依赖使用Gradle构建时添加一下即可:
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:1.1.1'
+compile 'com.mylhyl:zxingscanner:1.1.2'
 ```
 
 - [最新Zxing核心库点击查看](http://jcenter.bintray.com/com/google/zxing/core/)，使用Gradle构建时如下:
@@ -45,6 +45,7 @@ compile 'com.google.zxing:core:3.2.1'
     android:layout_height="match_parent" />
 ```
 
+###### 注意生命周期中的使用
 重写`onResume`调用`mScannerView.onResume();`
 
 ```java
@@ -52,6 +53,12 @@ compile 'com.google.zxing:core:3.2.1'
 protected void onResume() {
     mScannerView.onResume();
     super.onResume();
+}
+
+@Override
+protected void onPause() {
+    mScannerView.onPause();
+    super.onPause();
 }
 ```
 
@@ -174,3 +181,7 @@ imageView.setImageBitmap(bitmap);
 <td>text -> 将二维码放入框内，即可自动扫描 <br>textSize -> 16sp <br>textColor -> 白色 <br>isBottom -> true <br> textMargin -> 20dp</td>
 </tr>
 </table>
+
+### 七、版本更新
+
+> 1.1.2 修复锁屏`onPause`生命周期没有摧毁，导致`onResume`时抛出`RuntimeException`异常 

@@ -86,6 +86,12 @@ public class EnCodeActivity extends DeCodeActivity {
     }
 
     @Override
+    protected void onPause() {
+        mScannerView.onPause();
+        super.onPause();
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:

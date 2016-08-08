@@ -82,17 +82,13 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         }
     }
 
-    private void onPause() {
+    public void onPause() {
         if (mScannerViewHandler != null) {
             mScannerViewHandler.quitSynchronously();
             mScannerViewHandler = null;
         }
         mBeepManager.close();
         mCameraManager.closeDriver();
-        if (!hasSurface) {
-            SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
-            surfaceHolder.removeCallback(this);
-        }
         mViewfinderView.laserLineBitmapRecycle();
     }
 
@@ -214,7 +210,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         hasSurface = false;
-        onPause();
+        if (!hasSurface && surfaceHolder != null) {
+            surfaceHolder.removeCallback(this);
+        }
     }
 
     public void setOnScannerCompletionListener(OnScannerCompletionListener listener) {
