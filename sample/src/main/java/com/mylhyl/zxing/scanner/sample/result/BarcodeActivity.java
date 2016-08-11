@@ -53,6 +53,7 @@ public class BarcodeActivity extends BasicActivity {
     }
 
     private void executeAsync(LiteHttp liteHttp, String productID) {
+        //如果查询失败，请到 http://apistore.baidu.com/apiworks/servicedetail/1477.html 填写自己的apikey
         StringRequest stringRequest = new StringRequest("http://apis.baidu.com/3023/barcode/barcode")
                 .setMethod(HttpMethods.Get)
                 .addHeader("apikey", "3cec8d8175109823b986b178803738db")
