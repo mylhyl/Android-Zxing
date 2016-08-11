@@ -42,7 +42,10 @@
             android:label="照片" />
         <activity
             android:name=".DeCodeActivity"
-            android:theme="@style/Theme.Transparent"/>
+            android:theme="@style/Theme.Transparent" />
+        <activity
+            android:name=".result.BarcodeActivity"
+            android:label="barcode" />
     </application>
 
 </manifest>

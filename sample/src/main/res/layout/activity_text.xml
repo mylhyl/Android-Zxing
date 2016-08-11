@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".result.TextActivity">
 
-    <include
-        layout="@layout/include_toolbar"
-        android:layout_alignParentTop="true" />
+    <include layout="@layout/include_toolbar" />
 
     <TextView
         android:id="@+id/textView3"
@@ -15,6 +14,5 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-</RelativeLayout>
+</LinearLayout>

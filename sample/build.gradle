@@ -27,4 +27,6 @@ dependencies {
     compile 'com.mylhyl:commonrefreshlayout:1.0'
     compile 'com.mylhyl:cygadapter:1.0.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.alibaba:fastjson:1.1.52.android'
+    compile files('libs/lite-http-3.0.1.jar')
 }

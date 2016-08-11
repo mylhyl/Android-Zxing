@@ -12,6 +12,7 @@ import com.google.zxing.Result;
 import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.decode.QRDecode;
 import com.mylhyl.zxing.scanner.sample.result.AddressBookActivity;
+import com.mylhyl.zxing.scanner.sample.result.BarcodeActivity;
 import com.mylhyl.zxing.scanner.sample.result.TextActivity;
 import com.mylhyl.zxing.scanner.sample.result.UriActivity;
 
@@ -26,6 +27,10 @@ public class DeCodeActivity extends BasicScannerActivity {
                 AddressBookActivity.gotoActivity(DeCodeActivity.this, bundle);
                 break;
             case PRODUCT:
+                BarcodeActivity.gotoActivity(DeCodeActivity.this, bundle);
+                break;
+            case ISBN:
+                BarcodeActivity.gotoActivity(DeCodeActivity.this, bundle);
                 break;
             case URI:
                 UriActivity.gotoActivity(DeCodeActivity.this, bundle);
