@@ -12,13 +12,14 @@ import android.widget.ToggleButton;
 
 import com.google.zxing.Result;
 import com.mylhyl.zxing.scanner.ScannerView;
+import com.mylhyl.zxing.scanner.common.Intents;
 import com.mylhyl.zxing.scanner.decode.QRDecode;
 import com.mylhyl.zxing.scanner.sample.picture.PickPictureTotalActivity;
 
 /**
  * 扫描
  */
-public class EnCodeActivity extends DeCodeActivity {
+public class ScannerActivity extends DeCodeActivity {
 
     public static final String EXTRA_LASER_LINE_MODE = "laser_line_mode";
     public static final int EXTRA_LASER_LINE_MODE_0 = 0;
@@ -32,7 +33,7 @@ public class EnCodeActivity extends DeCodeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qr_encode);
+        setContentView(R.layout.activity_scanner);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         mScannerView = (ScannerView) findViewById(R.id.scanner_view);
@@ -49,7 +50,7 @@ public class EnCodeActivity extends DeCodeActivity {
         findViewById(R.id.button4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PickPictureTotalActivity.gotoActivity(EnCodeActivity.this);
+                PickPictureTotalActivity.gotoActivity(ScannerActivity.this);
             }
         });
 
@@ -125,9 +126,9 @@ public class EnCodeActivity extends DeCodeActivity {
     }
 
     public static void gotoActivity(Activity activity, boolean isBackResult, int laserMode) {
-        activity.startActivityForResult(new Intent(activity, EnCodeActivity.class)
-                        .putExtra(EnCodeActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
+        activity.startActivityForResult(new Intent(Intents.Scan.ACTION)
+                        .putExtra(ScannerActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
                         .putExtra(EXTRA_LASER_LINE_MODE, laserMode)
-                , EnCodeActivity.REQUEST_CODE_SCANNER);
+                , ScannerActivity.REQUEST_CODE_SCANNER);
     }
 }

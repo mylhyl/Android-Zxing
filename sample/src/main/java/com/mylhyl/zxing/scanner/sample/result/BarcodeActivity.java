@@ -19,9 +19,13 @@ import com.litesuits.http.request.StringRequest;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.result.ISBNResult;
+import com.mylhyl.zxing.scanner.result.ProductResult;
 import com.mylhyl.zxing.scanner.sample.BasicActivity;
 import com.mylhyl.zxing.scanner.sample.R;
 import com.mylhyl.zxing.scanner.sample.entities.Barcode;
+
+import java.io.Serializable;
 
 public class BarcodeActivity extends BasicActivity {
     private static final String TAG = "BarcodeActivity";
@@ -42,14 +46,26 @@ public class BarcodeActivity extends BasicActivity {
         mImageView = (ImageView) findViewById(R.id.imageView2);
 
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String productID = extras.getString(Intents.Scan.RESULT);
-            LiteHttp liteHttp = LiteHttp.build(this)
-                    .setSocketTimeout(5000)
-                    .setConnectTimeout(5000)
-                    .create();
-            executeAsync(liteHttp, productID);
+        if (extras == null) finish();
+
+        Serializable serializable = extras.getSerializable(Intents.Scan.RESULT);
+        if (serializable == null) finish();
+
+        String productID = "";
+        if (serializable instanceof ProductResult) {
+            ProductResult productResult = (ProductResult) serializable;
+            productID = productResult.getProductID();
+        } else if (serializable instanceof ISBNResult) {
+            ISBNResult isbnResult = (ISBNResult) serializable;
+            productID = isbnResult.getISBN();
         }
+
+        LiteHttp liteHttp = LiteHttp.build(this)
+                .setSocketTimeout(5000)
+                .setConnectTimeout(5000)
+                .create();
+        executeAsync(liteHttp, productID);
+
     }
 
     private void executeAsync(LiteHttp liteHttp, String productID) {

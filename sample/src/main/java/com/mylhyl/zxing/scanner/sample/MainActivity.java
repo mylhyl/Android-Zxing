@@ -44,13 +44,13 @@ public class MainActivity extends BasicActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.radioButton:
-                        laserMode = EnCodeActivity.EXTRA_LASER_LINE_MODE_0;
+                        laserMode = ScannerActivity.EXTRA_LASER_LINE_MODE_0;
                         break;
                     case R.id.radioButton2:
-                        laserMode = EnCodeActivity.EXTRA_LASER_LINE_MODE_1;
+                        laserMode = ScannerActivity.EXTRA_LASER_LINE_MODE_1;
                         break;
                     case R.id.radioButton3:
-                        laserMode = EnCodeActivity.EXTRA_LASER_LINE_MODE_2;
+                        laserMode = ScannerActivity.EXTRA_LASER_LINE_MODE_2;
                         break;
                 }
             }
@@ -59,7 +59,7 @@ public class MainActivity extends BasicActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EnCodeActivity.gotoActivity(MainActivity.this,
+                ScannerActivity.gotoActivity(MainActivity.this,
                         checkBox.isChecked(), laserMode);
             }
         });
@@ -113,7 +113,7 @@ public class MainActivity extends BasicActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_CANCELED && resultCode == Activity.RESULT_OK) {
-            if (requestCode == EnCodeActivity.REQUEST_CODE_SCANNER) {
+            if (requestCode == ScannerActivity.REQUEST_CODE_SCANNER) {
                 if (data != null) {
                     String stringExtra = data.getStringExtra(Intents.Scan.RESULT);
                     tvResult.setText(stringExtra);

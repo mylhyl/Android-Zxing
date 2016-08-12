@@ -23,8 +23,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EnCodeActivity"
-            android:label="扫一扫" />
+            android:name=".ScannerActivity"
+            android:label="扫一扫">
+            <intent-filter>
+                <action android:name="com.mylhyl.zxing.scanner.client.android.SCAN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".result.UriActivity"
             android:label="uri" />

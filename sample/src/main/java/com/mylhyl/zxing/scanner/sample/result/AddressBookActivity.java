@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.result.AddressBookResult;
 import com.mylhyl.zxing.scanner.sample.BasicActivity;
 import com.mylhyl.zxing.scanner.sample.R;
 
@@ -22,10 +23,14 @@ public class AddressBookActivity extends BasicActivity {
         TextView textView = (TextView) findViewById(R.id.textView2);
 
         Bundle extras = getIntent().getExtras();
+        if (extras == null) finish();
 
-        String[] names = extras.getStringArray(Intents.AddressBookConnect.NAME);
-        String[] phoneNumbers = extras.getStringArray(Intents.AddressBookConnect.NUMBER);
-        String[] emails = extras.getStringArray(Intents.AddressBookConnect.EMAIL);
+        AddressBookResult addressBookResult = (AddressBookResult) extras.getSerializable(Intents.Scan.RESULT);
+        if (addressBookResult == null) finish();
+
+        String[] names = addressBookResult.getNames();
+        String[] phoneNumbers = addressBookResult.getPhoneNumbers();
+        String[] emails = addressBookResult.getEmails();
 
         StringBuffer sb = new StringBuffer();
 

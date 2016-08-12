@@ -8,6 +8,7 @@ import android.webkit.WebViewClient;
 
 import com.mylhyl.crlayout.SwipeRefreshWebView;
 import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.result.URIResult;
 import com.mylhyl.zxing.scanner.sample.BasicActivity;
 import com.mylhyl.zxing.scanner.sample.R;
 
@@ -21,7 +22,7 @@ public class UriActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uri);
-        String uri = getIntent().getStringExtra(Intents.URIContents.URI);
+        String uri = ((URIResult) getIntent().getSerializableExtra(Intents.Scan.RESULT)).getUri();
         swipeRefreshWebView = (SwipeRefreshWebView) findViewById(R.id.webView);
         swipeRefreshWebView.getScrollView().loadUrl(uri);
         swipeRefreshWebView.getScrollView().setWebViewClient(new SampleWebViewClient());

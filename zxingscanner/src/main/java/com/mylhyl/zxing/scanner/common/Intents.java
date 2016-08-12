@@ -34,7 +34,7 @@ public final class Intents {
          * Send this intent to open the Barcodes app in scanning mode, find a barcode, and return
          * the results.
          */
-        public static final String ACTION = "com.google.zxing.client.android.SCAN";
+        public static final String ACTION = "com.mylhyl.zxing.scanner.client.android.SCAN";
 
         /**
          * By default, sending this will decode all barcodes that we understand. However it
@@ -169,23 +169,6 @@ public final class Intents {
         public static final String RESULT_BYTE_SEGMENTS_PREFIX = "SCAN_RESULT_BYTE_SEGMENTS_";
 
         private Scan() {
-        }
-    }
-
-    public static final class URIContents {
-        public static final String URI = "uri_uri";
-        public static final String TITLE = "uri_title";
-
-        private URIContents() {
-        }
-    }
-
-    public static final class AddressBookConnect {
-        public static final String NAME = "address_book_name";
-        public static final String NUMBER = "address_book_phone_number";
-        public static final String EMAIL = "address_book_email";
-
-        private AddressBookConnect() {
         }
     }
 }

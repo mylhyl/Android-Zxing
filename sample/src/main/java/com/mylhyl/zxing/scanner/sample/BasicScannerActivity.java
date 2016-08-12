@@ -15,9 +15,14 @@ import com.google.zxing.client.result.ISBNParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 import com.google.zxing.client.result.ProductParsedResult;
+import com.google.zxing.client.result.TextParsedResult;
 import com.google.zxing.client.result.URIParsedResult;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
 import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.result.AddressBookResult;
+import com.mylhyl.zxing.scanner.result.ISBNResult;
+import com.mylhyl.zxing.scanner.result.ProductResult;
+import com.mylhyl.zxing.scanner.result.URIResult;
 
 /**
  * Created by hupei on 2016/7/7.
@@ -63,29 +68,27 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
         Log.i(TAG, "ParsedResultType: " + type);
         switch (type) {
             case ADDRESSBOOK:
-                AddressBookParsedResult addressResult = (AddressBookParsedResult) parsedResult;
-                bundle.putStringArray(Intents.AddressBookConnect.NAME, addressResult.getNames());
-                bundle.putStringArray(Intents.AddressBookConnect.NUMBER, addressResult.getPhoneNumbers());
-                bundle.putStringArray(Intents.AddressBookConnect.EMAIL, addressResult.getEmails());
+                AddressBookParsedResult addressBook = (AddressBookParsedResult) parsedResult;
+                bundle.putSerializable(Intents.Scan.RESULT, new AddressBookResult(addressBook));
                 break;
             case PRODUCT:
-                ProductParsedResult productParsedResult = (ProductParsedResult) parsedResult;
-                String productID = productParsedResult.getProductID();
-                bundle.putString(Intents.Scan.RESULT, productID);
-                Log.i(TAG, "productID: " + productID);
+                ProductParsedResult product = (ProductParsedResult) parsedResult;
+                Log.i(TAG, "productID: " + product.getProductID());
+                bundle.putSerializable(Intents.Scan.RESULT, new ProductResult(product));
                 break;
             case ISBN:
-                ISBNParsedResult isbnParsedResult = (ISBNParsedResult) parsedResult;
-                String isbn = isbnParsedResult.getISBN();
-                bundle.putString(Intents.Scan.RESULT, isbn);
-                Log.i(TAG, "isbn: " + isbn);
+                ISBNParsedResult isbn = (ISBNParsedResult) parsedResult;
+                Log.i(TAG, "isbn: " + isbn.getISBN());
+                bundle.putSerializable(Intents.Scan.RESULT, new ISBNResult(isbn));
                 break;
             case URI:
-                URIParsedResult uriParsedResult = (URIParsedResult) parsedResult;
-                bundle.putString(Intents.URIContents.URI, uriParsedResult.getURI());
+                URIParsedResult uri = (URIParsedResult) parsedResult;
+                Log.i(TAG, "uri: " + uri.getURI());
+                bundle.putSerializable(Intents.Scan.RESULT, new URIResult(uri));
                 break;
             case TEXT:
-                bundle.putString(Intents.Scan.RESULT, rawResult.getText());
+                TextParsedResult textParsedResult = (TextParsedResult) parsedResult;
+                bundle.putString(Intents.Scan.RESULT, textParsedResult.getText());
                 break;
             case GEO:
                 break;
