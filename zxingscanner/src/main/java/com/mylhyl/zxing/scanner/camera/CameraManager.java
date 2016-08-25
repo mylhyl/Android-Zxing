@@ -309,9 +309,9 @@ public final class CameraManager {
      *
      * @param cameraId camera ID of the camera to use. A negative value means "no preference".
      */
-    public synchronized void setManualCameraId(int cameraId) {
+/*    public synchronized void setManualCameraId(int cameraId) {
         requestedCameraId = cameraId;
-    }
+    }*/
 
     /**
      * Allows third party apps to specify the scanning rectangle dimensions, rather than determine

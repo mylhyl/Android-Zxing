@@ -21,7 +21,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Build;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,8 +47,8 @@ public final class CameraConfigurationUtils {
     private static final float MAX_EXPOSURE_COMPENSATION = 1.5f;
     private static final float MIN_EXPOSURE_COMPENSATION = 0.0f;
     private static final double MAX_ASPECT_DISTORTION = 0.15;
-    private static final int MIN_FPS = 10;
-    private static final int MAX_FPS = 20;
+/*    private static final int MIN_FPS = 10;
+    private static final int MAX_FPS = 20;*/
     private static final int AREA_PER_1000 = 400;
 
     private CameraConfigurationUtils() {
@@ -134,11 +133,11 @@ public final class CameraConfigurationUtils {
         }
     }
 
-    public static void setBestPreviewFPS(Camera.Parameters parameters) {
+/*    public static void setBestPreviewFPS(Camera.Parameters parameters) {
         setBestPreviewFPS(parameters, MIN_FPS, MAX_FPS);
-    }
+    }*/
 
-    public static void setBestPreviewFPS(Camera.Parameters parameters, int minFPS, int maxFPS) {
+/*    public static void setBestPreviewFPS(Camera.Parameters parameters, int minFPS, int maxFPS) {
         List<int[]> supportedPreviewFpsRanges = parameters.getSupportedPreviewFpsRange();
 //        Log.i(TAG, "Supported FPS ranges: " + toString(supportedPreviewFpsRanges));
         if (supportedPreviewFpsRanges != null && !supportedPreviewFpsRanges.isEmpty()) {
@@ -165,7 +164,7 @@ public final class CameraConfigurationUtils {
                 }
             }
         }
-    }
+    }*/
 
     public static void setFocusArea(Camera.Parameters parameters) {
         if (parameters.getMaxNumFocusAreas() > 0) {
@@ -220,7 +219,7 @@ public final class CameraConfigurationUtils {
         }
     }
 
-    public static void setZoom(Camera.Parameters parameters, double targetZoomRatio) {
+/*    public static void setZoom(Camera.Parameters parameters, double targetZoomRatio) {
         if (parameters.isZoomSupported()) {
             Integer zoom = indexOfClosestZoom(parameters, targetZoomRatio);
             if (zoom == null) {
@@ -235,9 +234,9 @@ public final class CameraConfigurationUtils {
 //        } else {
 //            Log.i(TAG, "Zoom is not supported");
         }
-    }
+    }*/
 
-    private static Integer indexOfClosestZoom(Camera.Parameters parameters, double targetZoomRatio) {
+/*    private static Integer indexOfClosestZoom(Camera.Parameters parameters, double targetZoomRatio) {
         List<Integer> ratios = parameters.getZoomRatios();
 //        Log.i(TAG, "Zoom ratios: " + ratios);
         int maxZoom = parameters.getMaxZoom();
@@ -257,7 +256,7 @@ public final class CameraConfigurationUtils {
         }
 //        Log.i(TAG, "Chose zoom ratio of " + (ratios.get(closestIndex) / 100.0));
         return closestIndex;
-    }
+    }*/
 
     public static void setInvertColor(Camera.Parameters parameters) {
         if (Camera.Parameters.EFFECT_NEGATIVE.equals(parameters.getColorEffect())) {
@@ -377,7 +376,7 @@ public final class CameraConfigurationUtils {
         return null;
     }
 
-    private static String toString(Collection<int[]> arrays) {
+/*    private static String toString(Collection<int[]> arrays) {
         if (arrays == null || arrays.isEmpty()) {
             return "[]";
         }
@@ -407,9 +406,9 @@ public final class CameraConfigurationUtils {
 
     public static String collectStats(Camera.Parameters parameters) {
         return collectStats(parameters.flatten());
-    }
+    }*/
 
-    public static String collectStats(CharSequence flattenedParams) {
+/*    public static String collectStats(CharSequence flattenedParams) {
         StringBuilder result = new StringBuilder(1000);
 
         result.append("BOARD=").append(Build.BOARD).append('\n');
@@ -441,6 +440,6 @@ public final class CameraConfigurationUtils {
         }
 
         return result.toString();
-    }
+    }*/
 
 }

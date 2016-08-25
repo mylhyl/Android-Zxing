@@ -89,32 +89,32 @@ public final class Intents {
          * Overrides the default camera that would otherwise would have been selected.
          * If provided, should be an int.
          */
-        public static final String CAMERA_ID = "SCAN_CAMERA_ID";
+//        public static final String CAMERA_ID = "SCAN_CAMERA_ID";
 
         /**
          * @see com.google.zxing.DecodeHintType#CHARACTER_SET
          */
-        public static final String CHARACTER_SET = "CHARACTER_SET";
+//        public static final String CHARACTER_SET = "CHARACTER_SET";
 
         /**
          * Optional parameters to specify the width and height of the scanning rectangle in pixels.
          * The app will try to honor these, but will clamp them to the size of the preview frame.
          * You should specify both or neither, and pass the size as an int.
          */
-        public static final String WIDTH = "SCAN_WIDTH";
-        public static final String HEIGHT = "SCAN_HEIGHT";
+//        public static final String WIDTH = "SCAN_WIDTH";
+//        public static final String HEIGHT = "SCAN_HEIGHT";
 
         /**
          * Desired duration in milliseconds for which to pause after a successful scan before
          * returning to the calling intent. Specified as a long, not an integer!
          * For example: 1000L, not 1000.
          */
-        public static final String RESULT_DISPLAY_DURATION_MS = "RESULT_DISPLAY_DURATION_MS";
+//        public static final String RESULT_DISPLAY_DURATION_MS = "RESULT_DISPLAY_DURATION_MS";
 
         /**
          * Prompt to show on-screen when scanning by intent. Specified as a {@link String}.
          */
-        public static final String PROMPT_MESSAGE = "PROMPT_MESSAGE";
+//        public static final String PROMPT_MESSAGE = "PROMPT_MESSAGE";
 
         /**
          * If a barcode is found, Barcodes returns {@link android.app.Activity#RESULT_OK} to
@@ -140,25 +140,25 @@ public final class Intents {
          * to {@link com.google.zxing.BarcodeFormat#UPC_A} and {@link com.google.zxing.BarcodeFormat#EAN_13}
          * formats.
          */
-        public static final String RESULT_UPC_EAN_EXTENSION = "SCAN_RESULT_UPC_EAN_EXTENSION";
+//        public static final String RESULT_UPC_EAN_EXTENSION = "SCAN_RESULT_UPC_EAN_EXTENSION";
 
         /**
          * Call {@link android.content.Intent#getByteArrayExtra(String)} with {@link #RESULT_BYTES}
          * to get a {@code byte[]} of raw bytes in the barcode, if available.
          */
-        public static final String RESULT_BYTES = "SCAN_RESULT_BYTES";
+//        public static final String RESULT_BYTES = "SCAN_RESULT_BYTES";
 
         /**
          * Key for the value of {@link com.google.zxing.ResultMetadataType#ORIENTATION}, if available.
          * Call {@link android.content.Intent#getIntArrayExtra(String)} with {@link #RESULT_ORIENTATION}.
          */
-        public static final String RESULT_ORIENTATION = "SCAN_RESULT_ORIENTATION";
+//        public static final String RESULT_ORIENTATION = "SCAN_RESULT_ORIENTATION";
 
         /**
          * Key for the value of {@link com.google.zxing.ResultMetadataType#ERROR_CORRECTION_LEVEL}, if available.
          * Call {@link android.content.Intent#getStringExtra(String)} with {@link #RESULT_ERROR_CORRECTION_LEVEL}.
          */
-        public static final String RESULT_ERROR_CORRECTION_LEVEL = "SCAN_RESULT_ERROR_CORRECTION_LEVEL";
+//        public static final String RESULT_ERROR_CORRECTION_LEVEL = "SCAN_RESULT_ERROR_CORRECTION_LEVEL";
 
         /**
          * Prefix for keys that map to the values of {@link com.google.zxing.ResultMetadataType#BYTE_SEGMENTS},
@@ -166,7 +166,7 @@ public final class Intents {
          * to this prefix. So the first byte segment is under key "SCAN_RESULT_BYTE_SEGMENTS_0" for example.
          * Call {@link android.content.Intent#getByteArrayExtra(String)} with these keys.
          */
-        public static final String RESULT_BYTE_SEGMENTS_PREFIX = "SCAN_RESULT_BYTE_SEGMENTS_";
+//        public static final String RESULT_BYTE_SEGMENTS_PREFIX = "SCAN_RESULT_BYTE_SEGMENTS_";
 
         private Scan() {
         }
