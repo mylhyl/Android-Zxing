@@ -20,7 +20,7 @@
 - 本库依赖使用Gradle构建时添加一下即可:
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:1.1.3'
+compile 'com.mylhyl:zxingscanner:1.2.0'
 ```
 
 - [最新Zxing核心库点击查看](http://jcenter.bintray.com/com/google/zxing/core/)，使用Gradle构建时如下:
@@ -99,16 +99,21 @@ switch (type) {
 }
 ```
 
-生成二维码
+生成二维码使用
 
 ```java
-Bitmap bitmap = QREncode.encodeQR(MainActivity.this,
-        new QREncode.Builder()                
-                .setColor(getResources().getColor(R.color.colorPrimary))//二维码颜色
-                .setParsedResultType(ParsedResultType.URI)//二维码类型
-                .setContents("https://github.com/mylhyl")//二维码内容
-                .build());
-imageView.setImageBitmap(bitmap);
+//联系人类型
+Bitmap bitmap = QREncode.encodeQR(new QREncode.Builder(this)
+        .setParsedResultType(ParsedResultType.ADDRESSBOOK)
+        .setAddressBookUri(contactUri).build());
+
+//文本类型
+Bitmap bitmap = QREncode.encodeQR(new QREncode.Builder(this)
+        .setColor(getResources().getColor(R.color.colorPrimary))//二维码颜色
+        //.setParsedResultType(ParsedResultType.TEXT)//默认是TEXT类型
+        .setContents("我是石头")//二维码内容
+        .build());
+
 ```
 
 ###六、样式设置
@@ -181,6 +186,8 @@ imageView.setImageBitmap(bitmap);
 </table>
 
 ### 七、版本更新
+> 1.2.0 生成二维码增加`setAddressBookUri(Uri contactUri)`设置联系人`Uri`方法，更方便的使用
+
 > 1.1.3 重新装饰`ParsedResult`各实现类并`Serializable`
 
 > 1.1.2 修复锁屏`onPause`生命周期没有摧毁，导致`onResume`时抛出`RuntimeException`异常 

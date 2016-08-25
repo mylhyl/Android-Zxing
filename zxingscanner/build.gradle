@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 1
+        versionCode 20160825
         versionName version
     }
     buildTypes {
@@ -25,7 +25,7 @@ android {
 def siteUrl = 'https://github.com/mylhyl/Android-Zxing'
 def gitUrl = 'https://github.com/mylhyl/Android-Zxing.git'
 group = "com.mylhyl"
-version = "1.1.3"
+version = "1.2.0"
 
 install {
     repositories.mavenInstaller {
