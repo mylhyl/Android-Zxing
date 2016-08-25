@@ -12,7 +12,7 @@
  - 加入创建二维码、识别图片中的二维码功能
   
 ###二、效果图
-![这里写图片描述](http://img.blog.csdn.net/20160708110951092)
+<img src="preview/gif.gif" width="240px"/>
 
 ###三、[下载APK体验](preview/sample-debug.apk)
 
