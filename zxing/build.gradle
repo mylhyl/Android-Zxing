@@ -29,7 +29,7 @@ android {
 }
 version = "3.2.2"
 
-task makeJar(type: Copy) {
+task makeCodeJar(type: Copy) {
     def jarName = 'code-' + version + '.jar'
     delete 'build/libs/' + jarName
     from('build/intermediates/bundles/release/')
