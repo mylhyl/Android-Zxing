@@ -16,10 +16,11 @@
 
 package com.mylhyl.zxing.scanner.encode;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.telephony.PhoneNumberUtils;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -44,11 +45,17 @@ final class QRCodeEncoder {
 
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
+    private Context context;
     private QREncode.Builder encodeBuild;
 
-    QRCodeEncoder(QREncode.Builder build) {
+    QRCodeEncoder(QREncode.Builder build, Context context) {
+        this.context = context;
         this.encodeBuild = build;
         encodeContentsFromZXing(build);
+    }
+
+    Context getContext() {
+        return context;
     }
 
     private void encodeContentsFromZXing(QREncode.Builder build) {
@@ -101,7 +108,14 @@ final class QRCodeEncoder {
                 encodeBuild.setEncodeContents("sms:" + build.getContents());
                 break;
             case ADDRESSBOOK:
-                Bundle contactBundle = build.getBundle();
+                Bundle contactBundle = null;
+                //uri解析
+                Uri addressBookUri = build.getAddressBookUri();
+                if (addressBookUri != null)
+                    contactBundle = new ParserUriToVCard().parserUri(context, addressBookUri);
+                //Bundle解析
+                if ((contactBundle != null && contactBundle.isEmpty()) || contactBundle == null)
+                    contactBundle = build.getBundle();
                 if (contactBundle != null) {
                     String name = contactBundle.getString(ContactsContract.Intents.Insert.NAME);
                     String organization = contactBundle
