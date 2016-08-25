@@ -33,16 +33,14 @@ install {
             project {
                 packaging 'aar'
                 artifactId 'zxingscanner'
-                name 'android zxing style' //添加项目描述
+                name 'android zxing style'
                 url siteUrl
-                //设置开源证书信息
                 licenses {
                     license {
                         name 'The Apache Software License, Version 2.0'
                         url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
-                //填写开发者基本信息
                 developers {
                     developer {
                         id 'mylhyl'
@@ -80,22 +78,19 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
-//配置上传bintray相关信息
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 bintray {
-    //读取bintray帐号和密码。
-    //一般的为了保密和安全性，在项目的local.properties文件中添加两行句话即可：
     user = properties.getProperty("BINTRAY_USER")
     key = properties.getProperty("BINTRAY_KEY")
     configurations = ['archives']
     pkg {
-        repo = "maven" //上传的中央仓库名称
-        name = "zxingscanner" //上传的项目的名字
+        repo = "maven"
+        name = "zxingscanner"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
-        publish = true //是否发布
+        publish = true
     }
 }
 

@@ -69,8 +69,10 @@ public final class QRDecode {
             int height = srcBitmap.getHeight();
             int[] pixels = new int[width * height];
             srcBitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-            RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);//新建一个RGBLuminanceSource对象
-            BinaryBitmap binaryBitmap = new BinaryBitmap(new GlobalHistogramBinarizer(source));//将图片转换成二进制图片
+            //新建一个RGBLuminanceSource对象
+            RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
+            //将图片转换成二进制图片
+            BinaryBitmap binaryBitmap = new BinaryBitmap(new GlobalHistogramBinarizer(source));
             QRCodeReader reader = new QRCodeReader();//初始化解析对象
             try {
                 result = reader.decode(binaryBitmap, HINTS);//开始解析
@@ -82,9 +84,9 @@ public final class QRDecode {
                 e.printStackTrace();
             }
         }
-        if (listener != null)
+        if (listener != null) {
             listener.OnScannerCompletion(result, Scanner.parseResult(result), srcBitmap);
-
+        }
     }
 
     private static Bitmap loadBitmap(String picturePath) throws FileNotFoundException {

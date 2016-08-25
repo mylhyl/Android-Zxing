@@ -26,6 +26,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.Result;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
+import com.mylhyl.zxing.scanner.common.Intents;
 import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.decode.DecodeThread;
 
@@ -87,16 +88,13 @@ final class ScannerViewHandler extends Handler {
                                 0, compressedBitmap.length, null);
                         barcode = barcode.copy(Bitmap.Config.ARGB_8888, true);
                     }
-                    scaleFactor = bundle
-                            .getFloat(DecodeThread.BARCODE_SCALED_FACTOR);
+                    scaleFactor = bundle.getFloat(DecodeThread.BARCODE_SCALED_FACTOR);
                 }
-                scannerView
-                        .handleDecode((Result) message.obj, barcode, scaleFactor);
+                scannerView.handleDecode((Result) message.obj, barcode, scaleFactor);
                 break;
             case Scanner.DECODE_FAILED:
                 state = State.PREVIEW;
-                cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-                        Scanner.DECODE);
+                cameraManager.requestPreviewFrame(decodeThread.getHandler(), Scanner.DECODE);
                 break;
             case Scanner.RETURN_SCAN_RESULT:
                 break;
@@ -123,8 +121,7 @@ final class ScannerViewHandler extends Handler {
     private void restartPreviewAndDecode() {
         if (state == State.SUCCESS) {
             state = State.PREVIEW;
-            cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-                    Scanner.DECODE);
+            cameraManager.requestPreviewFrame(decodeThread.getHandler(), Scanner.DECODE);
             scannerView.drawViewfinder();
         }
     }

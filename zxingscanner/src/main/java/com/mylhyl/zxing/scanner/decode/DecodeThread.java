@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -47,10 +48,30 @@ public final class DecodeThread extends Thread {
     private Handler handler;
     private final CountDownLatch handlerInitLatch;
 
+    static final Set<BarcodeFormat> PRODUCT_FORMATS;
+    static final Set<BarcodeFormat> INDUSTRIAL_FORMATS;
+
+    static final Set<BarcodeFormat> QR_CODE_FORMATS = EnumSet.of(BarcodeFormat.QR_CODE);
+    static final Set<BarcodeFormat> DATA_MATRIX_FORMATS = EnumSet.of(BarcodeFormat.DATA_MATRIX);
+
+    static {
+        PRODUCT_FORMATS = EnumSet.of(BarcodeFormat.UPC_A,
+                BarcodeFormat.UPC_E,
+                BarcodeFormat.EAN_13,
+                BarcodeFormat.EAN_8,
+                BarcodeFormat.RSS_14,
+                BarcodeFormat.RSS_EXPANDED);
+        INDUSTRIAL_FORMATS = EnumSet.of(BarcodeFormat.CODE_39,
+                BarcodeFormat.CODE_93,
+                BarcodeFormat.CODE_128,
+                BarcodeFormat.ITF,
+                BarcodeFormat.CODABAR);
+    }
+
     public DecodeThread(CameraManager cameraManager, Handler scannerViewHandler,
-                 Collection<BarcodeFormat> decodeFormats,
-                 Map<DecodeHintType, ?> baseHints, String characterSet,
-                 ResultPointCallback resultPointCallback) {
+                        Collection<BarcodeFormat> decodeFormats,
+                        Map<DecodeHintType, ?> baseHints, String characterSet,
+                        ResultPointCallback resultPointCallback) {
         this.cameraManager = cameraManager;
         this.scannerViewHandler = scannerViewHandler;
         handlerInitLatch = new CountDownLatch(1);
@@ -68,32 +89,22 @@ public final class DecodeThread extends Thread {
             // 一维码：商品
             boolean decode1DProduct = true;
             if (decode1DProduct) {
-                decodeFormats.addAll(DecodeFormatManager.PRODUCT_FORMATS);
+                decodeFormats.addAll(PRODUCT_FORMATS);
             }
             // 一维码：工业
             boolean decode1DIndustrial = true;
             if (decode1DIndustrial) {
-                decodeFormats.addAll(DecodeFormatManager.INDUSTRIAL_FORMATS);
+                decodeFormats.addAll(INDUSTRIAL_FORMATS);
             }
             // 二维码
             boolean decodeQR = true;
             if (decodeQR) {
-                decodeFormats.addAll(DecodeFormatManager.QR_CODE_FORMATS);
+                decodeFormats.addAll(QR_CODE_FORMATS);
             }
             // Data Matrix
             boolean decodeDataMatrix = true;
             if (decodeDataMatrix) {
-                decodeFormats.addAll(DecodeFormatManager.DATA_MATRIX_FORMATS);
-            }
-            // Aztec
-            boolean decodeAztec = false;
-            if (decodeAztec) {
-                decodeFormats.addAll(DecodeFormatManager.AZTEC_FORMATS);
-            }
-            // PDF417 (测试)
-            boolean decodePDF417 = false;
-            if (decodePDF417) {
-                decodeFormats.addAll(DecodeFormatManager.PDF417_FORMATS);
+                decodeFormats.addAll(DATA_MATRIX_FORMATS);
             }
         }
         hints.put(DecodeHintType.POSSIBLE_FORMATS, decodeFormats);

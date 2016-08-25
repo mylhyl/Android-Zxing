@@ -8,12 +8,32 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 
-import com.mylhyl.zxing.scanner.common.Contents;
-
 /**
  * Created by hupei on 2016/8/25.
  */
 public class ParserUriToVCard {
+
+    public static final String URL_KEY = "URL_KEY";
+    public static final String NOTE_KEY = "NOTE_KEY";
+
+    public static final String[] PHONE_KEYS = {
+            ContactsContract.Intents.Insert.PHONE,
+            ContactsContract.Intents.Insert.SECONDARY_PHONE,
+            ContactsContract.Intents.Insert.TERTIARY_PHONE
+    };
+
+    public static final String[] PHONE_TYPE_KEYS = {
+            ContactsContract.Intents.Insert.PHONE_TYPE,
+            ContactsContract.Intents.Insert.SECONDARY_PHONE_TYPE,
+            ContactsContract.Intents.Insert.TERTIARY_PHONE_TYPE
+    };
+
+    public static final String[] EMAIL_KEYS = {
+            ContactsContract.Intents.Insert.EMAIL,
+            ContactsContract.Intents.Insert.SECONDARY_EMAIL,
+            ContactsContract.Intents.Insert.TERTIARY_EMAIL
+    };
+
     public ParserUriToVCard() {
     }
 
@@ -58,13 +78,13 @@ public class ParserUriToVCard {
                     int foundPhone = 0;
                     int phonesNumberColumn = phonesCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                     int phoneTypeColumn = phonesCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
-                    while (phonesCursor.moveToNext() && foundPhone < Contents.PHONE_KEYS.length) {
+                    while (phonesCursor.moveToNext() && foundPhone < PHONE_KEYS.length) {
                         String number = phonesCursor.getString(phonesNumberColumn);
                         if (number != null && !number.isEmpty()) {
-                            bundle.putString(Contents.PHONE_KEYS[foundPhone], massageContactData(number));
+                            bundle.putString(PHONE_KEYS[foundPhone], massageContactData(number));
                         }
                         int type = phonesCursor.getInt(phoneTypeColumn);
-                        bundle.putInt(Contents.PHONE_TYPE_KEYS[foundPhone], type);
+                        bundle.putInt(PHONE_TYPE_KEYS[foundPhone], type);
                         foundPhone++;
                     }
                 } finally {
@@ -101,10 +121,10 @@ public class ParserUriToVCard {
             try {
                 int foundEmail = 0;
                 int emailColumn = emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
-                while (emailCursor.moveToNext() && foundEmail < Contents.EMAIL_KEYS.length) {
+                while (emailCursor.moveToNext() && foundEmail < EMAIL_KEYS.length) {
                     String email = emailCursor.getString(emailColumn);
                     if (email != null && !email.isEmpty()) {
-                        bundle.putString(Contents.EMAIL_KEYS[foundEmail], massageContactData(email));
+                        bundle.putString(EMAIL_KEYS[foundEmail], massageContactData(email));
                     }
                     foundEmail++;
                 }

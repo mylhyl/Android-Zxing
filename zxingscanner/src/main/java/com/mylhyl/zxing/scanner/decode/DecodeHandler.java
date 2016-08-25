@@ -106,8 +106,7 @@ final class DecodeHandler extends Handler {
         if (rawResult != null) {
             if (handler != null) {
                 //会向 ScannerViewHandler 发消息
-                Message message = Message.obtain(handler,
-                        Scanner.DECODE_SUCCEEDED, rawResult);
+                Message message = Message.obtain(handler, Scanner.DECODE_SUCCEEDED, rawResult);
                 Bundle bundle = new Bundle();
                 bundleThumbnail(source, bundle);
                 message.setData(bundle);

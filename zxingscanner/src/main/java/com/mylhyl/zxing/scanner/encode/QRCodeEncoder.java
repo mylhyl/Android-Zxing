@@ -27,7 +27,6 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.mylhyl.zxing.scanner.common.Contents;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,12 +120,12 @@ final class QRCodeEncoder {
                     String organization = contactBundle
                             .getString(ContactsContract.Intents.Insert.COMPANY);
                     String address = contactBundle.getString(ContactsContract.Intents.Insert.POSTAL);
-                    List<String> phones = getAllBundleValues(contactBundle, Contents.PHONE_KEYS);
-                    List<String> phoneTypes = getAllBundleValues(contactBundle, Contents.PHONE_TYPE_KEYS);
-                    List<String> emails = getAllBundleValues(contactBundle, Contents.EMAIL_KEYS);
-                    String url = contactBundle.getString(Contents.URL_KEY);
+                    List<String> phones = getAllBundleValues(contactBundle, ParserUriToVCard.PHONE_KEYS);
+                    List<String> phoneTypes = getAllBundleValues(contactBundle, ParserUriToVCard.PHONE_TYPE_KEYS);
+                    List<String> emails = getAllBundleValues(contactBundle, ParserUriToVCard.EMAIL_KEYS);
+                    String url = contactBundle.getString(ParserUriToVCard.URL_KEY);
                     List<String> urls = url == null ? null : Collections.singletonList(url);
-                    String note = contactBundle.getString(Contents.NOTE_KEY);
+                    String note = contactBundle.getString(ParserUriToVCard.NOTE_KEY);
                     ContactEncoder encoder = build.isUseVCard() ?
                             new VCardContactEncoder() : new MECARDContactEncoder();
                     String[] encoded = encoder.encode(Collections.singletonList(name), organization,

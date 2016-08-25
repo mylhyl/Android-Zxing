@@ -12,7 +12,6 @@ import android.widget.FrameLayout;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
-import com.google.zxing.client.result.ParsedResult;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
 
@@ -55,10 +54,12 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mBeepManager = new BeepManager(context);
 
         mSurfaceView = new SurfaceView(context, attrs, defStyle);
-        addView(mSurfaceView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        addView(mSurfaceView, new LayoutParams(LayoutParams.MATCH_PARENT
+                , LayoutParams.MATCH_PARENT));
 
         mViewfinderView = new ViewfinderView(context, attrs);
-        addView(mViewfinderView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        addView(mViewfinderView, new LayoutParams(LayoutParams.MATCH_PARENT
+                , LayoutParams.MATCH_PARENT));
     }
 
     public void onResume() {
@@ -132,8 +133,8 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         //扫描成功
         if (mScannerCompletionListener != null) {
             //转换结果
-            ParsedResult parsedResult = Scanner.parseResult(rawResult);
-            mScannerCompletionListener.OnScannerCompletion(rawResult, parsedResult, barcode);
+            mScannerCompletionListener.OnScannerCompletion(rawResult,
+                    Scanner.parseResult(rawResult), barcode);
         }
         //设置扫描结果图片
         if (barcode != null) {
@@ -291,7 +292,8 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param isBottom   是否在扫描框下方
      * @param textMargin 离扫描框间距 dp
      */
-    public void setDrawText(String text, int textSize, int textColor, boolean isBottom, int textMargin) {
+    public void setDrawText(String text, int textSize, int textColor
+            , boolean isBottom, int textMargin) {
         mViewfinderView.setDrawText(text, textSize, textColor, isBottom, textMargin);
     }
 

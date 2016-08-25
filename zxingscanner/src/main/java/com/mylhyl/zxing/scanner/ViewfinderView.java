@@ -42,6 +42,7 @@ import java.util.List;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 final class ViewfinderView extends View {
+
     private static final int CURRENT_POINT_OPACITY = 0xA0;
     private static final int MAX_RESULT_POINTS = 20;
     private static final int POINT_SIZE = 6;
@@ -182,8 +183,8 @@ final class ViewfinderView extends View {
         // 左上角
         canvas.drawRect(frame.left - laserFrameCornerWidth, frame.top, frame.left, frame.top
                 + laserFrameCornerLength, paint);
-        canvas.drawRect(frame.left - laserFrameCornerWidth, frame.top - laserFrameCornerWidth, frame.left
-                + laserFrameCornerLength, frame.top, paint);
+        canvas.drawRect(frame.left - laserFrameCornerWidth, frame.top - laserFrameCornerWidth
+                , frame.left + laserFrameCornerLength, frame.top, paint);
         // 右上角
         canvas.drawRect(frame.right, frame.top, frame.right + laserFrameCornerWidth,
                 frame.top + laserFrameCornerLength, paint);
@@ -224,7 +225,8 @@ final class ViewfinderView extends View {
         if (laserLineResId == 0) {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(laserColor);// 设置扫描线颜色
-            canvas.drawRect(frame.left, laserLineTop, frame.right, laserLineTop + laserLineHeight, paint);
+            canvas.drawRect(frame.left, laserLineTop, frame.right
+                    , laserLineTop + laserLineHeight, paint);
         } else {
             if (laserLineBitmap == null)//图片资源文件转为 Bitmap
                 laserLineBitmap = BitmapFactory.decodeResource(getResources(), laserLineResId);
@@ -232,7 +234,8 @@ final class ViewfinderView extends View {
             //网格图片
             if (isLaserGridLine) {
                 RectF dstRectF = new RectF(frame.left, frame.top, frame.right, laserLineTop);
-                Rect srcRect = new Rect(0, (int) (height - dstRectF.height()), laserLineBitmap.getWidth(), height);
+                Rect srcRect = new Rect(0, (int) (height - dstRectF.height())
+                        , laserLineBitmap.getWidth(), height);
                 canvas.drawBitmap(laserLineBitmap, srcRect, dstRectF, paint);
             }
             //线条图片
@@ -241,7 +244,8 @@ final class ViewfinderView extends View {
                 if (laserLineHeight == Scanner.dp2px(getContext(), DEFAULT_LASER_LINE_HEIGHT)) {
                     laserLineHeight = laserLineBitmap.getHeight() / 2;
                 }
-                Rect laserRect = new Rect(frame.left, laserLineTop, frame.right, laserLineTop + laserLineHeight);
+                Rect laserRect = new Rect(frame.left, laserLineTop, frame.right
+                        , laserLineTop + laserLineHeight);
                 canvas.drawBitmap(laserLineBitmap, null, laserRect, paint);
             }
         }
@@ -345,7 +349,8 @@ final class ViewfinderView extends View {
         this.laserFrameCornerWidth = Scanner.dp2px(getContext(), laserFrameCornerWidth);
     }
 
-    public void setDrawText(String text, int textSize, int textColor, boolean isBottom, int textMargin) {
+    public void setDrawText(String text, int textSize, int textColor
+            , boolean isBottom, int textMargin) {
         if (!TextUtils.isEmpty(text))
             drawText = text;
         if (textSize > 0)
