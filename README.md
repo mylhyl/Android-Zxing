@@ -17,19 +17,24 @@
 ###三、[下载APK体验](preview/sample-debug.apk)
 
 ###四、引用
+
+## 1、在线
 - 本库依赖使用Gradle构建时添加一下即可:
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:1.2.0'
+compile 'com.mylhyl:zxingscanner:1.2.1'
 ```
 
-- [最新Zxing核心库点击查看](http://jcenter.bintray.com/com/google/zxing/core/)，使用Gradle构建时如下:
+## 2、离线jar，需要手动添加 Zxing 核心库
+核心库二种方式：
+
+1、[最新Zxing核心库点击查看](http://jcenter.bintray.com/com/google/zxing/core/)，使用Gradle构建时如下:
 
 ```javascript
-compile 'com.google.zxing:core:3.2.1'
+compile 'com.google.zxing:core:3.3.0'
 ```
 
-- Gradle命令编译：[gradle makeJar](http://blog.csdn.net/hupei/article/details/51886221) 或者参考下图，在android studio中执行
+2、本地依赖jar文件使用Gradle命令编译：[gradle makeJar](http://blog.csdn.net/hupei/article/details/51886221) 或者参考下图，在android studio中执行
 
 ![这里写图片描述](http://img.blog.csdn.net/20160711135615587)
 
@@ -186,6 +191,8 @@ Bitmap bitmap = QREncode.encodeQR(new QREncode.Builder(this)
 </table>
 
 ### 七、版本更新
+> 1.2.1 修复依赖提示`Failed to resolve:Android-Zxing:zxing:3.2.2`的错误
+
 > 1.2.0 生成二维码增加`setAddressBookUri(Uri contactUri)`设置联系人`Uri`方法，更方便的使用
 
 > 1.1.3 重新装饰`ParsedResult`各实现类并`Serializable`
