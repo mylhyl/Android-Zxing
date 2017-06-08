@@ -1,13 +1,19 @@
 package com.mylhyl.zxing.scanner.sample;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.zxing.Result;
@@ -25,6 +31,7 @@ public class ScannerActivity extends DeCodeActivity {
     public static final int EXTRA_LASER_LINE_MODE_0 = 0;
     public static final int EXTRA_LASER_LINE_MODE_1 = 1;
     public static final int EXTRA_LASER_LINE_MODE_2 = 2;
+    public static final int APPLY_READ_EXTERNAL_STORAGE = 0x111;
 
     private ScannerView mScannerView;
     private Result mLastResult;
@@ -50,7 +57,13 @@ public class ScannerActivity extends DeCodeActivity {
         findViewById(R.id.button4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PickPictureTotalActivity.gotoActivity(ScannerActivity.this);
+                if (ContextCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    //权限还没有授予，需要在这里写申请权限的代码
+                    ActivityCompat.requestPermissions(ScannerActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, APPLY_READ_EXTERNAL_STORAGE);
+                } else {
+                    PickPictureTotalActivity.gotoActivity(ScannerActivity.this);
+                }
             }
         });
 
@@ -78,6 +91,18 @@ public class ScannerActivity extends DeCodeActivity {
             case EXTRA_LASER_LINE_MODE_2:
                 mScannerView.setLaserColor(Color.RED);
                 break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == APPLY_READ_EXTERNAL_STORAGE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                PickPictureTotalActivity.gotoActivity(ScannerActivity.this);
+            } else {
+                Toast.makeText(ScannerActivity.this, "请给予权限", Toast.LENGTH_LONG).show();
+            }
         }
     }
 

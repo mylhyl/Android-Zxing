@@ -1,11 +1,15 @@
 package com.mylhyl.zxing.scanner.sample;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
@@ -55,8 +59,17 @@ public class MainActivity extends BasicActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ScannerActivity.gotoActivity(MainActivity.this,
-                        checkBox.isChecked(), laserMode);
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    //权限还没有授予，需要在这里写申请权限的代码
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.CAMERA}, 60);
+                } else {
+                    //权限已经被授予，在这里直接写要执行的相应方法即可
+                    ScannerActivity.gotoActivity(MainActivity.this,
+                            checkBox.isChecked(), laserMode);
+                }
             }
         });
 
