@@ -24,6 +24,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -84,7 +87,7 @@ final class ViewfinderView extends View {
         laserLineHeight = Scanner.dp2px(context, DEFAULT_LASER_LINE_HEIGHT);
         laserFrameCornerWidth = Scanner.dp2px(context, 2f);
         laserFrameCornerLength = Scanner.dp2px(context, 15f);
-        drawTextSize = Scanner.sp2px(context, 16f);
+        drawTextSize = Scanner.sp2px(context, 15f);
         drawTextMargin = Scanner.dp2px(context, 20f);
     }
 
@@ -161,14 +164,24 @@ final class ViewfinderView extends View {
      * @param frame
      */
     private void drawText(Canvas canvas, Rect frame) {
-        int width = canvas.getWidth();
-        paint.setColor(drawTextColor);
-        paint.setTextSize(drawTextSize);
-        final float textWidth = paint.measureText(drawText);//取出文字宽度
-        float x = (width - textWidth) / 2;//文字开始位置
+        TextPaint textPaint = new TextPaint();
+        textPaint.setAntiAlias(true);
+        textPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setColor(drawTextColor);
+        textPaint.setTextSize(drawTextSize);
+
+        float x = frame.left;//文字开始位置
         //根据 drawTextGravityBottom 文字在扫描框上方还是下文，默认下方
-        float y = drawTextGravityBottom ? frame.bottom + drawTextMargin : frame.top - drawTextMargin;
-        canvas.drawText(drawText, x, y, paint);
+        float y = drawTextGravityBottom ? frame.bottom + drawTextMargin
+                : frame.top - drawTextMargin;
+
+        StaticLayout staticLayout = new StaticLayout(drawText, textPaint, frame.width()
+                , Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
+        canvas.save();
+        canvas.translate(x, y);
+        staticLayout.draw(canvas);
+        canvas.restore();
     }
 
     /**
@@ -355,11 +368,21 @@ final class ViewfinderView extends View {
             drawText = text;
         if (textSize > 0)
             drawTextSize = Scanner.sp2px(getContext(), textSize);
-        if (textColor > 0)
+        if (textColor != 0)
             drawTextColor = textColor;
         drawTextGravityBottom = isBottom;
         if (textMargin > 0)
             drawTextMargin = Scanner.dp2px(getContext(), textMargin);
+    }
+
+    public void setDrawTextColor(int textColor) {
+        if (textColor != 0)
+            drawTextColor = textColor;
+    }
+
+    public void setDrawTextSize(int textSize) {
+        if (textSize > 0)
+            drawTextSize = Scanner.sp2px(getContext(), textSize);
     }
 
     public void laserLineBitmapRecycle() {

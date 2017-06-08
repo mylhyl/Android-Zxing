@@ -22,7 +22,7 @@
 - 本库依赖使用Gradle构建时添加一下即可:
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:1.2.1'
+compile 'com.mylhyl:zxingscanner:1.2.2'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
@@ -191,6 +191,8 @@ Bitmap bitmap = QREncode.encodeQR(new QREncode.Builder(this)
 </table>
 
 ### 七、版本更新
+> 1.2.2 修复扫描提示文字颜色无效、支持自动换行
+
 > 1.2.1 修复依赖提示`Failed to resolve:Android-Zxing:zxing:3.2.2`的错误
 
 > 1.2.0 生成二维码增加`setAddressBookUri(Uri contactUri)`设置联系人`Uri`方法，更方便的使用

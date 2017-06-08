@@ -216,8 +216,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         }
     }
 
-    public void setOnScannerCompletionListener(OnScannerCompletionListener listener) {
+    public ScannerView setOnScannerCompletionListener(OnScannerCompletionListener listener) {
         this.mScannerCompletionListener = listener;
+        return this;
     }
 
     /**
@@ -225,8 +226,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param laserColor
      */
-    public void setLaserColor(int laserColor) {
+    public ScannerView setLaserColor(int laserColor) {
         mViewfinderView.setLaserColor(laserColor);
+        return this;
     }
 
     /**
@@ -234,8 +236,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param laserLineResId resId
      */
-    public void setLaserLineResId(int laserLineResId) {
+    public ScannerView setLaserLineResId(int laserLineResId) {
         mViewfinderView.setLaserLineResId(laserLineResId);
+        return this;
     }
 
     /**
@@ -243,8 +246,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param laserLineResId resId
      */
-    public void setLaserGridLineResId(int laserLineResId) {
+    public ScannerView setLaserGridLineResId(int laserLineResId) {
         mViewfinderView.setLaserGridLineResId(laserLineResId);
+        return this;
     }
 
     /**
@@ -252,8 +256,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param laserLineHeight dp
      */
-    public void setLaserLineHeight(int laserLineHeight) {
+    public ScannerView setLaserLineHeight(int laserLineHeight) {
         mViewfinderView.setLaserLineHeight(laserLineHeight);
+        return this;
     }
 
     /**
@@ -261,8 +266,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param laserFrameBoundColor
      */
-    public void setLaserFrameBoundColor(int laserFrameBoundColor) {
+    public ScannerView setLaserFrameBoundColor(int laserFrameBoundColor) {
         mViewfinderView.setLaserFrameBoundColor(laserFrameBoundColor);
+        return this;
     }
 
     /**
@@ -270,8 +276,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param laserFrameCornerLength dp
      */
-    public void setLaserFrameCornerLength(int laserFrameCornerLength) {
+    public ScannerView setLaserFrameCornerLength(int laserFrameCornerLength) {
         mViewfinderView.setLaserFrameCornerLength(laserFrameCornerLength);
+        return this;
     }
 
     /**
@@ -279,8 +286,50 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param laserFrameCornerWidth dp
      */
-    public void setLaserFrameCornerWidth(int laserFrameCornerWidth) {
+    public ScannerView setLaserFrameCornerWidth(int laserFrameCornerWidth) {
         mViewfinderView.setLaserFrameCornerWidth(laserFrameCornerWidth);
+        return this;
+    }
+
+    /**
+     * 设置文字颜色
+     *
+     * @param textColor 文字颜色
+     */
+    public ScannerView setDrawTextColor(int textColor) {
+        mViewfinderView.setDrawTextColor(textColor);
+        return this;
+    }
+
+    /**
+     * 设置文字大小
+     *
+     * @param textSize 文字大小 sp
+     */
+    public ScannerView setDrawTextSize(int textSize) {
+        mViewfinderView.setDrawTextSize(textSize);
+        return this;
+    }
+
+    /**
+     * 设置文字
+     *
+     * @param text
+     * @param isBottom 是否在扫描框下方
+     */
+    public ScannerView setDrawText(String text, boolean isBottom) {
+        return setDrawText(text, isBottom, 0);
+    }
+
+    /**
+     * 设置文字
+     *
+     * @param text
+     * @param isBottom   是否在扫描框下方
+     * @param textMargin 离扫描框间距 dp
+     */
+    public ScannerView setDrawText(String text, boolean isBottom, int textMargin) {
+        return setDrawText(text, 0, 0, isBottom, textMargin);
     }
 
     /**
@@ -292,9 +341,10 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param isBottom   是否在扫描框下方
      * @param textMargin 离扫描框间距 dp
      */
-    public void setDrawText(String text, int textSize, int textColor
+    public ScannerView setDrawText(String text, int textSize, int textColor
             , boolean isBottom, int textMargin) {
         mViewfinderView.setDrawText(text, textSize, textColor, isBottom, textMargin);
+        return this;
     }
 
     /**
@@ -302,8 +352,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param mediaResId
      */
-    public void setMediaResId(int mediaResId) {
+    public ScannerView setMediaResId(int mediaResId) {
         mBeepManager.setMediaResId(mediaResId);
+        return this;
     }
 
     /**
@@ -311,20 +362,20 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param mode true开；false关
      */
-    public void toggleLight(boolean mode) {
-        if (mCameraManager != null)
-            mCameraManager.setTorch(mode);
+    public ScannerView toggleLight(boolean mode) {
+        if (mCameraManager != null) mCameraManager.setTorch(mode);
+        return this;
     }
 
     /**
      * 设置扫描框大小
-     *
-     * @param width  dp
+     *  @param width  dp
      * @param height dp
      */
-    public void setLaserFrameSize(int width, int height) {
+    public ScannerView setLaserFrameSize(int width, int height) {
         this.laserFrameWidth = Scanner.dp2px(getContext(), width);
         this.laserFrameHeight = Scanner.dp2px(getContext(), height);
+        return this;
     }
 
     /**
@@ -332,8 +383,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      *
      * @param laserFrameTopMargin
      */
-    public void setLaserFrameTopMargin(int laserFrameTopMargin) {
+    public ScannerView setLaserFrameTopMargin(int laserFrameTopMargin) {
         this.laserFrameTopMargin = Scanner.dp2px(getContext(), laserFrameTopMargin);
+        return this;
     }
 
     /**
