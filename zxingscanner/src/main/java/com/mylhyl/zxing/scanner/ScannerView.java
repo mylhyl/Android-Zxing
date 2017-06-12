@@ -31,6 +31,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private CameraManager mCameraManager;
     private ScannerViewHandler mScannerViewHandler;
     private BeepManager mBeepManager;
+    private int mMediaResId;
     private OnScannerCompletionListener mScannerCompletionListener;
 
     private int laserFrameWidth, laserFrameHeight;//扫描框大小
@@ -51,7 +52,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
     private void init(Context context, AttributeSet attrs, int defStyle) {
         hasSurface = false;
-        mBeepManager = new BeepManager(context);
 
         mSurfaceView = new SurfaceView(context, attrs, defStyle);
         addView(mSurfaceView, new LayoutParams(LayoutParams.MATCH_PARENT
@@ -66,7 +66,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mCameraManager = new CameraManager(getContext());
         mCameraManager.setLaserFrameTopMargin(laserFrameTopMargin);//扫描框与屏幕距离
         mViewfinderView.setCameraManager(mCameraManager);
-        mBeepManager.updatePrefs();
+        if (mBeepManager != null) mBeepManager.updatePrefs();
 
         mScannerViewHandler = null;
 
@@ -88,7 +88,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             mScannerViewHandler.quitSynchronously();
             mScannerViewHandler = null;
         }
-        mBeepManager.close();
+        if (mBeepManager != null) mBeepManager.close();
         mCameraManager.closeDriver();
         mViewfinderView.laserLineBitmapRecycle();
     }
@@ -142,6 +142,10 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         }
         boolean fromLiveScan = barcode != null;
         if (fromLiveScan) {
+            if (mBeepManager == null) {
+                mBeepManager = new BeepManager(getContext());
+                mBeepManager.setMediaResId(mMediaResId);
+            }
             mBeepManager.playBeepSoundAndVibrate();
             drawResultPoints(barcode, scaleFactor, rawResult);
         }
@@ -353,7 +357,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param mediaResId
      */
     public ScannerView setMediaResId(int mediaResId) {
-        mBeepManager.setMediaResId(mediaResId);
+        this.mMediaResId = mediaResId;
         return this;
     }
 
@@ -369,7 +373,8 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
     /**
      * 设置扫描框大小
-     *  @param width  dp
+     *
+     * @param width  dp
      * @param height dp
      */
     public ScannerView setLaserFrameSize(int width, int height) {

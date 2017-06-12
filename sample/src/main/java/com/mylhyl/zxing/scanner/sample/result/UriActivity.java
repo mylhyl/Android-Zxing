@@ -32,7 +32,7 @@ public class UriActivity extends BasicActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);
-            swipeRefreshWebView.showProgressView();
+            swipeRefreshWebView.autoRefresh();
             return true;
         }
     }
