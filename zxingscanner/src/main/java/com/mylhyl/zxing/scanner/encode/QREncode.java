@@ -18,11 +18,8 @@ package com.mylhyl.zxing.scanner.encode;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -76,7 +73,7 @@ public final class QREncode {
     public static class Builder {
 
         private Context context;
-        private BarcodeFormat barcodeFormat;
+        BarcodeFormat barcodeFormat;
         private ParsedResultType parsedResultType = ParsedResultType.TEXT;
         private Bundle bundle;
         private String contents;//原内容
@@ -84,8 +81,9 @@ public final class QREncode {
         private int color;//颜色
         private Uri addressBookUri;
         private boolean useVCard = true;
-        private int width;
-        private int height;
+        private int size;
+        private Bitmap logoBitmap;
+        private int logoSize;
 
         public Builder(Context context) {
             this.context = context;
@@ -199,33 +197,50 @@ public final class QREncode {
         }
 
         /**
-         * 二维码宽
+         * 二维码大小
          *
-         * @param width
+         * @param size
          * @return
          */
-        public Builder setWidth(int width) {
-            this.width = width;
+        public Builder setSize(int size) {
+            this.size = size;
             return this;
         }
 
-        int getWidth() {
-            return width;
+        int getSize() {
+            return size;
         }
 
         /**
-         * 二维码高
+         * 二维码中间的logo
          *
-         * @param height
+         * @param logoBitmap
          * @return
          */
-        public Builder setHeight(int height) {
-            this.height = height;
+        public Builder setLogoBitmap(Bitmap logoBitmap) {
+            this.logoBitmap = logoBitmap;
             return this;
         }
 
-        int getHeight() {
-            return height;
+        /**
+         * 二维码中间的logo
+         *
+         * @param logoBitmap
+         * @param logoSize
+         * @return
+         */
+        public Builder setLogoBitmap(Bitmap logoBitmap, int logoSize) {
+            this.logoBitmap = logoBitmap;
+            this.logoSize = logoSize;
+            return this;
+        }
+
+        Bitmap getLogoBitmap() {
+            return logoBitmap;
+        }
+
+        int getLogoSize() {
+            return logoSize;
         }
 
         /**

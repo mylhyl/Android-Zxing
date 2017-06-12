@@ -4,7 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -78,6 +80,8 @@ public class MainActivity extends BasicActivity {
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Resources res = getResources();
+                Bitmap logoBitmap = BitmapFactory.decodeResource(res, R.mipmap.btn_wheelview_ok_normal);
                 String qrContent = editText.getText().toString();
                 Bitmap bitmap = new QREncode.Builder(MainActivity.this)
                         //二维码颜色
@@ -86,8 +90,8 @@ public class MainActivity extends BasicActivity {
                         .setParsedResultType(TextUtils.isEmpty(qrContent) ? ParsedResultType.URI : ParsedResultType.TEXT)
                         //二维码内容
                         .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" : qrContent)
-                        .setWidth(200)
-                        .setHeight(200)
+//                        .setSize(100)
+                        .setLogoBitmap(logoBitmap)
                         .build().encodeAsBitmap();
                 imageView.setImageBitmap(bitmap);
                 tvResult.setText("单击识别图中二维码");

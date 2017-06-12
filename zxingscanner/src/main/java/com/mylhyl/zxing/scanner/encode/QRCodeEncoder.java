@@ -47,12 +47,25 @@ final class QRCodeEncoder {
 
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
+
     private Context context;
     private QREncode.Builder encodeBuild;
 
     QRCodeEncoder(QREncode.Builder build, Context context) {
         this.context = context;
         this.encodeBuild = build;
+        if (encodeBuild.getColor() == 0) encodeBuild.setColor(BLACK);
+
+        // This assumes the view is full screen, which is a good assumption
+        if (encodeBuild.getSize() == 0) {
+            int smallerDimension = getSmallerDimension(context.getApplicationContext());
+            encodeBuild.setSize(smallerDimension);
+        }
+        Bitmap logoBitmap = encodeBuild.getLogoBitmap();
+        if (logoBitmap != null && encodeBuild.getLogoSize() == 0) {
+            int logoSize = Math.min(logoBitmap.getWidth(), logoBitmap.getHeight());
+            encodeBuild.setLogoBitmap(logoBitmap, logoSize / 2);
+        }
         encodeContentsFromZXing(build);
     }
 
@@ -118,17 +131,22 @@ final class QRCodeEncoder {
                     String name = contactBundle.getString(ContactsContract.Intents.Insert.NAME);
                     String organization = contactBundle
                             .getString(ContactsContract.Intents.Insert.COMPANY);
-                    String address = contactBundle.getString(ContactsContract.Intents.Insert.POSTAL);
-                    List<String> phones = getAllBundleValues(contactBundle, ParserUriToVCard.PHONE_KEYS);
-                    List<String> phoneTypes = getAllBundleValues(contactBundle, ParserUriToVCard.PHONE_TYPE_KEYS);
-                    List<String> emails = getAllBundleValues(contactBundle, ParserUriToVCard.EMAIL_KEYS);
+                    String address = contactBundle.getString(ContactsContract.Intents.Insert
+                            .POSTAL);
+                    List<String> phones = getAllBundleValues(contactBundle, ParserUriToVCard
+                            .PHONE_KEYS);
+                    List<String> phoneTypes = getAllBundleValues(contactBundle, ParserUriToVCard
+                            .PHONE_TYPE_KEYS);
+                    List<String> emails = getAllBundleValues(contactBundle, ParserUriToVCard
+                            .EMAIL_KEYS);
                     String url = contactBundle.getString(ParserUriToVCard.URL_KEY);
                     List<String> urls = url == null ? null : Collections.singletonList(url);
                     String note = contactBundle.getString(ParserUriToVCard.NOTE_KEY);
                     ContactEncoder encoder = build.isUseVCard() ?
                             new VCardContactEncoder() : new MECARDContactEncoder();
                     String[] encoded = encoder.encode(Collections.singletonList(name), organization,
-                            Collections.singletonList(address), phones, phoneTypes, emails, urls, note);
+                            Collections.singletonList(address), phones, phoneTypes, emails, urls,
+                            note);
                     // Make sure we've encoded at least one field.
                     if (!encoded[1].isEmpty()) {
                         encodeBuild.setEncodeContents(encoded[0]);
@@ -158,31 +176,32 @@ final class QRCodeEncoder {
     }
 
     Bitmap encodeAsBitmap() throws WriterException {
-        if(encodeBuild.getWidth() > 0 && encodeBuild.getHeight() > 0){
-            return encodeAsBitmap(encodeBuild.getWidth(), encodeBuild.getHeight());
-        }
-        // This assumes the view is full screen, which is a good assumption
-        int smallerDimension = getSmallerDimension(context.getApplicationContext());
-        return encodeAsBitmap(smallerDimension, smallerDimension);
+        String content = encodeBuild.getEncodeContents();
+        BarcodeFormat barcodeFormat = encodeBuild.getBarcodeFormat();
+        int qrColor = encodeBuild.getColor();
+        int size = encodeBuild.getSize();
+        Bitmap logoBitmap = encodeBuild.getLogoBitmap();
+        if (logoBitmap != null)
+            return encodeAsBitmap(content, barcodeFormat, qrColor, size,
+                    logoBitmap, encodeBuild.getLogoSize());
+        return encodeAsBitmap(content, barcodeFormat, qrColor, size);
     }
 
-    Bitmap encodeAsBitmap(int w, int h) throws WriterException {
-        if (encodeBuild.getColor() == 0)
-            encodeBuild.setColor(BLACK);
-        String contentsToEncode = encodeBuild.getEncodeContents();
-        if (contentsToEncode == null) {
+    private Bitmap encodeAsBitmap(String content, BarcodeFormat barcodeFormat, int qrColor,
+                                  int size) throws
+            WriterException {
+        if (content == null) {
             return null;
         }
         Map<EncodeHintType, Object> hints = null;
-        String encoding = guessAppropriateEncoding(contentsToEncode);
+        String encoding = guessAppropriateEncoding(content);
         if (encoding != null) {
             hints = new EnumMap<>(EncodeHintType.class);
             hints.put(EncodeHintType.CHARACTER_SET, encoding);
         }
         BitMatrix result;
         try {
-            result = new MultiFormatWriter().encode(contentsToEncode,
-                    encodeBuild.getBarcodeFormat(), w, h, hints);
+            result = new MultiFormatWriter().encode(content, barcodeFormat, size, size, hints);
         } catch (IllegalArgumentException iae) {
             // Unsupported format
             return null;
@@ -193,7 +212,51 @@ final class QRCodeEncoder {
         for (int y = 0; y < height; y++) {
             int offset = y * width;
             for (int x = 0; x < width; x++) {
-                pixels[offset + x] = result.get(x, y) ? encodeBuild.getColor() : WHITE;
+                // 无信息设置像素点为白色
+                pixels[offset + x] = result.get(x, y) ? qrColor : WHITE;
+            }
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bitmap;
+    }
+
+    private Bitmap encodeAsBitmap(String content, BarcodeFormat barcodeFormat, int qrColor,
+                                  int size, Bitmap logoBitmap, int logoSize) throws
+            WriterException {
+        if (content == null) {
+            return null;
+        }
+        Map<EncodeHintType, Object> hints = null;
+        String encoding = guessAppropriateEncoding(content);
+        if (encoding != null) {
+            hints = new EnumMap<>(EncodeHintType.class);
+            hints.put(EncodeHintType.CHARACTER_SET, encoding);
+        }
+        BitMatrix result;
+        try {
+            result = new MultiFormatWriter().encode(content, barcodeFormat, size, size, hints);
+        } catch (IllegalArgumentException iae) {
+            // Unsupported format
+            return null;
+        }
+        int width = result.getWidth();
+        int height = result.getHeight();
+        int halfW = width / 2;
+        int halfH = height / 2;
+        int[] pixels = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            int offset = y * width;
+            for (int x = 0; x < width; x++) {
+                if (x > halfW - logoSize && x < halfW + logoSize && y > halfH - logoSize
+                        && y < halfH + logoSize) {
+                    pixels[y * width + x] = logoBitmap.getPixel(x - halfW + logoSize, y - halfH
+                            + logoSize);
+                } else {
+                    // 无信息设置像素点为白色
+                    pixels[offset + x] = result.get(x, y) ? qrColor : WHITE;
+                }
             }
         }
 
