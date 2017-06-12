@@ -18,9 +18,12 @@ package com.mylhyl.zxing.scanner.encode;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -51,10 +54,6 @@ final class QRCodeEncoder {
         this.context = context;
         this.encodeBuild = build;
         encodeContentsFromZXing(build);
-    }
-
-    Context getContext() {
-        return context;
     }
 
     private void encodeContentsFromZXing(QREncode.Builder build) {
@@ -158,7 +157,16 @@ final class QRCodeEncoder {
         return values;
     }
 
-    Bitmap encodeAsBitmap(int dimension) throws WriterException {
+    Bitmap encodeAsBitmap() throws WriterException {
+        if(encodeBuild.getWidth() > 0 && encodeBuild.getHeight() > 0){
+            return encodeAsBitmap(encodeBuild.getWidth(), encodeBuild.getHeight());
+        }
+        // This assumes the view is full screen, which is a good assumption
+        int smallerDimension = getSmallerDimension(context.getApplicationContext());
+        return encodeAsBitmap(smallerDimension, smallerDimension);
+    }
+
+    Bitmap encodeAsBitmap(int w, int h) throws WriterException {
         if (encodeBuild.getColor() == 0)
             encodeBuild.setColor(BLACK);
         String contentsToEncode = encodeBuild.getEncodeContents();
@@ -174,7 +182,7 @@ final class QRCodeEncoder {
         BitMatrix result;
         try {
             result = new MultiFormatWriter().encode(contentsToEncode,
-                    encodeBuild.getBarcodeFormat(), dimension, dimension, hints);
+                    encodeBuild.getBarcodeFormat(), w, h, hints);
         } catch (IllegalArgumentException iae) {
             // Unsupported format
             return null;
@@ -204,4 +212,15 @@ final class QRCodeEncoder {
         return null;
     }
 
+    private static int getSmallerDimension(Context context) {
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        Point displaySize = new Point();
+        display.getSize(displaySize);
+        int width = displaySize.x;
+        int height = displaySize.y;
+        int smallerDimension = width < height ? width : height;
+        smallerDimension = smallerDimension * 7 / 8;
+        return smallerDimension;
+    }
 }

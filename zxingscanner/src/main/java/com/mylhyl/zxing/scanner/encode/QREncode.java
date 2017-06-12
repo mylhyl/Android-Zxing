@@ -35,36 +35,42 @@ import com.google.zxing.client.result.ParsedResultType;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class QREncode {
+    private QRCodeEncoder mQRCodeEncoder;
+
     private QREncode() {
     }
 
+    private QREncode(QRCodeEncoder codeEncoder) {
+        this.mQRCodeEncoder = codeEncoder;
+    }
+
     /**
-     * @param codeEncoder {@linkplain Builder#build() QREncode.Builder().build()}
+     * {@linkplain Builder#build()} () QREncode.Builder().build()}
+     *
      * @return
      */
-    public static Bitmap encodeQR(QRCodeEncoder codeEncoder) {
-        // This assumes the view is full screen, which is a good assumption
-        Context context = codeEncoder.getContext();
-        int smallerDimension = getSmallerDimension(context.getApplicationContext());
+    public Bitmap encodeAsBitmap() {
         try {
-            return codeEncoder.encodeAsBitmap(smallerDimension);
+            return mQRCodeEncoder.encodeAsBitmap();
         } catch (WriterException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static int getSmallerDimension(Context context) {
-        WindowManager manager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
-        Point displaySize = new Point();
-        display.getSize(displaySize);
-        int width = displaySize.x;
-        int height = displaySize.y;
-        int smallerDimension = width < height ? width : height;
-        smallerDimension = smallerDimension * 7 / 8;
-        return smallerDimension;
+    /**
+     * @param codeEncoder {@linkplain Builder#buildDeprecated()} () QREncode.Builder()
+     *                    .buildDeprecated()}
+     * @return
+     */
+    @Deprecated
+    public static Bitmap encodeQR(QRCodeEncoder codeEncoder) {
+        try {
+            return codeEncoder.encodeAsBitmap();
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static class Builder {
@@ -78,6 +84,8 @@ public final class QREncode {
         private int color;//颜色
         private Uri addressBookUri;
         private boolean useVCard = true;
+        private int width;
+        private int height;
 
         public Builder(Context context) {
             this.context = context;
@@ -190,22 +198,72 @@ public final class QREncode {
             return this;
         }
 
-        public QRCodeEncoder build() {
+        /**
+         * 二维码宽
+         *
+         * @param width
+         * @return
+         */
+        public Builder setWidth(int width) {
+            this.width = width;
+            return this;
+        }
+
+        int getWidth() {
+            return width;
+        }
+
+        /**
+         * 二维码高
+         *
+         * @param height
+         * @return
+         */
+        public Builder setHeight(int height) {
+            this.height = height;
+            return this;
+        }
+
+        int getHeight() {
+            return height;
+        }
+
+        /**
+         * @return
+         * @deprecated {@link #build()}
+         */
+        @Deprecated
+        public QRCodeEncoder buildDeprecated() {
+            checkParams();
+            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(this, context.getApplicationContext());
+            return qrCodeEncoder;
+        }
+
+        public QREncode build() {
+            checkParams();
+            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(this, context.getApplicationContext());
+            return new QREncode(qrCodeEncoder);
+        }
+
+        private void checkParams() {
             if (context == null)
                 throw new IllegalArgumentException("context no found...");
             if (parsedResultType == null) {
                 throw new IllegalArgumentException("parsedResultType no found...");
             }
-            if (parsedResultType != ParsedResultType.ADDRESSBOOK && parsedResultType != ParsedResultType.GEO && contents == null) {
+            if (parsedResultType != ParsedResultType.ADDRESSBOOK && parsedResultType !=
+                    ParsedResultType.GEO && contents == null) {
                 throw new IllegalArgumentException("parsedResultType not" +
-                        " ParsedResultType.ADDRESSBOOK and ParsedResultType.GEO, contents no found...");
+                        " ParsedResultType.ADDRESSBOOK and ParsedResultType.GEO, contents no " +
+                        "found...");
             }
-            if ((parsedResultType == ParsedResultType.ADDRESSBOOK || parsedResultType == ParsedResultType.GEO)
+            if ((parsedResultType == ParsedResultType.ADDRESSBOOK || parsedResultType ==
+                    ParsedResultType.GEO)
                     && bundle == null && addressBookUri == null) {
                 throw new IllegalArgumentException("parsedResultType yes" +
-                        " ParsedResultType.ADDRESSBOOK or ParsedResultType.GEO, bundle and addressBookUri no found...");
+                        " ParsedResultType.ADDRESSBOOK or ParsedResultType.GEO, bundle and " +
+                        "addressBookUri no found...");
             }
-            return new QRCodeEncoder(this, context.getApplicationContext());
         }
     }
 }

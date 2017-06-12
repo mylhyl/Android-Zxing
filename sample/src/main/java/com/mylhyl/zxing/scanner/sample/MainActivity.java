@@ -79,14 +79,16 @@ public class MainActivity extends BasicActivity {
             @Override
             public void onClick(View v) {
                 String qrContent = editText.getText().toString();
-                Bitmap bitmap = QREncode.encodeQR(new QREncode.Builder(MainActivity.this)
+                Bitmap bitmap = new QREncode.Builder(MainActivity.this)
                         //二维码颜色
                         .setColor(getResources().getColor(R.color.colorPrimary))
                         //二维码类型
                         .setParsedResultType(TextUtils.isEmpty(qrContent) ? ParsedResultType.URI : ParsedResultType.TEXT)
                         //二维码内容
                         .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" : qrContent)
-                        .build());
+                        .setWidth(200)
+                        .setHeight(200)
+                        .build().encodeAsBitmap();
                 imageView.setImageBitmap(bitmap);
                 tvResult.setText("单击识别图中二维码");
 
@@ -149,9 +151,9 @@ public class MainActivity extends BasicActivity {
 //        } else tvResult.setText("联系人Uri错误");
 
         //只传Uri
-        Bitmap bitmap = QREncode.encodeQR(new QREncode.Builder(this)
+        Bitmap bitmap = new QREncode.Builder(this)
                 .setParsedResultType(ParsedResultType.ADDRESSBOOK)
-                .setAddressBookUri(contactUri).build());
+                .setAddressBookUri(contactUri).build().encodeAsBitmap();
         imageView.setImageBitmap(bitmap);
         tvResult.setText("单击二维码图片识别");
     }
