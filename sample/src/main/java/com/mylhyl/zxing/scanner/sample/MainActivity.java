@@ -91,7 +91,7 @@ public class MainActivity extends BasicActivity {
                         //二维码内容
                         .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" : qrContent)
 //                        .setSize(100)
-                        .setLogoBitmap(logoBitmap)
+                        .setLogoBitmap(logoBitmap,90)
                         .build().encodeAsBitmap();
                 imageView.setImageBitmap(bitmap);
                 tvResult.setText("单击识别图中二维码");

@@ -62,9 +62,12 @@ final class QRCodeEncoder {
             encodeBuild.setSize(smallerDimension);
         }
         Bitmap logoBitmap = encodeBuild.getLogoBitmap();
-        if (logoBitmap != null && encodeBuild.getLogoSize() == 0) {
-            int logoSize = Math.min(logoBitmap.getWidth(), logoBitmap.getHeight());
-            encodeBuild.setLogoBitmap(logoBitmap, logoSize / 2);
+        if (logoBitmap != null) {
+            int logoSize = Math.min(logoBitmap.getWidth(), logoBitmap.getHeight()) / 2;
+            if (encodeBuild.getLogoSize() > 0 && encodeBuild.getLogoSize() < logoSize) {
+                logoSize = encodeBuild.getLogoSize();
+            }
+            encodeBuild.setLogoBitmap(logoBitmap, logoSize);
         }
         encodeContentsFromZXing(build);
     }
