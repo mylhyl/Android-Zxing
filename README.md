@@ -22,7 +22,7 @@
 - 本库依赖使用Gradle构建时添加一下即可:
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:1.2.2'
+compile 'com.mylhyl:zxingscanner:1.3.0'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
@@ -108,16 +108,17 @@ switch (type) {
 
 ```java
 //联系人类型
-Bitmap bitmap = QREncode.encodeQR(new QREncode.Builder(this)
+Bitmap bitmap = new QREncode.Builder(this)
         .setParsedResultType(ParsedResultType.ADDRESSBOOK)
-        .setAddressBookUri(contactUri).build());
+        .setAddressBookUri(contactUri).build().encodeAsBitmap();
 
 //文本类型
-Bitmap bitmap = QREncode.encodeQR(new QREncode.Builder(this)
+Bitmap bitmap = new QREncode.Builder(this)
         .setColor(getResources().getColor(R.color.colorPrimary))//二维码颜色
         //.setParsedResultType(ParsedResultType.TEXT)//默认是TEXT类型
         .setContents("我是石头")//二维码内容
-        .build());
+        .setLogoBitmap(logoBitmap)//二维码中间logo
+        .build().encodeAsBitmap();
 
 ```
 
@@ -191,6 +192,9 @@ Bitmap bitmap = QREncode.encodeQR(new QREncode.Builder(this)
 </table>
 
 ### 七、版本更新
+
+> 1.3.0 生成二维码增加logo
+
 > 1.2.2 修复扫描提示文字颜色无效、支持自动换行
 
 > 1.2.1 修复依赖提示`Failed to resolve:Android-Zxing:zxing:3.2.2`的错误
