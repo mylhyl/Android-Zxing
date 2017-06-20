@@ -33,6 +33,7 @@ import com.mylhyl.zxing.scanner.camera.open.OpenCamera;
  * A class which deals with reading, parsing, and setting the camera parameters
  * which are used to configure the camera hardware.
  */
+@SuppressWarnings("deprecation")
 final class CameraConfigurationManager {
 
     private static final String TAG = "CameraConfiguration";
@@ -56,8 +57,7 @@ final class CameraConfigurationManager {
      */
     void initFromCameraParameters(OpenCamera camera) {
         Camera.Parameters parameters = camera.getCamera().getParameters();
-        WindowManager manager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
 
         int displayRotation = display.getRotation();
@@ -80,8 +80,7 @@ final class CameraConfigurationManager {
                 if (displayRotation % 90 == 0) {
                     cwRotationFromNaturalToDisplay = (360 + displayRotation) % 360;
                 } else {
-                    throw new IllegalArgumentException("Bad rotation: "
-                            + displayRotation);
+                    throw new IllegalArgumentException("Bad rotation: " + displayRotation);
                 }
         }
 
@@ -130,7 +129,8 @@ final class CameraConfigurationManager {
         Camera.Parameters parameters = theCamera.getParameters();
 
         if (parameters == null) {
-            Log.w(TAG, "Device error: no camera parameters are available. Proceeding without configuration.");
+            Log.w(TAG, "Device error: no camera parameters are available. Proceeding without " +
+                    "configuration.");
             return;
         }
 
@@ -184,13 +184,13 @@ final class CameraConfigurationManager {
         }
     }
 
-    Point getBestPreviewSize() {
-        return bestPreviewSize;
-    }
+//    Point getBestPreviewSize() {
+//        return bestPreviewSize;
+//    }
 
-    Point getPreviewSizeOnScreen() {
-        return previewSizeOnScreen;
-    }
+//    Point getPreviewSizeOnScreen() {
+//        return previewSizeOnScreen;
+//    }
 
     Point getCameraResolution() {
         return cameraResolution;
@@ -200,9 +200,9 @@ final class CameraConfigurationManager {
         return screenResolution;
     }
 
-    int getCWNeededRotation() {
-        return cwNeededRotation;
-    }
+//    int getCWNeededRotation() {
+//        return cwNeededRotation;
+//    }
 
     boolean getTorchState(Camera camera) {
         if (camera != null) {

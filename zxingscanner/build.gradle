@@ -7,9 +7,9 @@ android {
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 23
-        versionCode 20170608
+        versionCode 20170620
         versionName version
     }
     buildTypes {
@@ -33,7 +33,7 @@ publish {
     userOrg = 'mylhyl'
     groupId = 'com.mylhyl'
     artifactId = 'zxingscanner'
-    version = '1.3.0'
+    version = '1.3.1'
     description = 'android zxing style'
     website = "https://github.com/mylhyl/Android-Zxing"
 }

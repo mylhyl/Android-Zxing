@@ -22,6 +22,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Handler;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.PlanarYUVLuminanceSource;
@@ -38,6 +39,8 @@ import java.io.IOException;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class CameraManager {
+
+    private static final String TAG = CameraManager.class.getSimpleName();
 
     private static final int MIN_FRAME_WIDTH = 240;
     private static final int MIN_FRAME_HEIGHT = 240;
@@ -103,12 +106,11 @@ public final class CameraManager {
         Camera.Parameters parameters = cameraObject.getParameters();
         String parametersFlattened = parameters == null ? null : parameters.flatten(); // Save these, temporarily
         try {
-            //读取配置并设置相机参数
             configManager.setDesiredCameraParameters(theCamera, false);
         } catch (RuntimeException re) {
             // Driver failed
-            //Camera rejected parameters. Setting only minimal safe-mode parameters");
-            //  Log.i(TAG, "Resetting to saved camera params: " + parametersFlattened);
+            Log.w(TAG, "Camera rejected parameters. Setting only minimal safe-mode parameters");
+            Log.i(TAG, "Resetting to saved camera params: " + parametersFlattened);
             // Reset:
             if (parametersFlattened != null) {
                 parameters = cameraObject.getParameters();
@@ -118,7 +120,7 @@ public final class CameraManager {
                     configManager.setDesiredCameraParameters(theCamera, true);
                 } catch (RuntimeException re2) {
                     // Well, darn. Give up
-                    //   Log.w(TAG, "Camera rejected even safe-mode parameters! No configuration");
+                    Log.w(TAG, "Camera rejected even safe-mode parameters! No configuration");
                 }
             }
         }
@@ -174,11 +176,12 @@ public final class CameraManager {
     /**
      * 设置闪光灯
      *
-     * @param newSetting if {@code true}, light should be turned on if currently off. And vice versa.
+     * @param newSetting if {@code true}, light should be turned on if currently off. And vice
+     *                   versa.
      */
     public synchronized void setTorch(boolean newSetting) {
         OpenCamera theCamera = camera;
-        if (theCamera != null) {
+        if (theCamera != null && newSetting != configManager.getTorchState(theCamera.getCamera())) {
             if (newSetting != configManager.getTorchState(theCamera.getCamera())) {
                 boolean wasAutoFocusManager = autoFocusManager != null;
                 if (wasAutoFocusManager) {
@@ -195,7 +198,8 @@ public final class CameraManager {
     }
 
     /**
-     * A single preview frame will be returned to the handler supplied. The data will arrive as byte[]
+     * A single preview frame will be returned to the handler supplied. The data will arrive as
+     * byte[]
      * in the message.obj field, with width and height encoded as message.arg1 and message.arg2,
      * respectively.
      * <br/>
@@ -233,12 +237,15 @@ public final class CameraManager {
                 return null;
             }
             int height;
-            int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
+            int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH,
+                    MAX_FRAME_WIDTH);
             //竖屏则为正方形
-            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (context.getResources().getConfiguration().orientation == Configuration
+                    .ORIENTATION_PORTRAIT) {
                 height = width;
             } else {
-                height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
+                height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT,
+                        MAX_FRAME_HEIGHT);
             }
             int statusBarHeight = getStatusBarHeight();//状态栏高度
             int leftOffset = (screenResolution.x - width) / 2;
@@ -248,7 +255,8 @@ public final class CameraManager {
             else {
                 laserFrameTopMargin += statusBarHeight;
             }
-            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width, laserFrameTopMargin + height);
+            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width,
+                    laserFrameTopMargin + height);
             //  Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;
@@ -286,7 +294,8 @@ public final class CameraManager {
             }
 
             //竖屏识别一维
-            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (context.getResources().getConfiguration().orientation == Configuration
+                    .ORIENTATION_PORTRAIT) {
                 rect.left = rect.left * cameraResolution.y / screenResolution.x;
                 rect.right = rect.right * cameraResolution.y / screenResolution.x;
                 rect.top = rect.top * cameraResolution.x / screenResolution.y;
@@ -337,7 +346,8 @@ public final class CameraManager {
             else {
                 laserFrameTopMargin += statusBarHeight;
             }
-            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width, laserFrameTopMargin + height);
+            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width,
+                    laserFrameTopMargin + height);
             //   Log.d(TAG, "Calculated manual framing rect: " + framingRect);
             framingRectInPreview = null;
         } else {
@@ -372,7 +382,8 @@ public final class CameraManager {
      */
     private int getStatusBarHeight() {
         int result = 0;
-        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen",
+                "android");
         if (resourceId > 0) {
             result = context.getResources().getDimensionPixelSize(resourceId);
         }

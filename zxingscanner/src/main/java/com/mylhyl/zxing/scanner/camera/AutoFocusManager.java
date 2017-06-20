@@ -18,14 +18,16 @@ package com.mylhyl.zxing.scanner.camera;
 
 import android.hardware.Camera;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.RejectedExecutionException;
 
+@SuppressWarnings("deprecation")
 final class AutoFocusManager implements Camera.AutoFocusCallback {
 
-//	private static final String TAG = AutoFocusManager.class.getSimpleName();
+    private static final String TAG = AutoFocusManager.class.getSimpleName();
 
     private static final long AUTO_FOCUS_INTERVAL_MS = 2000L;
     private static final Collection<String> FOCUS_MODES_CALLING_AF;
@@ -47,7 +49,8 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
         String currentFocusMode = camera.getParameters().getFocusMode();
         // 自动对焦
         useAutoFocus = true && FOCUS_MODES_CALLING_AF.contains(currentFocusMode);
-        //Log.i(TAG, "Current focus mode '" + currentFocusMode + "'; use auto focus? " + useAutoFocus);
+        //Log.i(TAG, "Current focus mode '" + currentFocusMode + "'; use auto focus? " +
+        // useAutoFocus);
         start();
     }
 
@@ -64,7 +67,7 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
                 newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 outstandingTask = newTask;
             } catch (RejectedExecutionException ree) {
-                //  Log.w(TAG, "Could not request auto focus", ree);
+                Log.w(TAG, "Could not request auto focus", ree);
             }
         }
     }
@@ -77,9 +80,8 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
                     camera.autoFocus(this);
                     focusing = true;
                 } catch (RuntimeException re) {
-                    // Have heard RuntimeException reported in Android 4.0.x+;
-                    // continue?
-                    //     Log.w(TAG, "Unexpected exception while focusing", re);
+                    // Have heard RuntimeException reported in Android 4.0.x+; continue?
+                    Log.w(TAG, "Unexpected exception while focusing", re);
                     // Try again later to keep cycle going
                     autoFocusAgainLater();
                 }
@@ -104,9 +106,8 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
             try {
                 camera.cancelAutoFocus();
             } catch (RuntimeException re) {
-                // Have heard RuntimeException reported in Android 4.0.x+;
-                // continue?
-                //   Log.w(TAG, "Unexpected exception while cancelling focusing", re);
+                // Have heard RuntimeException reported in Android 4.0.x+; continue?
+                Log.w(TAG, "Unexpected exception while cancelling focusing", re);
             }
         }
     }

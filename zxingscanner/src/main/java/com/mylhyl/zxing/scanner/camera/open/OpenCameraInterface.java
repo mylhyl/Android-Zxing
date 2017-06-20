@@ -17,13 +17,15 @@
 package com.mylhyl.zxing.scanner.camera.open;
 
 import android.hardware.Camera;
+import android.util.Log;
 
 /**
  * Abstraction over the {@link Camera} API that helps open them and return their metadata.
  */
+@SuppressWarnings("deprecation")
 public final class OpenCameraInterface {
 
-//  private static final String TAG = OpenCameraInterface.class.getName();
+  private static final String TAG = OpenCameraInterface.class.getName();
 
     private OpenCameraInterface() {
     }
@@ -45,7 +47,7 @@ public final class OpenCameraInterface {
 
         int numCameras = Camera.getNumberOfCameras();
         if (numCameras == 0) {
-            // Log.w(TAG, "No cameras!");
+             Log.w(TAG, "No cameras!");
             return null;
         }
 
@@ -73,14 +75,14 @@ public final class OpenCameraInterface {
 
         Camera camera;
         if (index < numCameras) {
-            //  Log.i(TAG, "Opening camera #" + index);
+              Log.i(TAG, "Opening camera #" + index);
             camera = Camera.open(index);
         } else {
             if (explicitRequest) {
-                //    Log.w(TAG, "Requested camera does not exist: " + cameraId);
+                    Log.w(TAG, "Requested camera does not exist: " + cameraId);
                 camera = null;
             } else {
-                //    Log.i(TAG, "No camera facing " + CameraFacing.BACK + "; returning camera #0");
+                    Log.i(TAG, "No camera facing " + CameraFacing.BACK + "; returning camera #0");
                 camera = Camera.open(0);
                 selectedCameraInfo = new Camera.CameraInfo();
                 Camera.getCameraInfo(0, selectedCameraInfo);

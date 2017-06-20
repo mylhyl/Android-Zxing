@@ -22,7 +22,7 @@
 - 本库依赖使用Gradle构建时添加一下即可:
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:1.3.0'
+compile 'com.mylhyl:zxingscanner:1.3.1'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
@@ -192,6 +192,8 @@ Bitmap bitmap = new QREncode.Builder(this)
 </table>
 
 ### 七、版本更新
+
+> 1.3.1 优化代码
 
 > 1.3.0 生成二维码增加logo
 
