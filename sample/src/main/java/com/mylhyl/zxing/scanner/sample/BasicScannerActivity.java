@@ -18,7 +18,7 @@ import com.google.zxing.client.result.ProductParsedResult;
 import com.google.zxing.client.result.TextParsedResult;
 import com.google.zxing.client.result.URIParsedResult;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
-import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.result.AddressBookResult;
 import com.mylhyl.zxing.scanner.result.ISBNResult;
 import com.mylhyl.zxing.scanner.result.ProductResult;
@@ -69,26 +69,26 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
         switch (type) {
             case ADDRESSBOOK:
                 AddressBookParsedResult addressBook = (AddressBookParsedResult) parsedResult;
-                bundle.putSerializable(Intents.Scan.RESULT, new AddressBookResult(addressBook));
+                bundle.putSerializable(Scanner.Scan.RESULT, new AddressBookResult(addressBook));
                 break;
             case PRODUCT:
                 ProductParsedResult product = (ProductParsedResult) parsedResult;
                 Log.i(TAG, "productID: " + product.getProductID());
-                bundle.putSerializable(Intents.Scan.RESULT, new ProductResult(product));
+                bundle.putSerializable(Scanner.Scan.RESULT, new ProductResult(product));
                 break;
             case ISBN:
                 ISBNParsedResult isbn = (ISBNParsedResult) parsedResult;
                 Log.i(TAG, "isbn: " + isbn.getISBN());
-                bundle.putSerializable(Intents.Scan.RESULT, new ISBNResult(isbn));
+                bundle.putSerializable(Scanner.Scan.RESULT, new ISBNResult(isbn));
                 break;
             case URI:
                 URIParsedResult uri = (URIParsedResult) parsedResult;
                 Log.i(TAG, "uri: " + uri.getURI());
-                bundle.putSerializable(Intents.Scan.RESULT, new URIResult(uri));
+                bundle.putSerializable(Scanner.Scan.RESULT, new URIResult(uri));
                 break;
             case TEXT:
                 TextParsedResult textParsedResult = (TextParsedResult) parsedResult;
-                bundle.putString(Intents.Scan.RESULT, textParsedResult.getText());
+                bundle.putString(Scanner.Scan.RESULT, textParsedResult.getText());
                 break;
             case GEO:
                 break;
@@ -102,7 +102,7 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
 
     private void onReturnScanResult(Result rawResult) {
         Intent intent = getIntent();
-        intent.putExtra(Intents.Scan.RESULT, rawResult.getText());
+        intent.putExtra(Scanner.Scan.RESULT, rawResult.getText());
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

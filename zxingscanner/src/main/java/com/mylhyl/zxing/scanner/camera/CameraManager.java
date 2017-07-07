@@ -249,15 +249,15 @@ public final class CameraManager {
             }
             int statusBarHeight = getStatusBarHeight();//状态栏高度
             int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2 - statusBarHeight;
+            int topOffset = (screenResolution.y - height) / 2 ;
             if (laserFrameTopMargin == 0)
-                laserFrameTopMargin = topOffset;
+                laserFrameTopMargin = topOffset - statusBarHeight;
             else {
                 laserFrameTopMargin += statusBarHeight;
             }
             framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width,
                     laserFrameTopMargin + height);
-            //  Log.d(TAG, "Calculated framing rect: " + framingRect);
+              Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;
     }

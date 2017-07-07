@@ -18,7 +18,7 @@ import android.widget.ToggleButton;
 
 import com.google.zxing.Result;
 import com.mylhyl.zxing.scanner.ScannerView;
-import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.decode.QRDecode;
 import com.mylhyl.zxing.scanner.sample.picture.PickPictureTotalActivity;
 
@@ -57,10 +57,12 @@ public class ScannerActivity extends DeCodeActivity {
         findViewById(R.id.button4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission
+                        .WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     //权限还没有授予，需要在这里写申请权限的代码
                     ActivityCompat.requestPermissions(ScannerActivity.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, APPLY_READ_EXTERNAL_STORAGE);
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            APPLY_READ_EXTERNAL_STORAGE);
                 } else {
                     PickPictureTotalActivity.gotoActivity(ScannerActivity.this);
                 }
@@ -72,8 +74,9 @@ public class ScannerActivity extends DeCodeActivity {
             laserMode = extras.getInt(EXTRA_LASER_LINE_MODE);
         }
         mScannerView.setMediaResId(R.raw.beep);//设置扫描成功的声音
-        mScannerView.setDrawText("将二维码放入框内",true);
+        mScannerView.setDrawText("将二维码放入框内", true);
         mScannerView.setDrawTextColor(Color.RED);
+//        mScannerView.setScanMode(Scanner.ScanMode.PRODUCT_MODE);
 
 //        mScannerView.setLaserFrameTopMargin(100);//扫描框与屏幕上方距离
 //        mScannerView.setLaserFrameSize(200, 200);//扫描框大小
@@ -95,7 +98,8 @@ public class ScannerActivity extends DeCodeActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == APPLY_READ_EXTERNAL_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -146,14 +150,15 @@ public class ScannerActivity extends DeCodeActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_CANCELED && resultCode == Activity.RESULT_OK) {
             if (requestCode == PickPictureTotalActivity.REQUEST_CODE_SELECT_PICTURE) {
-                String picturePath = data.getStringExtra(PickPictureTotalActivity.EXTRA_PICTURE_PATH);
+                String picturePath = data.getStringExtra(PickPictureTotalActivity
+                        .EXTRA_PICTURE_PATH);
                 QRDecode.decodeQR(picturePath, this);
             }
         }
     }
 
     public static void gotoActivity(Activity activity, boolean isBackResult, int laserMode) {
-        activity.startActivityForResult(new Intent(Intents.Scan.ACTION)
+        activity.startActivityForResult(new Intent(Scanner.Scan.ACTION)
                         .putExtra(ScannerActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
                         .putExtra(EXTRA_LASER_LINE_MODE, laserMode)
                 , ScannerActivity.REQUEST_CODE_SCANNER);

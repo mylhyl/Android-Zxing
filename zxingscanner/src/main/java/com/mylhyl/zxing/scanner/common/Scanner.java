@@ -10,7 +10,7 @@ import com.google.zxing.client.result.ResultParser;
 /**
  * Created by hupei on 2016/7/1.
  */
-public class Scanner {
+public final class Scanner {
     public static final int RESTART_PREVIEW = 0;
     public static final int DECODE_SUCCEEDED = 1;
     public static final int DECODE_FAILED = 2;
@@ -25,6 +25,36 @@ public class Scanner {
         public static final int VIEWFINDER_LASER = 0xff00ff00;
         public static final int POSSIBLE_RESULT_POINTS = 0xc0ffbd21;
         public static final int RESULT_POINTS = 0xc099cc00;
+    }
+
+    public static class Scan {
+        public static final String ACTION = "com.mylhyl.zxing.scanner.client.android.SCAN";
+
+        public static final String RESULT = "SCAN_RESULT";
+    }
+
+    public static class ScanMode {
+
+        /**
+         * Decode only UPC and EAN barcodes. This is the right choice for shopping apps which get
+         * prices, reviews, etc. for products.
+         */
+        public static final String PRODUCT_MODE = "PRODUCT_MODE";
+
+        /**
+         * Decode only 1D barcodes.
+         */
+        public static final String ONE_D_MODE = "ONE_D_MODE";
+
+        /**
+         * Decode only QR codes.
+         */
+        public static final String QR_CODE_MODE = "QR_CODE";
+
+        /**
+         * Decode only Data Matrix codes.
+         */
+        public static final String DATA_MATRIX_MODE = "DATA_MATRIX_MODE";
     }
 
     public static ParsedResult parseResult(Result rawResult) {

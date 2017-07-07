@@ -14,8 +14,10 @@ import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
+import com.mylhyl.zxing.scanner.decode.DecodeFormatManager;
 
 import java.io.IOException;
+import java.util.Collection;
 
 /**
  * Created by hupei on 2016/7/1.
@@ -36,6 +38,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
     private int laserFrameWidth, laserFrameHeight;//扫描框大小
     private int laserFrameTopMargin;//扫描框离屏幕上方距离
+    private Collection<BarcodeFormat> decodeFormats;//解码类型
 
     public ScannerView(Context context) {
         this(context, null);
@@ -60,6 +63,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mViewfinderView = new ViewfinderView(context, attrs);
         addView(mViewfinderView, new LayoutParams(LayoutParams.MATCH_PARENT
                 , LayoutParams.MATCH_PARENT));
+
+        //默认解码二维
+        setScanMode(Scanner.ScanMode.QR_CODE_MODE);
     }
 
     public void onResume() {
@@ -106,8 +112,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             // Creating the mScannerViewHandler starts the preview, which can also throw a
             // RuntimeException.
             if (mScannerViewHandler == null) {
-                mScannerViewHandler = new ScannerViewHandler(this, null,
-                        null, null, mCameraManager);
+                mScannerViewHandler = new ScannerViewHandler(this, decodeFormats, mCameraManager);
             }
             //设置扫描框大小
             if (laserFrameWidth > 0 && laserFrameHeight > 0)
@@ -390,6 +395,28 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     public ScannerView setLaserFrameTopMargin(int laserFrameTopMargin) {
         this.laserFrameTopMargin = Scanner.dp2px(getContext(), laserFrameTopMargin);
+        return this;
+    }
+
+    /**
+     * 设置扫描解码类型（二维码、一维码、商品条码）
+     *
+     * @param scanMode {@linkplain Scanner.ScanMode mode}
+     * @return
+     */
+    public ScannerView setScanMode(String scanMode) {
+        decodeFormats = DecodeFormatManager.parseDecodeFormats(scanMode);
+        return this;
+    }
+
+    /**
+     * 设置扫描解码类型
+     *
+     * @param barcodeFormat
+     * @return
+     */
+    public ScannerView setScanMode(BarcodeFormat... barcodeFormat) {
+        decodeFormats = DecodeFormatManager.parseDecodeFormats(barcodeFormat);
         return this;
     }
 

@@ -40,12 +40,12 @@ final class CameraConfigurationManager {
     private static final int FRONT_LIGHT_MODE_ON = 0;
     private static final int FRONT_LIGHT_MODE_OFF = 1;
     private final Context context;
-    private int cwNeededRotation;
+//    private int cwNeededRotation;
     private int cwRotationFromDisplayToCamera;
     private Point screenResolution;
     private Point cameraResolution;
     private Point bestPreviewSize;
-    private Point previewSizeOnScreen;
+//    private Point previewSizeOnScreen;
 
     CameraConfigurationManager(Context context) {
         this.context = context;
@@ -93,11 +93,11 @@ final class CameraConfigurationManager {
         cwRotationFromDisplayToCamera = (360 +
                 cwRotationFromNaturalToCamera - cwRotationFromNaturalToDisplay) % 360;
 
-        if (camera.getFacing() == CameraFacing.FRONT) {
-            cwNeededRotation = (360 - cwRotationFromDisplayToCamera) % 360;
-        } else {
-            cwNeededRotation = cwRotationFromDisplayToCamera;
-        }
+//        if (camera.getFacing() == CameraFacing.FRONT) {
+//            cwNeededRotation = (360 - cwRotationFromDisplayToCamera) % 360;
+//        } else {
+//            cwNeededRotation = cwRotationFromDisplayToCamera;
+//        }
 
         Point theScreenResolution = new Point();
         display.getSize(theScreenResolution);
@@ -107,14 +107,14 @@ final class CameraConfigurationManager {
         bestPreviewSize = CameraConfigurationUtils.findBestPreviewSizeValue(
                 parameters, screenResolution);
 
-        boolean isScreenPortrait = screenResolution.x < screenResolution.y;
-        boolean isPreviewSizePortrait = bestPreviewSize.x < bestPreviewSize.y;
+//        boolean isScreenPortrait = screenResolution.x < screenResolution.y;
+//        boolean isPreviewSizePortrait = bestPreviewSize.x < bestPreviewSize.y;
 
-        if (isScreenPortrait == isPreviewSizePortrait) {
-            previewSizeOnScreen = bestPreviewSize;
-        } else {
-            previewSizeOnScreen = new Point(bestPreviewSize.y, bestPreviewSize.x);
-        }
+//        if (isScreenPortrait == isPreviewSizePortrait) {
+//            previewSizeOnScreen = bestPreviewSize;
+//        } else {
+//            previewSizeOnScreen = new Point(bestPreviewSize.y, bestPreviewSize.x);
+//        }
     }
 
     /**

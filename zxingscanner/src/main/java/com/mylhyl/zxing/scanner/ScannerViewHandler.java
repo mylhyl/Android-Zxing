@@ -23,15 +23,12 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.DecodeHintType;
 import com.google.zxing.Result;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
-import com.mylhyl.zxing.scanner.common.Intents;
 import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.decode.DecodeThread;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * 针对扫描任务的Handler，可接收的message有启动扫描（restart_preview）、扫描成功（decode_succeeded）、扫描失败（decode_failed）等等
@@ -51,16 +48,13 @@ final class ScannerViewHandler extends Handler {
         PREVIEW, SUCCESS, DONE
     }
 
-    ScannerViewHandler(ScannerView scannerView,
-                       Collection<BarcodeFormat> decodeFormats,
-                       Map<DecodeHintType, ?> baseHints, String characterSet,
+    ScannerViewHandler(ScannerView scannerView, Collection<BarcodeFormat> decodeFormats,
                        CameraManager cameraManager) {
         this.scannerView = scannerView;
         this.cameraManager = cameraManager;
         //启动扫描线程
-        decodeThread = new DecodeThread(cameraManager, this, decodeFormats, baseHints,
-                characterSet, new ViewfinderResultPointCallback(
-                scannerView.getViewfinderView()));
+        decodeThread = new DecodeThread(cameraManager, this, decodeFormats,
+                new ViewfinderResultPointCallback(scannerView.getViewfinderView()));
         decodeThread.start();
         state = State.SUCCESS;
         //开启相机预览界面

@@ -18,7 +18,7 @@ import com.litesuits.http.request.AbstractRequest;
 import com.litesuits.http.request.StringRequest;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
-import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.result.ISBNResult;
 import com.mylhyl.zxing.scanner.result.ProductResult;
 import com.mylhyl.zxing.scanner.sample.BasicActivity;
@@ -48,7 +48,7 @@ public class BarcodeActivity extends BasicActivity {
         Bundle extras = getIntent().getExtras();
         if (extras == null) finish();
 
-        Serializable serializable = extras.getSerializable(Intents.Scan.RESULT);
+        Serializable serializable = extras.getSerializable(Scanner.Scan.RESULT);
         if (serializable == null) finish();
 
         String productID = "";

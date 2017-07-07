@@ -21,7 +21,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.zxing.client.result.ParsedResultType;
-import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.encode.QREncode;
 
 import java.io.ByteArrayOutputStream;
@@ -129,7 +129,7 @@ public class MainActivity extends BasicActivity {
         if (resultCode != Activity.RESULT_CANCELED && resultCode == Activity.RESULT_OK) {
             if (requestCode == ScannerActivity.REQUEST_CODE_SCANNER) {
                 if (data != null) {
-                    String stringExtra = data.getStringExtra(Intents.Scan.RESULT);
+                    String stringExtra = data.getStringExtra(Scanner.Scan.RESULT);
                     tvResult.setText(stringExtra);
                 }
             } else if (requestCode == PICK_CONTACT) {

@@ -1,4 +1,4 @@
-###一、概述
+### 一、概述
 
 相信Adnroid开发都知道，有四款扫描器，[Zxing](https://github.com/zxing/zxing) 、[Zbar](https://github.com/zbar/zbar) ，[Barcode4J](https://sourceforge.net/projects/barcode4j/files/)、[OkapiBarcode](https://github.com/woo-j/OkapiBarcode) 前二者应用较广泛，至于介绍与区别就在此阐述，网上有很多。此文主要介绍在在使用过程中，官方客户端各种达不到需求。相信很多童鞋都有此体会，所以借此机会就在Zxing 官方客户端基础上修改，去除无用功能并二次封装达到可扩展。
 - 官方客户端目前问题汇总
@@ -11,12 +11,12 @@
  - 可定制扫描框与扫描线样式
  - 加入创建二维码、识别图片中的二维码功能
   
-###二、效果图
+### 二、效果图
 <img src="preview/gif.gif" width="240px"/>
 
-###三、[下载APK体验](preview/sample-debug.apk)
+### 三、[下载APK体验](preview/sample-debug.apk)
 
-###四、引用
+### 四、引用
 
 ## 1、在线
 - 本库依赖使用Gradle构建时添加一下即可:
@@ -191,7 +191,14 @@ Bitmap bitmap = new QREncode.Builder(this)
 </tr>
 </table>
 
-### 七、版本更新
+### 七、注意事项
+对于setLaserFrameTopMargin方法，扫描区域偏移的问题[issues-13](https://github.com/mylhyl/Android-Zxing/issues/13)
+
+QQ交流群：630413339 [点击链接加入群Android-Zxing](https://jq.qq.com/?_wv=1027&k=4BR729O)
+
+<img src="preview/qrcode.png"/>
+
+### 八、版本更新
 
 > 1.3.1 优化代码
 

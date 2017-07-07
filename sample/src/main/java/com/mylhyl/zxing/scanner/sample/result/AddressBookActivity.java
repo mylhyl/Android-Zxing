@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.mylhyl.zxing.scanner.common.Intents;
+import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.result.AddressBookResult;
 import com.mylhyl.zxing.scanner.sample.BasicActivity;
 import com.mylhyl.zxing.scanner.sample.R;
@@ -25,7 +25,7 @@ public class AddressBookActivity extends BasicActivity {
         Bundle extras = getIntent().getExtras();
         if (extras == null) finish();
 
-        AddressBookResult addressBookResult = (AddressBookResult) extras.getSerializable(Intents.Scan.RESULT);
+        AddressBookResult addressBookResult = (AddressBookResult) extras.getSerializable(Scanner.Scan.RESULT);
         if (addressBookResult == null) finish();
 
         String[] names = addressBookResult.getNames();
