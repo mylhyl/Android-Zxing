@@ -22,7 +22,7 @@
 - 本库依赖使用Gradle构建时添加一下即可:
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:1.3.1'
+compile 'com.mylhyl:zxingscanner:1.4.0'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
@@ -189,6 +189,12 @@ Bitmap bitmap = new QREncode.Builder(this)
 <td> text -> 内容 <br>textSize -> 文字大小 <br>textColor -> 文字颜色 <br>isBottom -> 是否在扫描框下方 <br> textMargin -> 离扫描框间距</td>
 <td>text -> 将二维码放入框内，即可自动扫描 <br>textSize -> 16sp <br>textColor -> 白色 <br>isBottom -> true <br> textMargin -> 20dp</td>
 </tr>
+<tr>
+<td>setScanMode</td>
+<td>设置扫描类型</td>
+<td>二维码、一维码</td>
+</tr>
+<tr>
 </table>
 
 ### 七、注意事项
@@ -199,6 +205,8 @@ QQ交流群：630413339 [点击链接加入群Android-Zxing](https://jq.qq.com/?
 <img src="preview/qrcode.png"/>
 
 ### 八、版本更新
+
+> 1.4.0 增加扫描类型`setScanMode`
 
 > 1.3.1 优化代码
 
