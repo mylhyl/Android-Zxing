@@ -195,6 +195,11 @@ Bitmap bitmap = new QREncode.Builder(this)
 <td>二维码、一维码</td>
 </tr>
 <tr>
+<td>isShowResThumbnail</td>
+<td>是否显示扫描结果缩略图</td>
+<td>true显示；false显示</td>
+</tr>
+<tr>
 </table>
 
 ### 七、注意事项

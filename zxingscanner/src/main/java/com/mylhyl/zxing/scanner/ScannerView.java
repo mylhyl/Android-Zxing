@@ -39,6 +39,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private int laserFrameWidth, laserFrameHeight;//扫描框大小
     private int laserFrameTopMargin;//扫描框离屏幕上方距离
     private Collection<BarcodeFormat> decodeFormats;//解码类型
+    private boolean mShowResThumbnail = true;//扫描成功是否显示缩略图
 
     public ScannerView(Context context) {
         this(context, null);
@@ -145,14 +146,15 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         if (barcode != null) {
             mViewfinderView.drawResultBitmap(barcode);
         }
-        boolean fromLiveScan = barcode != null;
-        if (fromLiveScan) {
+
+        if (mMediaResId != 0) {
             if (mBeepManager == null) {
                 mBeepManager = new BeepManager(getContext());
                 mBeepManager.setMediaResId(mMediaResId);
             }
             mBeepManager.playBeepSoundAndVibrate();
-            drawResultPoints(barcode, scaleFactor, rawResult);
+            if (barcode != null)
+                drawResultPoints(barcode, scaleFactor, rawResult);
         }
     }
 
@@ -421,6 +423,16 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
+     * 是否显示扫描结果缩略图
+     * @param showResThumbnail
+     * @return
+     */
+    public ScannerView isShowResThumbnail(boolean showResThumbnail) {
+        this.mShowResThumbnail = showResThumbnail;
+        return this;
+    }
+
+    /**
      * 重新扫描，支持延时
      *
      * @param delayMS 毫秒
@@ -437,5 +449,9 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
     void drawViewfinder() {
         mViewfinderView.drawViewfinder();
+    }
+
+    boolean getShowResThumbnail() {
+        return mShowResThumbnail;
     }
 }

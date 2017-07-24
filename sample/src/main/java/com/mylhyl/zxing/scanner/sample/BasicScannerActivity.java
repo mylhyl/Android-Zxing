@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -27,7 +28,8 @@ import com.mylhyl.zxing.scanner.result.URIResult;
 /**
  * Created by hupei on 2016/7/7.
  */
-public abstract class BasicScannerActivity extends AppCompatActivity implements OnScannerCompletionListener {
+public abstract class BasicScannerActivity extends AppCompatActivity implements
+        OnScannerCompletionListener {
     public static final int REQUEST_CODE_SCANNER = 188;
     public static final String EXTRA_RETURN_SCANNER_RESULT = "return_scanner_result";
     private static final String TAG = "BasicScannerActivity";
@@ -43,6 +45,8 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
      */
     abstract void onResultActivity(Result result, ParsedResultType type, Bundle bundle);
 
+    boolean showThumbnail = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +57,7 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
     }
 
     @Override
-    public void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
+    public void OnScannerCompletion(final Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
         if (rawResult == null) {
             Toast.makeText(this, "未发现二维码", Toast.LENGTH_SHORT).show();
             finish();
@@ -63,8 +67,8 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
             onReturnScanResult(rawResult);
             return;
         }
-        Bundle bundle = new Bundle();
-        ParsedResultType type = parsedResult.getType();
+        final Bundle bundle = new Bundle();
+        final ParsedResultType type = parsedResult.getType();
         Log.i(TAG, "ParsedResultType: " + type);
         switch (type) {
             case ADDRESSBOOK:
@@ -97,7 +101,16 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements 
             case SMS:
                 break;
         }
-        onResultActivity(rawResult, type, bundle);
+        if(showThumbnail){
+            onResultActivity(rawResult, type, bundle);
+        }else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onResultActivity(rawResult, type, bundle);
+                }
+            }, 3 * 1000);
+        }
     }
 
     private void onReturnScanResult(Result rawResult) {

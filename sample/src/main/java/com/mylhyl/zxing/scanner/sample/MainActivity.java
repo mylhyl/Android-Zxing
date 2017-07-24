@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.common.Scanner;
@@ -30,6 +31,7 @@ public class MainActivity extends BasicActivity {
     private static final int PICK_CONTACT = 1;
     private TextView tvResult;
     private ImageView imageView;
+    private ToggleButton toggleButton, toggleButton2;
     private int laserMode;
 
     @Override
@@ -39,6 +41,8 @@ public class MainActivity extends BasicActivity {
         tvResult = (TextView) findViewById(R.id.textView);
         imageView = (ImageView) findViewById(R.id.imageView);
 
+        toggleButton = (ToggleButton) findViewById(R.id.toggleButton1);
+        toggleButton2 = (ToggleButton) findViewById(R.id.toggleButton2);
         final CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -70,7 +74,8 @@ public class MainActivity extends BasicActivity {
                 } else {
                     //权限已经被授予，在这里直接写要执行的相应方法即可
                     ScannerActivity.gotoActivity(MainActivity.this,
-                            checkBox.isChecked(), laserMode);
+                            checkBox.isChecked(), laserMode, toggleButton.isChecked()
+                            , toggleButton2.isChecked());
                 }
             }
         });
@@ -81,17 +86,20 @@ public class MainActivity extends BasicActivity {
             @Override
             public void onClick(View v) {
                 Resources res = getResources();
-                Bitmap logoBitmap = BitmapFactory.decodeResource(res, R.mipmap.btn_wheelview_ok_normal);
+                Bitmap logoBitmap = BitmapFactory.decodeResource(res, R.mipmap
+                        .btn_wheelview_ok_normal);
                 String qrContent = editText.getText().toString();
                 Bitmap bitmap = new QREncode.Builder(MainActivity.this)
                         //二维码颜色
                         .setColor(getResources().getColor(R.color.colorPrimary))
                         //二维码类型
-                        .setParsedResultType(TextUtils.isEmpty(qrContent) ? ParsedResultType.URI : ParsedResultType.TEXT)
+                        .setParsedResultType(TextUtils.isEmpty(qrContent) ? ParsedResultType.URI
+                                : ParsedResultType.TEXT)
                         //二维码内容
-                        .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" : qrContent)
+                        .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" :
+                                qrContent)
 //                        .setSize(100)
-                        .setLogoBitmap(logoBitmap,90)
+                        .setLogoBitmap(logoBitmap, 90)
                         .build().encodeAsBitmap();
                 imageView.setImageBitmap(bitmap);
                 tvResult.setText("单击识别图中二维码");
@@ -102,7 +110,8 @@ public class MainActivity extends BasicActivity {
         findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts
+                        .CONTENT_URI);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                 startActivityForResult(intent, PICK_CONTACT);
             }

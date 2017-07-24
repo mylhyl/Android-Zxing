@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public final class QRDecode {
 
-    public static final Map<DecodeHintType, Object> HINTS = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
+    public static final Map<DecodeHintType, Object> HINTS = new EnumMap<>(DecodeHintType.class);
 
     static {
         List<BarcodeFormat> formats = new ArrayList<BarcodeFormat>();

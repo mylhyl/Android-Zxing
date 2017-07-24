@@ -42,10 +42,13 @@ final class DecodeHandler extends Handler {
     private final Handler scannerViewHandler;
     private final MultiFormatReader multiFormatReader;
     private boolean running = true;
+    private boolean bundleThumbnail = true;
 
-    DecodeHandler(CameraManager cameraManager, Handler scannerViewHandler, Map<DecodeHintType, Object> hints) {
+    DecodeHandler(CameraManager cameraManager, Handler scannerViewHandler, Map<DecodeHintType,
+            Object> hints, boolean bundleThumbnail) {
         this.cameraManager = cameraManager;
         this.scannerViewHandler = scannerViewHandler;
+        this.bundleThumbnail = bundleThumbnail;
         multiFormatReader = new MultiFormatReader();
         multiFormatReader.setHints(hints);
     }
@@ -78,7 +81,8 @@ final class DecodeHandler extends Handler {
      */
     private void decode(byte[] data, int width, int height) {
         //竖屏识别一维
-        if (cameraManager.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (cameraManager.getContext().getResources().getConfiguration().orientation ==
+                Configuration.ORIENTATION_PORTRAIT) {
             byte[] rotatedData = new byte[data.length];
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++)
@@ -108,7 +112,8 @@ final class DecodeHandler extends Handler {
                 //会向 ScannerViewHandler 发消息
                 Message message = Message.obtain(handler, Scanner.DECODE_SUCCEEDED, rawResult);
                 Bundle bundle = new Bundle();
-                bundleThumbnail(source, bundle);
+                if (bundleThumbnail)
+                    bundleThumbnail(source, bundle);
                 message.setData(bundle);
                 message.sendToTarget();
             }

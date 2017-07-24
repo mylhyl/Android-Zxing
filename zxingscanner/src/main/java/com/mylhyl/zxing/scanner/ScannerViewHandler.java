@@ -54,7 +54,9 @@ final class ScannerViewHandler extends Handler {
         this.cameraManager = cameraManager;
         //启动扫描线程
         decodeThread = new DecodeThread(cameraManager, this, decodeFormats,
-                new ViewfinderResultPointCallback(scannerView.getViewfinderView()));
+                new ViewfinderResultPointCallback(scannerView.getViewfinderView()),
+                scannerView.getShowResThumbnail());
+
         decodeThread.start();
         state = State.SUCCESS;
         //开启相机预览界面
@@ -77,7 +79,7 @@ final class ScannerViewHandler extends Handler {
                 if (bundle != null) {
                     byte[] compressedBitmap = bundle
                             .getByteArray(DecodeThread.BARCODE_BITMAP);
-                    if (compressedBitmap != null) {
+                    if (compressedBitmap != null && compressedBitmap.length > 0) {
                         barcode = BitmapFactory.decodeByteArray(compressedBitmap,
                                 0, compressedBitmap.length, null);
                         barcode = barcode.copy(Bitmap.Config.ARGB_8888, true);
@@ -119,5 +121,4 @@ final class ScannerViewHandler extends Handler {
             scannerView.drawViewfinder();
         }
     }
-
 }

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.mylhyl.zxing.scanner.sample.MainActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                tools:context="com.mylhyl.zxing.scanner.sample.MainActivity">
 
-    <include layout="@layout/include_toolbar" />
+    <include layout="@layout/include_toolbar"/>
 
     <TextView
         android:id="@+id/textView"
@@ -14,14 +14,14 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:text="扫描结果" />
+        android:text="扫描结果"/>
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"/>
 
     <Button
         android:id="@+id/button"
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="扫一扫" />
+        android:text="扫一扫"/>
 
     <Button
         android:id="@+id/button2"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="创建二维码" />
+        android:text="创建二维码"/>
 
     <Button
         android:id="@+id/button3"
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="联系人" />
+        android:text="联系人"/>
 
     <CheckBox
         android:id="@+id/checkBox"
@@ -54,7 +54,7 @@
         android:layout_above="@+id/radioGroup"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:text="返回结果" />
+        android:text="返回结果"/>
 
     <RadioGroup
         android:id="@+id/radioGroup"
@@ -71,19 +71,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="线条图" />
+            android:text="线条图"/>
 
         <RadioButton
             android:id="@+id/radioButton2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="网格图" />
+            android:text="网格图"/>
 
         <RadioButton
             android:id="@+id/radioButton3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="线" />
+            android:text="线"/>
     </RadioGroup>
 
     <EditText
@@ -91,7 +91,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/radioGroup"
-        android:textSize="14sp"
         android:layout_toRightOf="@+id/checkBox"
-        android:hint="输入二维码内容，默认为uri" />
+        android:hint="输入二维码内容，默认为uri"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/checkBox"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="解码类型"/>
+
+    <ToggleButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/textView10"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@id/textView10"
+        android:checked="true"
+        android:textOff="一维"
+        android:textOn="二维"/>
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/toggleButton1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="是否显示扫描结果缩略图"/>
+
+
+    <ToggleButton
+        android:id="@+id/toggleButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/textView11"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@id/textView11"
+        android:checked="true"
+        android:textOff="不显示"
+        android:textOn="显示"/>
 </RelativeLayout>
