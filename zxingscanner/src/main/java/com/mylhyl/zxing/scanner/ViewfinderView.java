@@ -50,6 +50,7 @@ final class ViewfinderView extends View {
     private static final int MAX_RESULT_POINTS = 20;
     private static final int POINT_SIZE = 6;
     private static final int DEFAULT_LASER_LINE_HEIGHT = 2;//扫描线默认高度
+    private static final int DEFAULT_LASER_MOVE_SPEED = 6;//默认每毫秒移动6px
 
     private CameraManager cameraManager;
     private final Paint paint;
@@ -83,7 +84,7 @@ final class ViewfinderView extends View {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         possibleResultPoints = new ArrayList<>(5);
         lastPossibleResultPoints = null;
-        laserMoveSpeed = Scanner.dp2px(context, 3f);
+        laserMoveSpeed = DEFAULT_LASER_MOVE_SPEED;//默认每毫秒移动6px
         laserLineHeight = Scanner.dp2px(context, DEFAULT_LASER_LINE_HEIGHT);
         laserFrameCornerWidth = Scanner.dp2px(context, 2f);
         laserFrameCornerLength = Scanner.dp2px(context, 15f);
@@ -383,6 +384,14 @@ final class ViewfinderView extends View {
     public void setDrawTextSize(int textSize) {
         if (textSize > 0)
             drawTextSize = Scanner.sp2px(getContext(), textSize);
+    }
+
+    public void setLaserMoveSpeed(int moveSpeed) {
+        if (moveSpeed <= 0) {
+            laserMoveSpeed = DEFAULT_LASER_MOVE_SPEED;
+        } else {
+            laserMoveSpeed = moveSpeed;
+        }
     }
 
     public void laserLineBitmapRecycle() {

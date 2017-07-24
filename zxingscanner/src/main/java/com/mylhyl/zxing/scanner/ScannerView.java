@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
@@ -24,7 +25,7 @@ import java.util.Collection;
  */
 public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
-//    private static final String TAG = ScannerView.class.getSimpleName();
+    private static final String TAG = ScannerView.class.getSimpleName();
 
     private SurfaceView mSurfaceView;
     private ViewfinderView mViewfinderView;
@@ -119,11 +120,11 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             if (laserFrameWidth > 0 && laserFrameHeight > 0)
                 mCameraManager.setManualFramingRect(laserFrameWidth, laserFrameHeight);
         } catch (IOException ioe) {
-//            Log.w(TAG, ioe);
+            Log.w(TAG, ioe);
         } catch (RuntimeException e) {
             // Barcode Scanner has seen crashes in the wild of this variety:
             // java.?lang.?RuntimeException: Fail to connect to camera service
-//            Log.w(TAG, "Unexpected error initializing camera", e);
+            Log.w(TAG, "Unexpected error initializing camera", e);
         }
     }
 
@@ -424,11 +425,23 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
     /**
      * 是否显示扫描结果缩略图
+     *
      * @param showResThumbnail
      * @return
      */
     public ScannerView isShowResThumbnail(boolean showResThumbnail) {
         this.mShowResThumbnail = showResThumbnail;
+        return this;
+    }
+
+    /**
+     * 设置扫描框线移动间距，每毫秒移动 moveSpeed 像素
+     *
+     * @param moveSpeed px
+     * @return
+     */
+    public ScannerView setLaserMoveSpeed(int moveSpeed) {
+        mViewfinderView.setLaserMoveSpeed(moveSpeed);
         return this;
     }
 

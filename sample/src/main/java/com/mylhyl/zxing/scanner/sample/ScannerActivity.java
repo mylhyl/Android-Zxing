@@ -90,6 +90,7 @@ public class ScannerActivity extends DeCodeActivity {
 
         //显示扫描成功后的缩略图
         mScannerView.isShowResThumbnail(showThumbnail);
+//        mScannerView.setLaserMoveSpeed(1);//速度
 
 //        mScannerView.setLaserFrameTopMargin(100);//扫描框与屏幕上方距离
 //        mScannerView.setLaserFrameSize(200, 200);//扫描框大小
