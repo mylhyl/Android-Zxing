@@ -19,10 +19,10 @@
 ### 四、引用
 
 ## 1、在线
-- 本库依赖使用Gradle构建时添加一下即可:
+- 本库依赖使用Gradle构建时添加一下即可，已依赖`zxing:core:3.3.0`
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:1.4.0'
+compile 'com.mylhyl:zxingscanner:1.4.1'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
@@ -34,7 +34,10 @@ compile 'com.mylhyl:zxingscanner:1.4.0'
 compile 'com.google.zxing:core:3.3.0'
 ```
 
-2、本地依赖jar文件使用Gradle命令编译：[gradle makeJar](http://blog.csdn.net/hupei/article/details/51886221) 或者参考下图，在android studio中执行
+2、本地依赖jar文件
+ win终端执行：gradlew makeJar
+ 
+[gradle makeJar](http://blog.csdn.net/hupei/article/details/51886221) 或者参考下图，在android studio中执行
 
 ![这里写图片描述](http://img.blog.csdn.net/20160711135615587)
 
