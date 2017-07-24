@@ -39,7 +39,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private int laserFrameWidth, laserFrameHeight;//扫描框大小
     private int laserFrameTopMargin;//扫描框离屏幕上方距离
     private Collection<BarcodeFormat> decodeFormats;//解码类型
-    private boolean mShowResThumbnail = true;//扫描成功是否显示缩略图
+    private boolean mShowResThumbnail = false;//扫描成功是否显示缩略图
 
     public ScannerView(Context context) {
         this(context, null);

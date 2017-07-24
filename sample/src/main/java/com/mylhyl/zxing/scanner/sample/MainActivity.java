@@ -75,7 +75,7 @@ public class MainActivity extends BasicActivity {
                     //权限已经被授予，在这里直接写要执行的相应方法即可
                     ScannerActivity.gotoActivity(MainActivity.this,
                             checkBox.isChecked(), laserMode, toggleButton.isChecked()
-                            , toggleButton2.isChecked());
+                            , !toggleButton2.isChecked());
                 }
             }
         });

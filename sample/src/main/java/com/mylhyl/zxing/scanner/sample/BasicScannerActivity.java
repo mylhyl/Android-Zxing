@@ -45,7 +45,7 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements
      */
     abstract void onResultActivity(Result result, ParsedResultType type, Bundle bundle);
 
-    boolean showThumbnail = true;
+    boolean showThumbnail = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -42,7 +42,7 @@ final class DecodeHandler extends Handler {
     private final Handler scannerViewHandler;
     private final MultiFormatReader multiFormatReader;
     private boolean running = true;
-    private boolean bundleThumbnail = true;
+    private boolean bundleThumbnail = false;
 
     DecodeHandler(CameraManager cameraManager, Handler scannerViewHandler, Map<DecodeHintType,
             Object> hints, boolean bundleThumbnail) {

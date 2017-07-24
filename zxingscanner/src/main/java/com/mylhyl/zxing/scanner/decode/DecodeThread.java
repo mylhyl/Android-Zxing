@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -47,7 +46,7 @@ public final class DecodeThread extends Thread {
     private final Map<DecodeHintType, Object> hints;
     private DecodeHandler handler;
     private final CountDownLatch handlerInitLatch;
-    private boolean bundleThumbnail = true;
+    private boolean bundleThumbnail = false;
 
     public DecodeThread(CameraManager cameraManager, Handler scannerViewHandler,
                         Collection<BarcodeFormat> decodeFormats,
@@ -105,7 +104,7 @@ public final class DecodeThread extends Thread {
     @Override
     public void run() {
         Looper.prepare();
-        handler = new DecodeHandler(cameraManager, scannerViewHandler, hints,bundleThumbnail);
+        handler = new DecodeHandler(cameraManager, scannerViewHandler, hints, bundleThumbnail);
         handlerInitLatch.countDown();
         Looper.loop();
     }

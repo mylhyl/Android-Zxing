@@ -133,6 +133,6 @@
         android:layout_marginLeft="20dp"
         android:layout_toRightOf="@id/textView11"
         android:checked="true"
-        android:textOff="不显示"
-        android:textOn="显示"/>
+        android:textOff="显示"
+        android:textOn="不显示"/>
 </RelativeLayout>
