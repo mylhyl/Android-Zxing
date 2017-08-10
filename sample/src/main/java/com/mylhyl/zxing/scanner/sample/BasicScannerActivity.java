@@ -1,6 +1,7 @@
 package com.mylhyl.zxing.scanner.sample;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements
     public static final String EXTRA_RETURN_SCANNER_RESULT = "return_scanner_result";
     private static final String TAG = "BasicScannerActivity";
 
+    private ProgressDialog progressDialog;
     private boolean mReturnScanResult;
 
     /**
@@ -57,7 +59,8 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void OnScannerCompletion(final Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
+    public void OnScannerCompletion(final Result rawResult, ParsedResult parsedResult, Bitmap
+            barcode) {
         if (rawResult == null) {
             Toast.makeText(this, "未发现二维码", Toast.LENGTH_SHORT).show();
             finish();
@@ -101,9 +104,10 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements
             case SMS:
                 break;
         }
-        if(showThumbnail){
+        showProgressDialog();
+        if (showThumbnail) {
             onResultActivity(rawResult, type, bundle);
-        }else {
+        } else {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -118,5 +122,18 @@ public abstract class BasicScannerActivity extends AppCompatActivity implements
         intent.putExtra(Scanner.Scan.RESULT, rawResult.getText());
         setResult(Activity.RESULT_OK, intent);
         finish();
+    }
+
+    void showProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("请稍候...");
+        progressDialog.show();
+    }
+
+    void dismissProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
     }
 }

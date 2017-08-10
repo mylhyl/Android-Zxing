@@ -13,7 +13,8 @@ import android.widget.FrameLayout;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
-import com.mylhyl.zxing.scanner.camera.CameraManager;
+import com.mylhyl.zxing.scanner.camera.WrapperCameraManager;
+import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
 import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.decode.DecodeFormatManager;
 
@@ -31,7 +32,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private ViewfinderView mViewfinderView;
 
     private boolean hasSurface;
-    private CameraManager mCameraManager;
+    private WrapperCameraManager mCameraManager;
     private ScannerViewHandler mScannerViewHandler;
     private BeepManager mBeepManager;
     private int mMediaResId;
@@ -41,6 +42,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private int laserFrameTopMargin;//扫描框离屏幕上方距离
     private Collection<BarcodeFormat> decodeFormats;//解码类型
     private boolean mShowResThumbnail = false;//扫描成功是否显示缩略图
+    private CameraFacing mCameraFacing = CameraFacing.BACK;//默认后置摄像头
 
     public ScannerView(Context context) {
         this(context, null);
@@ -71,7 +73,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     public void onResume() {
-        mCameraManager = new CameraManager(getContext());
+        mCameraManager = new WrapperCameraManager(getContext(), mCameraFacing);
         mCameraManager.setLaserFrameTopMargin(laserFrameTopMargin);//扫描框与屏幕距离
         mViewfinderView.setCameraManager(mCameraManager);
         if (mBeepManager != null) mBeepManager.updatePrefs();
@@ -106,7 +108,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             throw new IllegalStateException("No SurfaceHolder provided");
         }
         if (mCameraManager.isOpen()) {
-//            Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
+            Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
             return;
         }
         try {
@@ -408,7 +410,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @return
      */
     public ScannerView setScanMode(String scanMode) {
-        decodeFormats = DecodeFormatManager.parseDecodeFormats(scanMode);
+        this.decodeFormats = DecodeFormatManager.parseDecodeFormats(scanMode);
         return this;
     }
 
@@ -419,7 +421,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @return
      */
     public ScannerView setScanMode(BarcodeFormat... barcodeFormat) {
-        decodeFormats = DecodeFormatManager.parseDecodeFormats(barcodeFormat);
+        this.decodeFormats = DecodeFormatManager.parseDecodeFormats(barcodeFormat);
         return this;
     }
 
@@ -441,7 +443,18 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @return
      */
     public ScannerView setLaserMoveSpeed(int moveSpeed) {
-        mViewfinderView.setLaserMoveSpeed(moveSpeed);
+        this.mViewfinderView.setLaserMoveSpeed(moveSpeed);
+        return this;
+    }
+
+    /**
+     * 设置扫描摄像头，默认后置
+     *
+     * @param cameraFacing
+     * @return
+     */
+    public ScannerView setCameraFacing(CameraFacing cameraFacing) {
+        this.mCameraFacing = cameraFacing;
         return this;
     }
 

@@ -45,14 +45,10 @@ public class DeCodeActivity extends BasicScannerActivity {
             case SMS:
                 break;
         }
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-            progressDialog = null;
-        }
+        dismissProgressDialog();
         finish();
     }
 
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +60,7 @@ public class DeCodeActivity extends BasicScannerActivity {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 if (bitmap != null) {
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    progressDialog = new ProgressDialog(this);
-                    progressDialog.setMessage("请稍候...");
-                    progressDialog.show();
+                    showProgressDialog();
                     QRDecode.decodeQR(bitmap, this);
                 }
             }

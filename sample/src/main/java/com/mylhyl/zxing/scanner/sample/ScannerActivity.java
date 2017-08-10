@@ -18,6 +18,7 @@ import android.widget.ToggleButton;
 
 import com.google.zxing.Result;
 import com.mylhyl.zxing.scanner.ScannerView;
+import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
 import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.decode.QRDecode;
 import com.mylhyl.zxing.scanner.sample.picture.PickPictureTotalActivity;
@@ -90,6 +91,7 @@ public class ScannerActivity extends DeCodeActivity {
 
         //显示扫描成功后的缩略图
         mScannerView.isShowResThumbnail(showThumbnail);
+//        mScannerView.setCameraFacing(CameraFacing.FRONT);
 //        mScannerView.setLaserMoveSpeed(1);//速度
 
 //        mScannerView.setLaserFrameTopMargin(100);//扫描框与屏幕上方距离
