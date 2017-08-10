@@ -95,7 +95,7 @@ public class ScannerActivity extends DeCodeActivity {
 //        mScannerView.setLaserMoveSpeed(1);//速度
 
 //        mScannerView.setLaserFrameTopMargin(100);//扫描框与屏幕上方距离
-//        mScannerView.setLaserFrameSize(200, 200);//扫描框大小
+//        mScannerView.setLaserFrameSize(400, 400);//扫描框大小
 //        mScannerView.setLaserFrameCornerLength(25);//设置4角长度
 //        mScannerView.setLaserLineHeight(5);//设置扫描线高度
 

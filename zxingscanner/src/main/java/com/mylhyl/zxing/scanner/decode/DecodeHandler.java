@@ -30,7 +30,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.GlobalHistogramBinarizer;
-import com.mylhyl.zxing.scanner.camera.CameraManager;
+import com.mylhyl.zxing.scanner.camera.WrapperCameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
 
 import java.io.ByteArrayOutputStream;
@@ -38,13 +38,14 @@ import java.util.Map;
 
 final class DecodeHandler extends Handler {
 
-    private final CameraManager cameraManager;
+    private final WrapperCameraManager cameraManager;
     private final Handler scannerViewHandler;
     private final MultiFormatReader multiFormatReader;
     private boolean running = true;
     private boolean bundleThumbnail = false;
 
-    DecodeHandler(CameraManager cameraManager, Handler scannerViewHandler, Map<DecodeHintType,
+    DecodeHandler(WrapperCameraManager cameraManager, Handler scannerViewHandler,
+                  Map<DecodeHintType,
             Object> hints, boolean bundleThumbnail) {
         this.cameraManager = cameraManager;
         this.scannerViewHandler = scannerViewHandler;

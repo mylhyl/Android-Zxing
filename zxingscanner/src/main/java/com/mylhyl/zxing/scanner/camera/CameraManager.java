@@ -39,12 +39,12 @@ import java.io.IOException;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public class CameraManager {
+abstract class CameraManager {
 
     private static final String TAG = CameraManager.class.getSimpleName();
 
-    protected static final int MIN_FRAME_WIDTH = 240;
-    protected static final int MIN_FRAME_HEIGHT = 240;
+    public static final int MIN_FRAME_WIDTH = 240;
+    public static final int MIN_FRAME_HEIGHT = 240;
     public static final int MAX_FRAME_WIDTH = 1200; // = 5/8 * 1920
     public static final int MAX_FRAME_HEIGHT = 675; // = 5/8 * 1080
 
@@ -56,7 +56,7 @@ public class CameraManager {
     protected Rect framingRectInPreview;
     protected boolean initialized;
     private boolean previewing;
-    protected int requestedCameraId = OpenCameraInterface.NO_REQUESTED_CAMERA;
+    private int requestedCameraId = OpenCameraInterface.NO_REQUESTED_CAMERA;
     protected int requestedFramingRectWidth;
     protected int requestedFramingRectHeight;
     /**
@@ -225,27 +225,28 @@ public class CameraManager {
      *
      * @return The rectangle to draw on screen in window coordinates.
      */
-    public synchronized Rect getFramingRect() {
-        if (framingRect == null) {
-            if (camera == null) {
-                return null;
-            }
-            Point screenResolution = configManager.getScreenResolution();
-            if (screenResolution == null) {
-                // Called early, before init even finished
-                return null;
-            }
-
-            int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
-            int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
-
-            int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2;
-            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
-            Log.d(TAG, "Calculated framing rect: " + framingRect);
-        }
-        return framingRect;
-    }
+    abstract Rect getFramingRect();
+//    public synchronized Rect getFramingRect() {
+//        if (framingRect == null) {
+//            if (camera == null) {
+//                return null;
+//            }
+//            Point screenResolution = configManager.getScreenResolution();
+//            if (screenResolution == null) {
+//                // Called early, before init even finished
+//                return null;
+//            }
+//
+//            int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
+//            int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
+//
+//            int leftOffset = (screenResolution.x - width) / 2;
+//            int topOffset = (screenResolution.y - height) / 2;
+//            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
+//            Log.d(TAG, "Calculated framing rect: " + framingRect);
+//        }
+//        return framingRect;
+//    }
 
     protected static int findDesiredDimensionInRange(int resolution, int hardMin, int hardMax) {
         int dim = 5 * resolution / 8; // Target 5/8 of each dimension
@@ -303,9 +304,9 @@ public class CameraManager {
      *
      * @param cameraId camera ID of the camera to use. A negative value means "no preference".
      */
-/*    public synchronized void setManualCameraId(int cameraId) {
+    public synchronized void setManualCameraId(int cameraId) {
         requestedCameraId = cameraId;
-    }*/
+    }
 
     /**
      * Allows third party apps to specify the scanning rectangle dimensions, rather than determine
@@ -314,25 +315,26 @@ public class CameraManager {
      * @param width  The width in pixels to scan.
      * @param height The height in pixels to scan.
      */
-    public synchronized void setManualFramingRect(int width, int height) {
-        if (initialized) {
-            Point screenResolution = configManager.getScreenResolution();
-            if (width > screenResolution.x) {
-                width = screenResolution.x;
-            }
-            if (height > screenResolution.y) {
-                height = screenResolution.y;
-            }
-            int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2;
-            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
-            Log.d(TAG, "Calculated manual framing rect: " + framingRect);
-            framingRectInPreview = null;
-        } else {
-            requestedFramingRectWidth = width;
-            requestedFramingRectHeight = height;
-        }
-    }
+    abstract void setManualFramingRect(int width, int height);
+//    public synchronized void setManualFramingRect(int width, int height) {
+//        if (initialized) {
+//            Point screenResolution = configManager.getScreenResolution();
+//            if (width > screenResolution.x) {
+//                width = screenResolution.x;
+//            }
+//            if (height > screenResolution.y) {
+//                height = screenResolution.y;
+//            }
+//            int leftOffset = (screenResolution.x - width) / 2;
+//            int topOffset = (screenResolution.y - height) / 2;
+//            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
+//            Log.d(TAG, "Calculated manual framing rect: " + framingRect);
+//            framingRectInPreview = null;
+//        } else {
+//            requestedFramingRectWidth = width;
+//            requestedFramingRectHeight = height;
+//        }
+//    }
 
     /**
      * A factory method to build the appropriate LuminanceSource object based on the format

@@ -42,7 +42,9 @@ final class CameraConfigurationManager {
     private final Context context;
 //    private int cwNeededRotation;
     private int cwRotationFromDisplayToCamera;
+    // 屏幕分辨率
     private Point screenResolution;
+    // 相机分辨率
     private Point cameraResolution;
     private Point bestPreviewSize;
 //    private Point previewSizeOnScreen;
@@ -102,10 +104,18 @@ final class CameraConfigurationManager {
         Point theScreenResolution = new Point();
         display.getSize(theScreenResolution);
         screenResolution = theScreenResolution;
+        //拉抻问题
+        Point screenResolutionForCamera = new Point();
+        screenResolutionForCamera.x = screenResolution.x;
+        screenResolutionForCamera.y = screenResolution.y;
+        if (screenResolution.x < screenResolution.y) {
+            screenResolutionForCamera.x = screenResolution.y;
+            screenResolutionForCamera.y = screenResolution.x;
+        }
         cameraResolution = CameraConfigurationUtils.findBestPreviewSizeValue(
-                parameters, screenResolution);
+                parameters, screenResolutionForCamera);
         bestPreviewSize = CameraConfigurationUtils.findBestPreviewSizeValue(
-                parameters, screenResolution);
+                parameters, screenResolutionForCamera);
 
 //        boolean isScreenPortrait = screenResolution.x < screenResolution.y;
 //        boolean isPreviewSizePortrait = bestPreviewSize.x < bestPreviewSize.y;
