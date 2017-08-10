@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 20170724
-        versionName '1.4.1'
+        versionCode 20170810
+        versionName '1.5.0'
     }
     buildTypes {
         release {
@@ -41,7 +41,7 @@ def gitUrl = 'https://github.com/mylhyl/Android-Zxing.git'
 
 def libName = "zxingscanner"
 group = "com.mylhyl"
-version = "1.4.1"
+version = "1.5.0"
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
