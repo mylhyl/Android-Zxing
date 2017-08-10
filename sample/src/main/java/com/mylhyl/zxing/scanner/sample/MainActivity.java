@@ -87,18 +87,22 @@ public class MainActivity extends BasicActivity {
             public void onClick(View v) {
                 Resources res = getResources();
                 Bitmap logoBitmap = BitmapFactory.decodeResource(res, R.mipmap
-                        .btn_wheelview_ok_normal);
+                        .connect_logo);
+                Bitmap qrBg = BitmapFactory.decodeResource(res, R.mipmap
+                        .wb_wlog_blow_bg_night);
                 String qrContent = editText.getText().toString();
                 Bitmap bitmap = new QREncode.Builder(MainActivity.this)
-                        //二维码颜色
-                        .setColor(getResources().getColor(R.color.colorPrimary))
+//                        .setColor(getResources().getColor(R.color.colorPrimary))//二维码颜色
+                        .setColors(0xFF0094FF, 0xFFFED545, 0xFF5ACF00, 0xFFFF4081)//二维码彩色
+                        .setQrBackground(qrBg)//二维码背景
+                        .setMargin(0)//二维码边框
                         //二维码类型
                         .setParsedResultType(TextUtils.isEmpty(qrContent) ? ParsedResultType.URI
                                 : ParsedResultType.TEXT)
                         //二维码内容
                         .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" :
                                 qrContent)
-//                        .setSize(100)
+                        .setSize(500)//二维码等比大小
                         .setLogoBitmap(logoBitmap, 90)
                         .build().encodeAsBitmap();
                 imageView.setImageBitmap(bitmap);

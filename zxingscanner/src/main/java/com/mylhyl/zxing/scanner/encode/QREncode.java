@@ -79,11 +79,14 @@ public final class QREncode {
         private String contents;//原内容
         private String encodeContents;//编码内容
         private int color;//颜色
+        private int[] colors;
         private Uri addressBookUri;
         private boolean useVCard = true;
         private int size;
         private Bitmap logoBitmap;
         private int logoSize;
+        private Bitmap qrBackground;
+        private int margin = 4;
 
         public Builder(Context context) {
             this.context = context;
@@ -181,6 +184,29 @@ public final class QREncode {
             return this;
         }
 
+        int[] getColors() {
+            return colors;
+        }
+
+        /**
+         * 设置二维码颜色
+         *
+         * @param leftTop     左上
+         * @param leftBottom  左下
+         * @param rightBottom 右下
+         * @param rightTop    右上
+         * @return
+         */
+        public Builder setColors(int leftTop, int leftBottom, int rightBottom, int rightTop) {
+            this.colors = null;
+            this.colors = new int[4];
+            this.colors[0] = leftTop;
+            this.colors[1] = leftBottom;
+            this.colors[2] = rightBottom;
+            this.colors[3] = rightTop;
+            return this;
+        }
+
         boolean isUseVCard() {
             return useVCard;
         }
@@ -241,6 +267,36 @@ public final class QREncode {
 
         int getLogoSize() {
             return logoSize;
+        }
+
+        /**
+         * 设置二维码背景
+         *
+         * @param background
+         * @return
+         */
+        public Builder setQrBackground(Bitmap background) {
+            this.qrBackground = background;
+            return this;
+        }
+
+        Bitmap getQrBackground() {
+            return qrBackground;
+        }
+
+        /**
+         * 设置二维码边框
+         *
+         * @param margin 范围值：0-4
+         * @return
+         */
+        public Builder setMargin(int margin) {
+            this.margin = margin;
+            return this;
+        }
+
+        int getMargin() {
+            return margin;
         }
 
         /**

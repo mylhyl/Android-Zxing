@@ -18,6 +18,7 @@ package com.mylhyl.zxing.scanner.encode;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -196,12 +198,10 @@ final class QRCodeEncoder {
         if (content == null) {
             return null;
         }
-        Map<EncodeHintType, Object> hints = null;
-        String encoding = guessAppropriateEncoding(content);
-        if (encoding != null) {
-            hints = new EnumMap<>(EncodeHintType.class);
-            hints.put(EncodeHintType.CHARACTER_SET, encoding);
-        }
+
+        Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
+        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        hints.put(EncodeHintType.MARGIN, encodeBuild.getMargin());
         BitMatrix result;
         try {
             result = new MultiFormatWriter().encode(content, barcodeFormat, size, size, hints);
@@ -215,8 +215,25 @@ final class QRCodeEncoder {
         for (int y = 0; y < height; y++) {
             int offset = y * width;
             for (int x = 0; x < width; x++) {
-                // 无信息设置像素点为白色
-                pixels[offset + x] = result.get(x, y) ? qrColor : WHITE;
+                // 处理二维码颜色
+                if (result.get(x, y)) {
+                    int[] colors = encodeBuild.getColors();
+                    if (colors != null) {
+                        if (x < size / 2 && y < size / 2) {
+                            pixels[y * size + x] = colors[0];// 左上
+                        } else if (x < size / 2 && y > size / 2) {
+                            pixels[y * size + x] = colors[1];// 左下
+                        } else if (x > size / 2 && y > size / 2) {
+                            pixels[y * size + x] = colors[2];// 右下
+                        } else {
+                            pixels[y * size + x] = colors[3];// 右上
+                        }
+                    } else {
+                        pixels[offset + x] = qrColor;
+                    }
+                } else {
+                    pixels[offset + x] = WHITE;
+                }
             }
         }
 
@@ -231,12 +248,11 @@ final class QRCodeEncoder {
         if (content == null) {
             return null;
         }
-        Map<EncodeHintType, Object> hints = null;
-        String encoding = guessAppropriateEncoding(content);
-        if (encoding != null) {
-            hints = new EnumMap<>(EncodeHintType.class);
-            hints.put(EncodeHintType.CHARACTER_SET, encoding);
-        }
+        Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
+        hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);// 容错率
+        hints.put(EncodeHintType.MARGIN, encodeBuild.getMargin()); // default is 4
+
         BitMatrix result;
         try {
             result = new MultiFormatWriter().encode(content, barcodeFormat, size, size, hints);
@@ -257,25 +273,35 @@ final class QRCodeEncoder {
                     pixels[y * width + x] = logoBitmap.getPixel(x - halfW + logoSize, y - halfH
                             + logoSize);
                 } else {
-                    // 无信息设置像素点为白色
-                    pixels[offset + x] = result.get(x, y) ? qrColor : WHITE;
+                    // 处理二维码颜色
+                    if (result.get(x, y)) {
+                        int[] colors = encodeBuild.getColors();
+                        if (colors != null) {
+                            if (x < size / 2 && y < size / 2) {
+                                pixels[y * size + x] = colors[0];// 左上
+                            } else if (x < size / 2 && y > size / 2) {
+                                pixels[y * size + x] = colors[1];// 左下
+                            } else if (x > size / 2 && y > size / 2) {
+                                pixels[y * size + x] = colors[2];// 右下
+                            } else {
+                                pixels[y * size + x] = colors[3];// 右上
+                            }
+                        } else {
+                            pixels[offset + x] = qrColor;
+                        }
+                    } else {
+                        pixels[offset + x] = WHITE;
+                    }
                 }
             }
         }
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-        return bitmap;
-    }
-
-    private static String guessAppropriateEncoding(CharSequence contents) {
-        // Very crude at the moment
-        for (int i = 0; i < contents.length(); i++) {
-            if (contents.charAt(i) > 0xFF) {
-                return "UTF-8";
-            }
+        if (encodeBuild.getQrBackground() != null) {
+            return addBackground(bitmap, encodeBuild.getQrBackground());
         }
-        return null;
+        return bitmap;
     }
 
     private static int getSmallerDimension(Context context) {
@@ -288,5 +314,22 @@ final class QRCodeEncoder {
         int smallerDimension = width < height ? width : height;
         smallerDimension = smallerDimension * 7 / 8;
         return smallerDimension;
+    }
+
+    private static Bitmap addBackground(Bitmap qrBitmap, Bitmap background) {
+        int bgWidth = background.getWidth();
+        int bgHeight = background.getHeight();
+        int fgWidth = qrBitmap.getWidth();
+        int fgHeight = qrBitmap.getHeight();
+        Bitmap bitmap = Bitmap.createBitmap(bgWidth, bgHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawBitmap(background, 0, 0, null);
+        //二维码在背景图中间
+        float left = (bgWidth - fgWidth) / 2;
+        float top = (bgHeight - fgHeight) / 2;
+        canvas.drawBitmap(qrBitmap, left, top, null);
+        canvas.save(Canvas.ALL_SAVE_FLAG);
+        canvas.restore();
+        return bitmap;
     }
 }
