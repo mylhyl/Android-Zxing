@@ -199,7 +199,7 @@ Bitmap bitmap = new QREncode.Builder(this)
 <tr>
 <td>setScanMode</td>
 <td>设置扫描类型：二维码、一维码</td>
-<td>二维码</td>
+<td>全部</td>
 </tr>
 <tr>
 <td>isShowResThumbnail</td>
