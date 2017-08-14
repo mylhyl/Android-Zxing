@@ -31,8 +31,8 @@ public class MainActivity extends BasicActivity {
     private static final int PICK_CONTACT = 1;
     private TextView tvResult;
     private ImageView imageView;
-    private ToggleButton toggleButton, toggleButton2;
-    private int laserMode;
+    private ToggleButton toggleButton;
+    private int laserMode, scanMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +41,8 @@ public class MainActivity extends BasicActivity {
         tvResult = (TextView) findViewById(R.id.textView);
         imageView = (ImageView) findViewById(R.id.imageView);
 
-        toggleButton = (ToggleButton) findViewById(R.id.toggleButton1);
-        toggleButton2 = (ToggleButton) findViewById(R.id.toggleButton2);
+        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+
         final CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -62,6 +62,24 @@ public class MainActivity extends BasicActivity {
             }
         });
 
+        RadioGroup radioGroup1 = (RadioGroup) findViewById(R.id.radioGroup1);
+        radioGroup1.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioButton4:
+                        scanMode = ScannerActivity.EXTRA_SCAN_MODE_0;
+                        break;
+                    case R.id.radioButton5:
+                        scanMode = ScannerActivity.EXTRA_SCAN_MODE_1;
+                        break;
+                    case R.id.radioButton6:
+                        scanMode = ScannerActivity.EXTRA_SCAN_MODE_2;
+                        break;
+                }
+            }
+        });
+
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,8 +92,7 @@ public class MainActivity extends BasicActivity {
                 } else {
                     //权限已经被授予，在这里直接写要执行的相应方法即可
                     ScannerActivity.gotoActivity(MainActivity.this,
-                            checkBox.isChecked(), laserMode, toggleButton.isChecked()
-                            , !toggleButton2.isChecked());
+                            checkBox.isChecked(), laserMode, scanMode, !toggleButton.isChecked());
                 }
             }
         });

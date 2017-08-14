@@ -67,9 +67,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mViewfinderView = new ViewfinderView(context, attrs);
         addView(mViewfinderView, new LayoutParams(LayoutParams.MATCH_PARENT
                 , LayoutParams.MATCH_PARENT));
-
-        //默认解码二维
-        setScanMode(Scanner.ScanMode.QR_CODE_MODE);
     }
 
     public void onResume() {

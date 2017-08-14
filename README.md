@@ -18,24 +18,22 @@
 
 ### 四、引用
 
-## 1、在线
-- 本库依赖使用Gradle构建时添加一下即可，已依赖`zxing:core:3.3.0`
+## 1、在线 已集成`zxing:core:3.3.0`
+- 本库依赖使用Gradle构建时添加一下即可
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:1.5.0'
+compile 'com.mylhyl:zxingscanner:1.5.1'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
-核心库二种方式：
-
-1、[最新Zxing核心库点击查看](http://jcenter.bintray.com/com/google/zxing/core/)，使用Gradle构建时如下:
+- [jar包](https://github.com/mylhyl/Android-Zxing/tree/master/preview/lib)
+- 也可自己打包jar文件打开终端，切换置项目根据目录，执行命令：gradlew makeJar
+- [最新Zxing核心库点击查看](http://jcenter.bintray.com/com/google/zxing/core/)取出aar
+- 也可使用Gradle构建时如下:
 
 ```javascript
 compile 'com.google.zxing:core:3.3.0'
 ```
-
-2、本地依赖jar文件
- win终端执行：gradlew makeJar
  
 [gradle makeJar](http://blog.csdn.net/hupei/article/details/51886221) 或者参考下图，在android studio中执行
 
@@ -43,7 +41,7 @@ compile 'com.google.zxing:core:3.3.0'
 
 - [直接下载jar](preview)
 
-###五、使用
+### 五、使用
 直接在`layout xml`使用`ScannerView`即可
 
 ```xml
@@ -124,8 +122,14 @@ Bitmap bitmap = new QREncode.Builder(this)
         .build().encodeAsBitmap();
 
 ```
+解析图中二维码
 
-###六、样式设置
+```java
+    public static void decodeQR(String picturePath, OnScannerCompletionListener listener);
+    public static void decodeQR(Bitmap srcBitmap, final OnScannerCompletionListener listener)
+```
+
+### 六、样式设置
 <table class="table table-bordered table-striped table-condensed">
 <tr>
 <td>方法名</td>
@@ -220,21 +224,3 @@ Bitmap bitmap = new QREncode.Builder(this)
 QQ交流群：630413339 [点击链接加入群Android-Zxing](https://jq.qq.com/?_wv=1027&k=4BR729O)
 
 <img src="preview/qrcode.png"/>
-
-### 八、版本更新
-
-> 1.4.0 增加扫描类型`setScanMode`
-
-> 1.3.1 优化代码
-
-> 1.3.0 生成二维码增加logo
-
-> 1.2.2 修复扫描提示文字颜色无效、支持自动换行
-
-> 1.2.1 修复依赖提示`Failed to resolve:Android-Zxing:zxing:3.2.2`的错误
-
-> 1.2.0 生成二维码增加`setAddressBookUri(Uri contactUri)`设置联系人`Uri`方法，更方便的使用
-
-> 1.1.3 重新装饰`ParsedResult`各实现类并`Serializable`
-
-> 1.1.2 修复锁屏`onPause`生命周期没有摧毁，导致`onResume`时抛出`RuntimeException`异常 

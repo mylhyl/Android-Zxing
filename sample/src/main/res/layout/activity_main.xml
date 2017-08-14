@@ -60,7 +60,6 @@
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
-
         android:layout_height="wrap_content"
         android:layout_above="@+id/button"
         android:layout_alignParentLeft="true"
@@ -105,29 +104,47 @@
         android:layout_alignParentStart="true"
         android:text="解码类型"/>
 
-    <ToggleButton
-        android:id="@+id/toggleButton1"
+    <RadioGroup
+        android:id="@+id/radioGroup1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/textView10"
         android:layout_marginLeft="20dp"
         android:layout_toRightOf="@id/textView10"
-        android:checked="true"
-        android:textOff="一维"
-        android:textOn="二维"/>
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radioButton4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="全部"/>
+
+        <RadioButton
+            android:id="@+id/radioButton5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="仅二维"/>
+
+        <RadioButton
+            android:id="@+id/radioButton6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="仅一维"/>
+    </RadioGroup>
 
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/toggleButton1"
+        android:layout_above="@+id/radioGroup1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:text="是否显示扫描结果缩略图"/>
 
 
     <ToggleButton
-        android:id="@+id/toggleButton2"
+        android:id="@+id/toggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/textView11"

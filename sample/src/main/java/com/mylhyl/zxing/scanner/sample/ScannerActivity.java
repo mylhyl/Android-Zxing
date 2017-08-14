@@ -18,7 +18,6 @@ import android.widget.ToggleButton;
 
 import com.google.zxing.Result;
 import com.mylhyl.zxing.scanner.ScannerView;
-import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
 import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.decode.QRDecode;
 import com.mylhyl.zxing.scanner.sample.picture.PickPictureTotalActivity;
@@ -36,12 +35,16 @@ public class ScannerActivity extends DeCodeActivity {
     public static final int EXTRA_LASER_LINE_MODE_1 = 1;
     public static final int EXTRA_LASER_LINE_MODE_2 = 2;
 
+    public static final int EXTRA_SCAN_MODE_0 = 0;
+    public static final int EXTRA_SCAN_MODE_1 = 1;
+    public static final int EXTRA_SCAN_MODE_2 = 2;
+
     public static final int APPLY_READ_EXTERNAL_STORAGE = 0x111;
 
     private ScannerView mScannerView;
     private Result mLastResult;
     private int laserMode;
-    private boolean scanMode = true;
+    private int scanMode;
 
 
     @Override
@@ -79,15 +82,20 @@ public class ScannerActivity extends DeCodeActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             laserMode = extras.getInt(EXTRA_LASER_LINE_MODE);
-            scanMode = extras.getBoolean(EXTRA_SCAN_MODE);
+            scanMode = extras.getInt(EXTRA_SCAN_MODE);
             showThumbnail = extras.getBoolean(EXTRA_SHOW_THUMBNAIL);
         }
         mScannerView.setMediaResId(R.raw.beep);//设置扫描成功的声音
         mScannerView.setDrawText("将二维码放入框内", true);
         mScannerView.setDrawTextColor(Color.RED);
 
-        if (!scanMode)//一维码
+        if (scanMode == 1) {
+            //二维码
+            mScannerView.setScanMode(Scanner.ScanMode.QR_CODE_MODE);
+        } else if (scanMode == 2) {
+            //一维码
             mScannerView.setScanMode(Scanner.ScanMode.PRODUCT_MODE);
+        }
 
         //显示扫描成功后的缩略图
         mScannerView.isShowResThumbnail(showThumbnail);
@@ -174,7 +182,7 @@ public class ScannerActivity extends DeCodeActivity {
     }
 
     public static void gotoActivity(Activity activity, boolean isBackResult
-            , int laserMode, boolean scanMode,boolean showThumbnail) {
+            , int laserMode, int scanMode, boolean showThumbnail) {
         activity.startActivityForResult(new Intent(Scanner.Scan.ACTION)
                         .putExtra(BasicScannerActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
                         .putExtra(ScannerActivity.EXTRA_LASER_LINE_MODE, laserMode)
