@@ -29,7 +29,9 @@ dependencies {
     compile project(':zxingscanner')
     compile 'com.mylhyl:commonrefreshlayout:2.4'
     compile 'com.mylhyl:cygadapter:1.1.0'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.github.bumptech.glide:glide:4.0.0'
+    compile 'com.android.support:support-v4:25.3.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
     compile 'com.alibaba:fastjson:1.1.52.android'
     compile files('libs/lite-http-3.0.1.jar')
     compile 'com.android.support:design:23.3.0'

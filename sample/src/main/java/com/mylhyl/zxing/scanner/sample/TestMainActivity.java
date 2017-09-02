@@ -1,17 +1,22 @@
 package com.mylhyl.zxing.scanner.sample;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.google.zxing.Result;
 import com.google.zxing.client.result.ParsedResult;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
 import com.mylhyl.zxing.scanner.ScannerView;
+import com.mylhyl.zxing.scanner.common.Scanner;
 
 public class TestMainActivity extends Activity implements OnScannerCompletionListener {
-
+    public static void gotoActivity(Activity activity) {
+        activity.startActivity(new Intent(activity,TestMainActivity.class));
+    }
     private ScannerView mScannerView;
 
     @Override
@@ -51,6 +56,6 @@ public class TestMainActivity extends Activity implements OnScannerCompletionLis
 
     @Override
     public void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
-
+        Toast.makeText(this, rawResult.getText(), Toast.LENGTH_SHORT).show();
     }
 }

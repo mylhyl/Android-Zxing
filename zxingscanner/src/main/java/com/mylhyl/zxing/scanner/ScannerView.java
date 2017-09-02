@@ -38,6 +38,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private int mMediaResId;
     private OnScannerCompletionListener mScannerCompletionListener;
 
+    private boolean lightMode = false;//闪光灯，默认关闭
     private int laserFrameWidth, laserFrameHeight;//扫描框大小
     private int laserFrameTopMargin;//扫描框离屏幕上方距离
     private Collection<BarcodeFormat> decodeFormats;//解码类型
@@ -110,6 +111,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         }
         try {
             mCameraManager.openDriver(surfaceHolder);
+            mCameraManager.setTorch(lightMode);
             // Creating the mScannerViewHandler starts the preview, which can also throw a
             // RuntimeException.
             if (mScannerViewHandler == null) {
@@ -374,7 +376,8 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param mode true开；false关
      */
     public ScannerView toggleLight(boolean mode) {
-        if (mCameraManager != null) mCameraManager.setTorch(mode);
+        this.lightMode = mode;
+        if (mCameraManager != null) mCameraManager.setTorch(lightMode);
         return this;
     }
 
