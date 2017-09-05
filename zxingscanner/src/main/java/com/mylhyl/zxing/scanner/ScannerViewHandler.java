@@ -24,7 +24,7 @@ import android.os.Message;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
-import com.mylhyl.zxing.scanner.camera.WrapperCameraManager;
+import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.decode.DecodeThread;
 
@@ -42,14 +42,14 @@ final class ScannerViewHandler extends Handler {
     private final ScannerView scannerView;
     private final DecodeThread decodeThread;
     private State state;
-    private final WrapperCameraManager cameraManager;
+    private final CameraManager cameraManager;
 
     private enum State {
         PREVIEW, SUCCESS, DONE
     }
 
     ScannerViewHandler(ScannerView scannerView, Collection<BarcodeFormat> decodeFormats,
-                       WrapperCameraManager cameraManager) {
+                       CameraManager cameraManager) {
         this.scannerView = scannerView;
         this.cameraManager = cameraManager;
         //启动扫描线程

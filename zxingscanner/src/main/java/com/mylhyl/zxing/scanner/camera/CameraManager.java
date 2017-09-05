@@ -39,36 +39,40 @@ import java.io.IOException;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-abstract class CameraManager {
+public final class CameraManager {
 
     private static final String TAG = CameraManager.class.getSimpleName();
 
-    public static final int MIN_FRAME_WIDTH = 240;
-    public static final int MIN_FRAME_HEIGHT = 240;
+    private static final int MIN_FRAME_WIDTH = 240;
+    private static final int MIN_FRAME_HEIGHT = 240;
     public static final int MAX_FRAME_WIDTH = 1200; // = 5/8 * 1920
     public static final int MAX_FRAME_HEIGHT = 675; // = 5/8 * 1080
 
-    protected final Context context;
-    protected final CameraConfigurationManager configManager;
-    protected OpenCamera camera;
+    private final Context context;
+    private final CameraConfigurationManager configManager;
+    private OpenCamera camera;
     private AutoFocusManager autoFocusManager;
-    protected Rect framingRect;
-    protected Rect framingRectInPreview;
-    protected boolean initialized;
+    private Rect framingRect;
+    private Rect framingRectInPreview;
+    private boolean initialized;
     private boolean previewing;
     private int requestedCameraId = OpenCameraInterface.NO_REQUESTED_CAMERA;
-    protected int requestedFramingRectWidth;
-    protected int requestedFramingRectHeight;
+    private int requestedFramingRectWidth;
+    private int requestedFramingRectHeight;
     /**
      * Preview frames are delivered here, which we pass on to the registered handler. Make sure to
      * clear the handler so it will only receive one message.
      */
     private final PreviewCallback previewCallback;
+    private final int statusBarHeight;//状态栏高度
+    private int laserFrameTopMargin;//扫描框离屏幕上方距离
 
-    public CameraManager(Context context) {
+    public CameraManager(Context context,CameraFacing cameraFacing) {
         this.context = context;
         this.configManager = new CameraConfigurationManager(context);
         previewCallback = new PreviewCallback(configManager);
+        statusBarHeight = getStatusBarHeight();
+        setManualCameraId(cameraFacing == CameraFacing.BACK ? 0 : 1);
     }
 
     public Context getContext() {
@@ -84,7 +88,7 @@ abstract class CameraManager {
     public synchronized void openDriver(SurfaceHolder holder) throws IOException {
         OpenCamera theCamera = camera;
         if (theCamera == null) {
-            //获取手机摄像头
+            //获取手机背面的摄像头
             theCamera = OpenCameraInterface.open(requestedCameraId);
             if (theCamera == null) {
                 throw new IOException("Camera.open() failed to return object from driver");
@@ -104,8 +108,7 @@ abstract class CameraManager {
 
         Camera cameraObject = theCamera.getCamera();
         Camera.Parameters parameters = cameraObject.getParameters();
-        String parametersFlattened = parameters == null ? null : parameters.flatten(); // Save
-        // these, temporarily
+        String parametersFlattened = parameters == null ? null : parameters.flatten(); // Save these, temporarily
         try {
             configManager.setDesiredCameraParameters(theCamera, false);
         } catch (RuntimeException re) {
@@ -225,30 +228,43 @@ abstract class CameraManager {
      *
      * @return The rectangle to draw on screen in window coordinates.
      */
-    abstract Rect getFramingRect();
-//    public synchronized Rect getFramingRect() {
-//        if (framingRect == null) {
-//            if (camera == null) {
-//                return null;
-//            }
-//            Point screenResolution = configManager.getScreenResolution();
-//            if (screenResolution == null) {
-//                // Called early, before init even finished
-//                return null;
-//            }
-//
-//            int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
-//            int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
-//
-//            int leftOffset = (screenResolution.x - width) / 2;
-//            int topOffset = (screenResolution.y - height) / 2;
-//            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
-//            Log.d(TAG, "Calculated framing rect: " + framingRect);
-//        }
-//        return framingRect;
-//    }
+    public synchronized Rect getFramingRect() {
+        if (framingRect == null) {
+            if (camera == null) {
+                return null;
+            }
+            Point screenResolution = configManager.getScreenResolution();
+            if (screenResolution == null) {
+                // Called early, before init even finished
+                return null;
+            }
+            int height;
+            int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH,
+                    MAX_FRAME_WIDTH);
+            //竖屏则为正方形
+            if (context.getResources().getConfiguration().orientation == Configuration
+                    .ORIENTATION_PORTRAIT) {
+                height = width;
+            } else {
+                height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT,
+                        MAX_FRAME_HEIGHT);
+            }
+            int statusBarHeight = getStatusBarHeight();//状态栏高度
+            int leftOffset = (screenResolution.x - width) / 2;
+            int topOffset = (screenResolution.y - height) / 2 ;
+            if (laserFrameTopMargin == 0)
+                laserFrameTopMargin = topOffset - statusBarHeight;
+            else {
+                laserFrameTopMargin += statusBarHeight;
+            }
+            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width,
+                    laserFrameTopMargin + height);
+            Log.d(TAG, "Calculated framing rect: " + framingRect);
+        }
+        return framingRect;
+    }
 
-    protected static int findDesiredDimensionInRange(int resolution, int hardMin, int hardMax) {
+    private static int findDesiredDimensionInRange(int resolution, int hardMin, int hardMax) {
         int dim = 5 * resolution / 8; // Target 5/8 of each dimension
         if (dim < hardMin) {
             return hardMin;
@@ -315,26 +331,32 @@ abstract class CameraManager {
      * @param width  The width in pixels to scan.
      * @param height The height in pixels to scan.
      */
-    abstract void setManualFramingRect(int width, int height);
-//    public synchronized void setManualFramingRect(int width, int height) {
-//        if (initialized) {
-//            Point screenResolution = configManager.getScreenResolution();
-//            if (width > screenResolution.x) {
-//                width = screenResolution.x;
-//            }
-//            if (height > screenResolution.y) {
-//                height = screenResolution.y;
-//            }
-//            int leftOffset = (screenResolution.x - width) / 2;
-//            int topOffset = (screenResolution.y - height) / 2;
-//            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
-//            Log.d(TAG, "Calculated manual framing rect: " + framingRect);
-//            framingRectInPreview = null;
-//        } else {
-//            requestedFramingRectWidth = width;
-//            requestedFramingRectHeight = height;
-//        }
-//    }
+    public synchronized void setManualFramingRect(int width, int height) {
+        if (initialized) {
+            Point screenResolution = configManager.getScreenResolution();
+            if (width > screenResolution.x) {
+                width = screenResolution.x;
+            }
+            if (height > screenResolution.y) {
+                height = screenResolution.y;
+            }
+            int statusBarHeight = getStatusBarHeight();//状态栏高度
+            int leftOffset = (screenResolution.x - width) / 2;
+            int topOffset = (screenResolution.y - height) / 2 - statusBarHeight;
+            if (laserFrameTopMargin == 0)
+                laserFrameTopMargin = topOffset;
+            else {
+                laserFrameTopMargin += statusBarHeight;
+            }
+            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width,
+                    laserFrameTopMargin + height);
+            //   Log.d(TAG, "Calculated manual framing rect: " + framingRect);
+            framingRectInPreview = null;
+        } else {
+            requestedFramingRectWidth = width;
+            requestedFramingRectHeight = height;
+        }
+    }
 
     /**
      * A factory method to build the appropriate LuminanceSource object based on the format
@@ -346,15 +368,36 @@ abstract class CameraManager {
      * @return A PlanarYUVLuminanceSource instance.
      */
     public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
-//        Rect rect = getFramingRectInPreview();
-//        if (rect == null) {
-//            return null;
-//        }
-
+        Rect rect = getFramingRectInPreview();
+        if (rect == null) {
+            return null;
+        }
         // Go ahead and assume it's YUV rather than die.
-//        return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
-//                rect.width(), rect.height(), false);
-        //扫描精度问题
-        return new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false);
+        return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
+                rect.width(), rect.height(), false);
+    }
+
+    /**
+     * 获取状态栏高度
+     *
+     * @return
+     */
+    private int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen",
+                "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
+    /**
+     * 设置扫描框与屏幕上方距离
+     *
+     * @param laserFrameTopMargin
+     */
+    public void setLaserFrameTopMargin(int laserFrameTopMargin) {
+        this.laserFrameTopMargin = laserFrameTopMargin;
     }
 }

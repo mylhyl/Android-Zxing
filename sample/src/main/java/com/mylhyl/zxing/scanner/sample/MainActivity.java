@@ -91,8 +91,8 @@ public class MainActivity extends BasicActivity {
                             new String[]{Manifest.permission.CAMERA}, 60);
                 } else {
                     //权限已经被授予，在这里直接写要执行的相应方法即可
-                    ScannerActivity.gotoActivity(MainActivity.this,
-                            checkBox.isChecked(), laserMode, scanMode, !toggleButton.isChecked());
+                    //ScannerActivity.gotoActivity(MainActivity.this,
+                    //        checkBox.isChecked(), laserMode, scanMode, !toggleButton.isChecked());
                     TestMainActivity.gotoActivity(MainActivity.this);
                 }
             }

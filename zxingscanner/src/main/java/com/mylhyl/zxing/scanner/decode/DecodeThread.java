@@ -23,7 +23,7 @@ import android.util.Log;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.ResultPointCallback;
-import com.mylhyl.zxing.scanner.camera.WrapperCameraManager;
+import com.mylhyl.zxing.scanner.camera.CameraManager;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -41,14 +41,14 @@ public final class DecodeThread extends Thread {
     public static final String BARCODE_BITMAP = "barcode_bitmap";
     public static final String BARCODE_SCALED_FACTOR = "barcode_scaled_factor";
 
-    private final WrapperCameraManager cameraManager;
+    private final CameraManager cameraManager;
     private final Handler scannerViewHandler;
     private final Map<DecodeHintType, Object> hints;
     private DecodeHandler handler;
     private final CountDownLatch handlerInitLatch;
     private boolean bundleThumbnail = false;
 
-    public DecodeThread(WrapperCameraManager cameraManager, Handler scannerViewHandler,
+    public DecodeThread(CameraManager cameraManager, Handler scannerViewHandler,
                         Collection<BarcodeFormat> decodeFormats,
                         ResultPointCallback resultPointCallback,
                         boolean bundleThumbnail) {

@@ -13,7 +13,7 @@ import android.widget.FrameLayout;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
-import com.mylhyl.zxing.scanner.camera.WrapperCameraManager;
+import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
 import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.decode.DecodeFormatManager;
@@ -32,7 +32,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private ViewfinderView mViewfinderView;
 
     private boolean hasSurface;
-    private WrapperCameraManager mCameraManager;
+    private CameraManager mCameraManager;
     private ScannerViewHandler mScannerViewHandler;
     private BeepManager mBeepManager;
     private int mMediaResId;
@@ -71,7 +71,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     public void onResume() {
-        mCameraManager = new WrapperCameraManager(getContext(), mCameraFacing);
+        mCameraManager = new CameraManager(getContext(), mCameraFacing);
         mCameraManager.setLaserFrameTopMargin(laserFrameTopMargin);//扫描框与屏幕距离
         mViewfinderView.setCameraManager(mCameraManager);
         if (mBeepManager != null) mBeepManager.updatePrefs();
@@ -459,7 +459,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
-     * 重新扫描，支持延时
+     * 在经过一段延迟后重置相机以进行下一次扫描。 成功扫描过后可调用此方法立刻准备进行下次扫描
      *
      * @param delayMS 毫秒
      */

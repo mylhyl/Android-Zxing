@@ -32,7 +32,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.google.zxing.ResultPoint;
-import com.mylhyl.zxing.scanner.camera.WrapperCameraManager;
+import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ final class ViewfinderView extends View {
     private static final int DEFAULT_LASER_LINE_HEIGHT = 2;//扫描线默认高度
     private static final int DEFAULT_LASER_MOVE_SPEED = 6;//默认每毫秒移动6px
 
-    private WrapperCameraManager cameraManager;
+    private CameraManager cameraManager;
     private final Paint paint;
     private Bitmap resultBitmap;
     private List<ResultPoint> possibleResultPoints;
@@ -92,7 +92,7 @@ final class ViewfinderView extends View {
         drawTextMargin = Scanner.dp2px(context, 20f);
     }
 
-    void setCameraManager(WrapperCameraManager cameraManager) {
+    void setCameraManager(CameraManager cameraManager) {
         this.cameraManager = cameraManager;
     }
 

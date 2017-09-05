@@ -14,7 +14,7 @@ import com.google.zxing.Result;
 import com.google.zxing.common.GlobalHistogramBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
-import com.mylhyl.zxing.scanner.camera.WrapperCameraManager;
+import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
 
 import java.io.FileNotFoundException;
@@ -97,8 +97,8 @@ public final class QRDecode {
         int picWidth = opt.outWidth;
         int picHeight = opt.outHeight;
         // 获取画布中间方框的宽度和高度
-        int screenWidth = WrapperCameraManager.MAX_FRAME_WIDTH;
-        int screenHeight = WrapperCameraManager.MAX_FRAME_HEIGHT;
+        int screenWidth = CameraManager.MAX_FRAME_WIDTH;
+        int screenHeight = CameraManager.MAX_FRAME_HEIGHT;
         // isSampleSize是表示对图片的缩放程度，比如值为2图片的宽度和高度都变为以前的1/2
         opt.inSampleSize = 1;
         // 根据屏的大小和图片大小计算出缩放比例
