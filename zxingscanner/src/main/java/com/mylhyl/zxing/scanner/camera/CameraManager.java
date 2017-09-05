@@ -66,8 +66,9 @@ public final class CameraManager {
     private final PreviewCallback previewCallback;
     private final int statusBarHeight;//状态栏高度
     private int laserFrameTopMargin;//扫描框离屏幕上方距离
+    private boolean scanFullScreen;
 
-    public CameraManager(Context context,CameraFacing cameraFacing) {
+    public CameraManager(Context context, CameraFacing cameraFacing) {
         this.context = context;
         this.configManager = new CameraConfigurationManager(context);
         previewCallback = new PreviewCallback(configManager);
@@ -239,26 +240,21 @@ public final class CameraManager {
                 return null;
             }
             int height;
-            int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH,
-                    MAX_FRAME_WIDTH);
+            int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
             //竖屏则为正方形
-            if (context.getResources().getConfiguration().orientation == Configuration
-                    .ORIENTATION_PORTRAIT) {
+            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 height = width;
             } else {
-                height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT,
-                        MAX_FRAME_HEIGHT);
+                height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
             }
-            int statusBarHeight = getStatusBarHeight();//状态栏高度
             int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2 ;
+            int topOffset = (screenResolution.y - height) / 2;
             if (laserFrameTopMargin == 0)
                 laserFrameTopMargin = topOffset - statusBarHeight;
             else {
                 laserFrameTopMargin += statusBarHeight;
             }
-            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width,
-                    laserFrameTopMargin + height);
+            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width, laserFrameTopMargin + height);
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;
@@ -296,8 +292,7 @@ public final class CameraManager {
             }
 
             //竖屏识别一维
-            if (context.getResources().getConfiguration().orientation == Configuration
-                    .ORIENTATION_PORTRAIT) {
+            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 rect.left = rect.left * cameraResolution.y / screenResolution.x;
                 rect.right = rect.right * cameraResolution.y / screenResolution.x;
                 rect.top = rect.top * cameraResolution.x / screenResolution.y;
@@ -340,7 +335,7 @@ public final class CameraManager {
             if (height > screenResolution.y) {
                 height = screenResolution.y;
             }
-            int statusBarHeight = getStatusBarHeight();//状态栏高度
+
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 2 - statusBarHeight;
             if (laserFrameTopMargin == 0)
@@ -348,8 +343,7 @@ public final class CameraManager {
             else {
                 laserFrameTopMargin += statusBarHeight;
             }
-            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width,
-                    laserFrameTopMargin + height);
+            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width, laserFrameTopMargin + height);
             //   Log.d(TAG, "Calculated manual framing rect: " + framingRect);
             framingRectInPreview = null;
         } else {
@@ -368,13 +362,15 @@ public final class CameraManager {
      * @return A PlanarYUVLuminanceSource instance.
      */
     public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
+        if (scanFullScreen) {
+            return new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false);
+        }
         Rect rect = getFramingRectInPreview();
         if (rect == null) {
             return null;
         }
         // Go ahead and assume it's YUV rather than die.
-        return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
-                rect.width(), rect.height(), false);
+        return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top, rect.width(), rect.height(), false);
     }
 
     /**
@@ -384,8 +380,7 @@ public final class CameraManager {
      */
     private int getStatusBarHeight() {
         int result = 0;
-        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen",
-                "android");
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             result = context.getResources().getDimensionPixelSize(resourceId);
         }
@@ -399,5 +394,9 @@ public final class CameraManager {
      */
     public void setLaserFrameTopMargin(int laserFrameTopMargin) {
         this.laserFrameTopMargin = laserFrameTopMargin;
+    }
+
+    public void setScanFullScreen(boolean scanFullScreen) {
+        this.scanFullScreen = scanFullScreen;
     }
 }

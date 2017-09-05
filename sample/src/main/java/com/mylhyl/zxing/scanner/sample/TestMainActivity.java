@@ -34,6 +34,7 @@ public class TestMainActivity extends Activity implements OnScannerCompletionLis
                 .setLaserColor(0xff06c1ae)
                 .setLaserLineHeight(8)
                 .toggleLight(false)
+                .isScanFullScreen(true)
                 .setDrawText("请联系其它已添加该设备用户获取二维码", 12, 0x000000, true, 19)
                 .setLaserFrameTopMargin(10);
 

@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.google.zxing.BarcodeFormat;
@@ -44,6 +45,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private Collection<BarcodeFormat> decodeFormats;//解码类型
     private boolean mShowResThumbnail = false;//扫描成功是否显示缩略图
     private CameraFacing mCameraFacing = CameraFacing.BACK;//默认后置摄像头
+    private boolean mScanFullScreen;//全屏扫描
 
     public ScannerView(Context context) {
         this(context, null);
@@ -62,17 +64,16 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         hasSurface = false;
 
         mSurfaceView = new SurfaceView(context, attrs, defStyle);
-        addView(mSurfaceView, new LayoutParams(LayoutParams.MATCH_PARENT
-                , LayoutParams.MATCH_PARENT));
+        addView(mSurfaceView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         mViewfinderView = new ViewfinderView(context, attrs);
-        addView(mViewfinderView, new LayoutParams(LayoutParams.MATCH_PARENT
-                , LayoutParams.MATCH_PARENT));
+        addView(mViewfinderView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
 
     public void onResume() {
         mCameraManager = new CameraManager(getContext(), mCameraFacing);
         mCameraManager.setLaserFrameTopMargin(laserFrameTopMargin);//扫描框与屏幕距离
+        mCameraManager.setScanFullScreen(mScanFullScreen);//是否全屏扫描
         mViewfinderView.setCameraManager(mCameraManager);
         if (mBeepManager != null) mBeepManager.updatePrefs();
 
@@ -141,8 +142,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         //扫描成功
         if (mScannerCompletionListener != null) {
             //转换结果
-            mScannerCompletionListener.OnScannerCompletion(rawResult,
-                    Scanner.parseResult(rawResult), barcode);
+            mScannerCompletionListener.OnScannerCompletion(rawResult, Scanner.parseResult(rawResult), barcode);
         }
         //设置扫描结果图片
         if (barcode != null) {
@@ -168,8 +168,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param scaleFactor amount by which thumbnail was scaled
      * @param rawResult   The decoded results which contains the points to draw.
      */
-    private void drawResultPoints(Bitmap barcode, float scaleFactor,
-                                  Result rawResult) {
+    private void drawResultPoints(Bitmap barcode, float scaleFactor, Result rawResult) {
         ResultPoint[] points = rawResult.getResultPoints();
         if (points != null && points.length > 0) {
             Canvas canvas = new Canvas(barcode);
@@ -179,8 +178,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
                 paint.setStrokeWidth(4.0f);
                 drawLine(canvas, paint, points[0], points[1], scaleFactor);
             } else if (points.length == 4
-                    && (rawResult.getBarcodeFormat() == BarcodeFormat.UPC_A || rawResult
-                    .getBarcodeFormat() == BarcodeFormat.EAN_13)) {
+                    && (rawResult.getBarcodeFormat() == BarcodeFormat.UPC_A || rawResult.getBarcodeFormat() == BarcodeFormat.EAN_13)) {
                 // Hacky special case -- draw two lines, for the barcode and
                 // metadata
                 drawLine(canvas, paint, points[0], points[1], scaleFactor);
@@ -189,19 +187,16 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
                 paint.setStrokeWidth(10.0f);
                 for (ResultPoint point : points) {
                     if (point != null) {
-                        canvas.drawPoint(scaleFactor * point.getX(),
-                                scaleFactor * point.getY(), paint);
+                        canvas.drawPoint(scaleFactor * point.getX(), scaleFactor * point.getY(), paint);
                     }
                 }
             }
         }
     }
 
-    private static void drawLine(Canvas canvas, Paint paint, ResultPoint a,
-                                 ResultPoint b, float scaleFactor) {
+    private static void drawLine(Canvas canvas, Paint paint, ResultPoint a, ResultPoint b, float scaleFactor) {
         if (a != null && b != null) {
-            canvas.drawLine(scaleFactor * a.getX(), scaleFactor * a.getY(),
-                    scaleFactor * b.getX(), scaleFactor * b.getY(), paint);
+            canvas.drawLine(scaleFactor * a.getX(), scaleFactor * a.getY(), scaleFactor * b.getX(), scaleFactor * b.getY(), paint);
         }
     }
 
@@ -354,8 +349,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param isBottom   是否在扫描框下方
      * @param textMargin 离扫描框间距 dp
      */
-    public ScannerView setDrawText(String text, int textSize, int textColor
-            , boolean isBottom, int textMargin) {
+    public ScannerView setDrawText(String text, int textSize, int textColor, boolean isBottom, int textMargin) {
         mViewfinderView.setDrawText(text, textSize, textColor, isBottom, textMargin);
         return this;
     }
@@ -459,14 +453,25 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
+     * 是否全屏扫描
+     *
+     * @param scanFullScreen
+     * @return
+     */
+    public ScannerView isScanFullScreen(boolean scanFullScreen) {
+        this.mScanFullScreen = scanFullScreen;
+        this.mViewfinderView.setVisibility(scanFullScreen ? View.GONE : View.VISIBLE);
+        return this;
+    }
+
+    /**
      * 在经过一段延迟后重置相机以进行下一次扫描。 成功扫描过后可调用此方法立刻准备进行下次扫描
      *
      * @param delayMS 毫秒
      */
     public void restartPreviewAfterDelay(long delayMS) {
-        if (mScannerViewHandler != null) {
+        if (mScannerViewHandler != null)
             mScannerViewHandler.sendEmptyMessageDelayed(Scanner.RESTART_PREVIEW, delayMS);
-        }
     }
 
     ViewfinderView getViewfinderView() {
