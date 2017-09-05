@@ -45,8 +45,7 @@ final class DecodeHandler extends Handler {
     private boolean bundleThumbnail = false;
 
     DecodeHandler(CameraManager cameraManager, Handler scannerViewHandler,
-                  Map<DecodeHintType,
-            Object> hints, boolean bundleThumbnail) {
+                  Map<DecodeHintType, Object> hints, boolean bundleThumbnail) {
         this.cameraManager = cameraManager;
         this.scannerViewHandler = scannerViewHandler;
         this.bundleThumbnail = bundleThumbnail;
