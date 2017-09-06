@@ -460,7 +460,17 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     public ScannerView isScanFullScreen(boolean scanFullScreen) {
         this.mScanFullScreen = scanFullScreen;
-        this.mViewfinderView.setVisibility(scanFullScreen ? View.GONE : View.VISIBLE);
+        return this;
+    }
+
+    /**
+     * 是否隐藏扫描框
+     *
+     * @param hide
+     * @return
+     */
+    public ScannerView isHideLaserFrame(boolean hide) {
+        this.mViewfinderView.setVisibility(hide ? View.GONE : View.VISIBLE);
         return this;
     }
 
