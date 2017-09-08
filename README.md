@@ -212,6 +212,20 @@ Bitmap bitmap = new QREncode.Builder(this)
 <td>6px</td>
 </tr>
 <tr>
+<td>setCameraFacing</td>
+<td>设置扫描摄像头</td>
+<td>后置</td>
+</tr>
+<tr>
+<td>isScanFullScreen</td>
+<td>是否全屏扫描</td>
+<td>false</td>
+</tr>
+<tr>
+<td>isHideLaserFrame</td>
+<td>是否隐藏扫描框</td>
+<td>false</td>
+</tr>
 </table>
 
 ### 七、注意事项
