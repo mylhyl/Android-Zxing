@@ -233,8 +233,9 @@ Bitmap bitmap = new QREncode.Builder(this)
 ```xml
 <uses-permission android:name="android.permission.CAMERA" />
 ```
-对于`setLaserFrameTopMargin`方法，扫描区域偏移的问题[issues-13](https://github.com/mylhyl/Android-Zxing/issues/13)
-`restartPreviewAfterDelay`方法连续扫描
+
+对于`setLaserFrameTopMargin`方法，扫描区域偏移的问题[issues-13](https://github.com/mylhyl/Android-Zxing/issues/13)  
+可以在扫描成功后，调用`restartPreviewAfterDelay`连续扫描
 
 QQ交流群：630413339 [点击链接加入群Android-Zxing](https://jq.qq.com/?_wv=1027&k=4BR729O)
 
