@@ -184,7 +184,7 @@ Bitmap bitmap = new QREncode.Builder(this)
 <tr>
 <td>setLaserFrameSize</td>
 <td>设置扫描框大小</td>
-<td>屏幕5/8</td>
+<td>屏幕5/8比例</td>
 </tr>
 <tr>
 <td>setLaserFrameTopMargin</td>

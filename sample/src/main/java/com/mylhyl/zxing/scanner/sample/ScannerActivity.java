@@ -30,6 +30,8 @@ public class ScannerActivity extends DeCodeActivity {
     public static final String EXTRA_LASER_LINE_MODE = "extra_laser_line_mode";
     public static final String EXTRA_SCAN_MODE = "extra_scan_mode";
     public static final String EXTRA_SHOW_THUMBNAIL = "EXTRA_SHOW_THUMBNAIL";
+    public static final String EXTRA_SCAN_FULL_SCREEN = "EXTRA_SCAN_FULL_SCREEN";
+    public static final String EXTRA_HIDE_LASER_FRAME = "EXTRA_HIDE_LASER_FRAME";
 
     public static final int EXTRA_LASER_LINE_MODE_0 = 0;
     public static final int EXTRA_LASER_LINE_MODE_1 = 1;
@@ -43,9 +45,6 @@ public class ScannerActivity extends DeCodeActivity {
 
     private ScannerView mScannerView;
     private Result mLastResult;
-    private int laserMode;
-    private int scanMode;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +79,9 @@ public class ScannerActivity extends DeCodeActivity {
         });
 
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            laserMode = extras.getInt(EXTRA_LASER_LINE_MODE);
-            scanMode = extras.getInt(EXTRA_SCAN_MODE);
-            showThumbnail = extras.getBoolean(EXTRA_SHOW_THUMBNAIL);
-        }
+        int laserMode = extras.getInt(EXTRA_LASER_LINE_MODE);
+        int scanMode = extras.getInt(EXTRA_SCAN_MODE);
+        showThumbnail = extras.getBoolean(EXTRA_SHOW_THUMBNAIL);
         mScannerView.setMediaResId(R.raw.beep);//设置扫描成功的声音
         mScannerView.setDrawText("将二维码放入框内", true);
         mScannerView.setDrawTextColor(Color.RED);
@@ -99,6 +96,10 @@ public class ScannerActivity extends DeCodeActivity {
 
         //显示扫描成功后的缩略图
         mScannerView.isShowResThumbnail(showThumbnail);
+        //全屏识别
+        mScannerView.isScanFullScreen(extras.getBoolean(EXTRA_SCAN_FULL_SCREEN));
+        //隐藏扫描框
+        mScannerView.isHideLaserFrame(extras.getBoolean(EXTRA_HIDE_LASER_FRAME));
 //        mScannerView.setCameraFacing(CameraFacing.FRONT);
 //        mScannerView.setLaserMoveSpeed(1);//速度
 
@@ -182,12 +183,15 @@ public class ScannerActivity extends DeCodeActivity {
     }
 
     public static void gotoActivity(Activity activity, boolean isBackResult
-            , int laserMode, int scanMode, boolean showThumbnail) {
+            , int laserMode, int scanMode, boolean showThumbnail, boolean isScanFullScreen
+            , boolean isHideLaserFrame) {
         activity.startActivityForResult(new Intent(Scanner.Scan.ACTION)
                         .putExtra(BasicScannerActivity.EXTRA_RETURN_SCANNER_RESULT, isBackResult)
                         .putExtra(ScannerActivity.EXTRA_LASER_LINE_MODE, laserMode)
                         .putExtra(ScannerActivity.EXTRA_SCAN_MODE, scanMode)
                         .putExtra(ScannerActivity.EXTRA_SHOW_THUMBNAIL, showThumbnail)
+                        .putExtra(ScannerActivity.EXTRA_SCAN_FULL_SCREEN, isScanFullScreen)
+                        .putExtra(ScannerActivity.EXTRA_HIDE_LASER_FRAME, isHideLaserFrame)
                 , BasicScannerActivity.REQUEST_CODE_SCANNER);
     }
 }

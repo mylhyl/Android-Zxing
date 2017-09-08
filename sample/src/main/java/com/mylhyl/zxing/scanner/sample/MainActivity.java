@@ -31,7 +31,6 @@ public class MainActivity extends BasicActivity {
     private static final int PICK_CONTACT = 1;
     private TextView tvResult;
     private ImageView imageView;
-    private ToggleButton toggleButton;
     private int laserMode, scanMode;
 
     @Override
@@ -41,7 +40,9 @@ public class MainActivity extends BasicActivity {
         tvResult = (TextView) findViewById(R.id.textView);
         imageView = (ImageView) findViewById(R.id.imageView);
 
-        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        final ToggleButton toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        final ToggleButton toggleButton1 = (ToggleButton) findViewById(R.id.toggleButton1);
+        final ToggleButton toggleButton2 = (ToggleButton) findViewById(R.id.toggleButton2);
 
         final CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
@@ -91,9 +92,10 @@ public class MainActivity extends BasicActivity {
                             new String[]{Manifest.permission.CAMERA}, 60);
                 } else {
                     //权限已经被授予，在这里直接写要执行的相应方法即可
-                    //ScannerActivity.gotoActivity(MainActivity.this,
-                    //        checkBox.isChecked(), laserMode, scanMode, !toggleButton.isChecked());
-                    TestMainActivity.gotoActivity(MainActivity.this);
+                    ScannerActivity.gotoActivity(MainActivity.this,
+                            checkBox.isChecked(), laserMode, scanMode, !toggleButton.isChecked()
+                            , toggleButton1.isChecked(), toggleButton2.isChecked());
+//                    TestMainActivity.gotoActivity(MainActivity.this);
                 }
             }
         });
