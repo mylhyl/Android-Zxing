@@ -40,7 +40,7 @@ final class CameraConfigurationManager {
     private static final int FRONT_LIGHT_MODE_ON = 0;
     private static final int FRONT_LIGHT_MODE_OFF = 1;
     private final Context context;
-//    private int cwNeededRotation;
+    //    private int cwNeededRotation;
     private int cwRotationFromDisplayToCamera;
     // 屏幕分辨率
     private Point screenResolution;
@@ -133,7 +133,7 @@ final class CameraConfigurationManager {
      * @param camera
      * @param safeMode
      */
-    void setDesiredCameraParameters(OpenCamera camera, boolean safeMode) {
+    void setDesiredCameraParameters(OpenCamera camera, boolean safeMode, boolean invertScan) {
 
         Camera theCamera = camera.getCamera();
         Camera.Parameters parameters = theCamera.getParameters();
@@ -158,7 +158,6 @@ final class CameraConfigurationManager {
 
         if (!safeMode) {
             // 反色，扫描黑色背景上的白色条码。仅适用于部分设备。
-            boolean invertScan = false;
             if (invertScan) {
                 CameraConfigurationUtils.setInvertColor(parameters);
             }

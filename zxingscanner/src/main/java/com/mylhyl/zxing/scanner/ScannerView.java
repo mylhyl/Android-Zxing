@@ -46,6 +46,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private boolean mShowResThumbnail = false;//扫描成功是否显示缩略图
     private CameraFacing mCameraFacing = CameraFacing.BACK;//默认后置摄像头
     private boolean mScanFullScreen;//全屏扫描
+    private boolean invertScan;//扫描反色二维码（黑底白色码）
 
     public ScannerView(Context context) {
         this(context, null);
@@ -74,6 +75,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mCameraManager = new CameraManager(getContext(), mCameraFacing);
         mCameraManager.setLaserFrameTopMargin(laserFrameTopMargin);//扫描框与屏幕距离
         mCameraManager.setScanFullScreen(mScanFullScreen);//是否全屏扫描
+        mCameraManager.setInvertScan(invertScan);
         mViewfinderView.setCameraManager(mCameraManager);
         if (mBeepManager != null) mBeepManager.updatePrefs();
 
@@ -471,6 +473,16 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     public ScannerView isHideLaserFrame(boolean hide) {
         this.mViewfinderView.setVisibility(hide ? View.GONE : View.VISIBLE);
+        return this;
+    }
+
+    /**
+     * 是否扫描反色二维码（黑底白码）
+     * @param invertScan
+     * @return
+     */
+    public ScannerView isScanInvert(boolean invertScan) {
+        this.invertScan = invertScan;
         return this;
     }
 

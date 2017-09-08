@@ -67,6 +67,7 @@ public final class CameraManager {
     private final int statusBarHeight;//状态栏高度
     private int laserFrameTopMargin;//扫描框离屏幕上方距离
     private boolean scanFullScreen;
+    private boolean invertScan;
 
     public CameraManager(Context context, CameraFacing cameraFacing) {
         this.context = context;
@@ -111,7 +112,7 @@ public final class CameraManager {
         Camera.Parameters parameters = cameraObject.getParameters();
         String parametersFlattened = parameters == null ? null : parameters.flatten(); // Save these, temporarily
         try {
-            configManager.setDesiredCameraParameters(theCamera, false);
+            configManager.setDesiredCameraParameters(theCamera, false, invertScan);
         } catch (RuntimeException re) {
             // Driver failed
             Log.w(TAG, "Camera rejected parameters. Setting only minimal safe-mode parameters");
@@ -122,7 +123,7 @@ public final class CameraManager {
                 parameters.unflatten(parametersFlattened);
                 try {
                     cameraObject.setParameters(parameters);
-                    configManager.setDesiredCameraParameters(theCamera, true);
+                    configManager.setDesiredCameraParameters(theCamera, true, invertScan);
                 } catch (RuntimeException re2) {
                     // Well, darn. Give up
                     Log.w(TAG, "Camera rejected even safe-mode parameters! No configuration");
@@ -398,5 +399,8 @@ public final class CameraManager {
 
     public void setScanFullScreen(boolean scanFullScreen) {
         this.scanFullScreen = scanFullScreen;
+    }
+    public void setInvertScan(boolean invertScan){
+        this.invertScan = invertScan;
     }
 }

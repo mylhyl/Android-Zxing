@@ -100,6 +100,7 @@ public class ScannerActivity extends DeCodeActivity {
         mScannerView.isScanFullScreen(extras.getBoolean(EXTRA_SCAN_FULL_SCREEN));
         //隐藏扫描框
         mScannerView.isHideLaserFrame(extras.getBoolean(EXTRA_HIDE_LASER_FRAME));
+//        mScannerView.isScanInvert(true);//扫描反色二维码
 //        mScannerView.setCameraFacing(CameraFacing.FRONT);
 //        mScannerView.setLaserMoveSpeed(1);//速度
 

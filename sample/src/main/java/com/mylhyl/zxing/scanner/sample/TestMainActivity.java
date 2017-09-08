@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.client.result.ParsedResult;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
@@ -34,7 +36,7 @@ public class TestMainActivity extends Activity implements OnScannerCompletionLis
                 .setLaserColor(0xff06c1ae)
                 .setLaserLineHeight(8)
                 .toggleLight(false)
-                .isScanFullScreen(true)
+                .setScanMode(BarcodeFormat.QR_CODE)
                 .setDrawText("请联系其它已添加该设备用户获取二维码", 12, 0x000000, true, 19)
                 .setLaserFrameTopMargin(10);
 
@@ -58,5 +60,11 @@ public class TestMainActivity extends Activity implements OnScannerCompletionLis
     @Override
     public void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
         Toast.makeText(this, rawResult.getText(), Toast.LENGTH_SHORT).show();
+        vibrate();
+        mScannerView.restartPreviewAfterDelay(0);
+    }
+    private void vibrate() {
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        vibrator.vibrate(200);
     }
 }
