@@ -22,7 +22,6 @@ import android.util.Log;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
-import com.google.zxing.ResultPointCallback;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
 
 import java.util.Collection;
@@ -49,9 +48,7 @@ public final class DecodeThread extends Thread {
     private boolean bundleThumbnail = false;
 
     public DecodeThread(CameraManager cameraManager, Handler scannerViewHandler,
-                        Collection<BarcodeFormat> decodeFormats,
-                        ResultPointCallback resultPointCallback,
-                        boolean bundleThumbnail) {
+                        Collection<BarcodeFormat> decodeFormats, boolean bundleThumbnail) {
         this.cameraManager = cameraManager;
         this.scannerViewHandler = scannerViewHandler;
         this.bundleThumbnail = bundleThumbnail;
@@ -87,8 +84,6 @@ public final class DecodeThread extends Thread {
         }
         hints.put(DecodeHintType.POSSIBLE_FORMATS, decodeFormats);
 
-        hints.put(DecodeHintType.NEED_RESULT_POINT_CALLBACK,
-                resultPointCallback);
         Log.i("DecodeThread", "Hints: " + hints);
     }
 

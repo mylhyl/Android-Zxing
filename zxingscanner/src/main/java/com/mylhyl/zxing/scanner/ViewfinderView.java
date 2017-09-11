@@ -55,15 +55,12 @@ final class ViewfinderView extends View {
     private CameraManager cameraManager;
     private final Paint paint;
     private Bitmap resultBitmap;
-    private List<ResultPoint> possibleResultPoints;
-    private List<ResultPoint> lastPossibleResultPoints;
 
     private int animationDelay = 0;
     private Bitmap laserLineBitmap;
 
     private int maskColor = Scanner.color.VIEWFINDER_MASK;//扫描框以外区域半透明黑色
     private int resultColor = Scanner.color.RESULT_VIEW;//扫描成功后扫描框以外区域白色
-    private int resultPointColor = Scanner.color.POSSIBLE_RESULT_POINTS;//聚焦扫描线中聚焦点红色
     private int laserColor = Scanner.color.VIEWFINDER_LASER;//扫描线颜色
     private int laserFrameBoundColor = laserColor;//扫描框4角颜色
     private int laserLineTop;// 扫描线最顶端位置
@@ -82,8 +79,6 @@ final class ViewfinderView extends View {
     public ViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        possibleResultPoints = new ArrayList<>(5);
-        lastPossibleResultPoints = null;
         laserMoveSpeed = DEFAULT_LASER_MOVE_SPEED;//默认每毫秒移动6px
         laserLineHeight = Scanner.dp2px(context, DEFAULT_LASER_LINE_HEIGHT);
         laserFrameCornerWidth = Scanner.dp2px(context, 2f);
@@ -118,7 +113,6 @@ final class ViewfinderView extends View {
             drawFrameCorner(canvas, frame);//绘制扫描框4角
             drawText(canvas, frame);// 画扫描框下面的字
             drawLaserLine(canvas, frame);//绘制扫描线
-            drawResultPoint(canvas, frame, previewFrame);//绘制扫描点标记
             moveLaserSpeed(frame);//计算移动位置
         }
     }
@@ -265,43 +259,6 @@ final class ViewfinderView extends View {
         }
     }
 
-    private void drawResultPoint(Canvas canvas, Rect frame, Rect previewFrame) {
-        float scaleX = frame.width() / (float) previewFrame.width();
-        float scaleY = frame.height() / (float) previewFrame.height();
-
-        List<ResultPoint> currentPossible = possibleResultPoints;
-        List<ResultPoint> currentLast = lastPossibleResultPoints;
-        int frameLeft = frame.left;
-        int frameTop = frame.top;
-        if (currentPossible.isEmpty()) {
-            lastPossibleResultPoints = null;
-        } else {
-            possibleResultPoints = new ArrayList<>(5);
-            lastPossibleResultPoints = currentPossible;
-            paint.setAlpha(CURRENT_POINT_OPACITY);
-            paint.setColor(resultPointColor);
-            synchronized (currentPossible) {
-                for (ResultPoint point : currentPossible) {
-                    canvas.drawCircle(frameLeft + (int) (point.getX() * scaleX),
-                            frameTop + (int) (point.getY() * scaleY),
-                            POINT_SIZE, paint);
-                }
-            }
-        }
-        if (currentLast != null) {
-            paint.setAlpha(CURRENT_POINT_OPACITY / 2);
-            paint.setColor(resultPointColor);
-            synchronized (currentLast) {
-                float radius = POINT_SIZE / 2.0f;
-                for (ResultPoint point : currentLast) {
-                    canvas.drawCircle(frameLeft + (int) (point.getX() * scaleX),
-                            frameTop + (int) (point.getY() * scaleY),
-                            radius, paint);
-                }
-            }
-        }
-    }
-
     public void drawViewfinder() {
         Bitmap resultBitmap = this.resultBitmap;
         this.resultBitmap = null;
@@ -319,18 +276,6 @@ final class ViewfinderView extends View {
     public void drawResultBitmap(Bitmap barcode) {
         resultBitmap = barcode;
         invalidate();
-    }
-
-    public void addPossibleResultPoint(ResultPoint point) {
-        List<ResultPoint> points = possibleResultPoints;
-        synchronized (points) {
-            points.add(point);
-            int size = points.size();
-            if (size > MAX_RESULT_POINTS) {
-                // trim it
-                points.subList(0, size - MAX_RESULT_POINTS / 2).clear();
-            }
-        }
     }
 
     public void setLaserColor(int laserColor) {
