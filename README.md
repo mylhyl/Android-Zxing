@@ -235,7 +235,22 @@ Bitmap bitmap = new QREncode.Builder(this)
 ```
 
 对于`setLaserFrameTopMargin`方法，扫描区域偏移的问题[issues-13](https://github.com/mylhyl/Android-Zxing/issues/13)  
-可以在扫描成功后，调用`restartPreviewAfterDelay`连续扫描
+可以在扫描成功后，调用`restartPreviewAfterDelay`连续扫描  
+对于加密后的二维码，判断二维码类型可以如下：
+```java
+	//重新包装`Result`，`decryptText`为解密后的内容
+        Result decryptResult = new Result(decryptText, rawResult.getRawBytes(),
+                rawResult.getNumBits(), rawResult.getResultPoints(), 
+                rawResult.getBarcodeFormat(), rawResult.getTimestamp());
+	//转换扫描结果为类型枚举
+        ParsedResult decryptParsedResult = Scanner.parseResult(decryptResult);
+        final ParsedResultType decryptType = decryptParsedResult.getType();
+        switch (decryptType) {
+            //类型分支
+	    case :
+	    	break;
+        }
+```
 
 QQ交流群：630413339 [点击链接加入群Android-Zxing](https://jq.qq.com/?_wv=1027&k=4BR729O)
 
