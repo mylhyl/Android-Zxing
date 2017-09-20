@@ -14,7 +14,7 @@
 ### 二、效果图
 <img src="preview/gif.gif" width="240px"/>
 
-### 三、[下载APK体验](preview/sample-debug.apk)
+### 三、[下载APK体验](http://fir.im/yv7k)
 
 ### 四、引用
 
