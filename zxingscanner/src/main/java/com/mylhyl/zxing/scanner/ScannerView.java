@@ -140,7 +140,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param scaleFactor amount by which thumbnail was scaled
      * @param barcode     A greyscale bitmap of the camera data which was decoded.
      */
-    public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
+    void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
         //扫描成功
         if (mScannerCompletionListener != null) {
             //转换结果
@@ -226,6 +226,11 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * 设置扫描成功监听器
+     * @param listener
+     * @return
+     */
     public ScannerView setOnScannerCompletionListener(OnScannerCompletionListener listener) {
         this.mScannerCompletionListener = listener;
         return this;
@@ -478,6 +483,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
     /**
      * 是否扫描反色二维码（黑底白码）
+     *
      * @param invertScan
      * @return
      */
