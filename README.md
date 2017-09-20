@@ -14,8 +14,8 @@
 ### 二、效果图
 <img src="preview/gif.gif" width="240px"/>
 
-### 三、[下载APK体验](http://fir.im/yv7k)
-
+### 三、[下载APK体验](http://fir.im/yv7k)或扫描下面的二维码安装
+        <img src="preview/qrdown.png"/>
 ### 四、引用
 
 ## 1、在线 已集成`zxing:core:3.3.0`
