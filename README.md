@@ -14,7 +14,7 @@
 ### 二、效果图
 <img src="preview/gif.gif" width="240px"/>
 
-### 三、[下载APK体验](https://www.pgyer.com/rqiH)或手机扫描下面二维码
+### 三、[下载APK体验](https://fir.im/yv7k)或手机扫描下面二维码
 
 <img src="preview/qrdown.png"/>
 
