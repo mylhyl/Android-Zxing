@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.RejectedExecutionException;
 
+/**
+ * 2017/02/21 4:35
+ */
 @SuppressWarnings("deprecation")
 final class AutoFocusManager implements Camera.AutoFocusCallback {
 

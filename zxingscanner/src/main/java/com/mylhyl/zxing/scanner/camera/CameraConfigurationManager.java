@@ -29,7 +29,7 @@ import com.mylhyl.zxing.scanner.camera.open.OpenCamera;
 
 
 /**
- * 相机辅助类，主要用于设置相机的各类参数
+ * 相机辅助类，主要用于设置相机的各类参数 2017/02/21 4:35
  * A class which deals with reading, parsing, and setting the camera parameters
  * which are used to configure the camera hardware.
  */

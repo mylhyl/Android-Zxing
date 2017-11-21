@@ -29,14 +29,14 @@ import java.util.List;
 /**
  * Utility methods for configuring the Android camera.
  *
- * @author Sean Owen
+ * @author Sean Owen 2017/05/05 7:30
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings("deprecation") // camera APIs
 public final class CameraConfigurationUtils {
 
     private static final String TAG = "CameraConfiguration";
 
-   // private static final Pattern SEMICOLON = Pattern.compile(";");
+//    private static final Pattern SEMICOLON = Pattern.compile(";");
 
     private static final int MIN_PREVIEW_PIXELS = 480 * 320; // normal screen
     private static final float MAX_EXPOSURE_COMPENSATION = 1.5f;
@@ -135,7 +135,7 @@ public final class CameraConfigurationUtils {
 
 //    public static void setBestPreviewFPS(Camera.Parameters parameters, int minFPS, int maxFPS) {
 //        List<int[]> supportedPreviewFpsRanges = parameters.getSupportedPreviewFpsRange();
-//        //Log.i(TAG, "Supported FPS ranges: " + toString(supportedPreviewFpsRanges));
+//        Log.i(TAG, "Supported FPS ranges: " + toString(supportedPreviewFpsRanges));
 //        if (supportedPreviewFpsRanges != null && !supportedPreviewFpsRanges.isEmpty()) {
 //            int[] suitableFPSRange = null;
 //            for (int[] fpsRange : supportedPreviewFpsRanges) {
@@ -164,9 +164,9 @@ public final class CameraConfigurationUtils {
 
     public static void setFocusArea(Camera.Parameters parameters) {
         if (parameters.getMaxNumFocusAreas() > 0) {
-            //Log.i(TAG, "Old focus areas: " + toString(parameters.getFocusAreas()));
+//            Log.i(TAG, "Old focus areas: " + toString(parameters.getFocusAreas()));
             List<Camera.Area> middleArea = buildMiddleArea(AREA_PER_1000);
-            //Log.i(TAG, "Setting focus area to : " + toString(middleArea));
+//            Log.i(TAG, "Setting focus area to : " + toString(middleArea));
             parameters.setFocusAreas(middleArea);
         } else {
             Log.i(TAG, "Device does not support focus areas");
@@ -175,9 +175,9 @@ public final class CameraConfigurationUtils {
 
     public static void setMetering(Camera.Parameters parameters) {
         if (parameters.getMaxNumMeteringAreas() > 0) {
-            //Log.i(TAG, "Old metering areas: " + parameters.getMeteringAreas());
+//            Log.i(TAG, "Old metering areas: " + parameters.getMeteringAreas());
             List<Camera.Area> middleArea = buildMiddleArea(AREA_PER_1000);
-            //Log.i(TAG, "Setting metering area to : " + toString(middleArea));
+//            Log.i(TAG, "Setting metering area to : " + toString(middleArea));
             parameters.setMeteringAreas(middleArea);
         } else {
             Log.i(TAG, "Device does not support metering areas");
@@ -357,7 +357,7 @@ public final class CameraConfigurationUtils {
         Log.i(TAG, "No supported values match");
         return null;
     }
-//
+
 //    private static String toString(Collection<int[]> arrays) {
 //        if (arrays == null || arrays.isEmpty()) {
 //            return "[]";
@@ -374,7 +374,7 @@ public final class CameraConfigurationUtils {
 //        buffer.append(']');
 //        return buffer.toString();
 //    }
-//
+
 //    private static String toString(Iterable<Camera.Area> areas) {
 //        if (areas == null) {
 //            return null;
@@ -389,7 +389,7 @@ public final class CameraConfigurationUtils {
 //    public static String collectStats(Camera.Parameters parameters) {
 //        return collectStats(parameters.flatten());
 //    }
-//
+
 //    public static String collectStats(CharSequence flattenedParams) {
 //        StringBuilder result = new StringBuilder(1000);
 //
@@ -420,6 +420,8 @@ public final class CameraConfigurationUtils {
 //                result.append(param).append('\n');
 //            }
 //        }
+//
 //        return result.toString();
 //    }
+
 }
