@@ -71,7 +71,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mCameraManager = new CameraManager(getContext(), mScannerOptions);
         mViewfinderView.setCameraManager(mCameraManager);
         mViewfinderView.setScannerOptions(mScannerOptions);
-        mViewfinderView.setVisibility(mScannerOptions.isLaserFrameHide() ? View.GONE : View.VISIBLE);
+        mViewfinderView.setVisibility(mScannerOptions.isViewfinderHide() ? View.GONE : View.VISIBLE);
         if (mBeepManager != null) mBeepManager.updatePrefs();
 
         mScannerViewHandler = null;
@@ -507,14 +507,14 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
-     * 是否隐藏扫描框
+     * 设置隐藏取景视图，包括文字
      *
      * @param hide
      * @return
      */
     @Deprecated
     public ScannerView isHideLaserFrame(boolean hide) {
-        mScannerOptionsBuilder.setLaserFrameHide(hide);
+        mScannerOptionsBuilder.setViewfinderHide(hide);
         return this;
     }
 

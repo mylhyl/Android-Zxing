@@ -29,6 +29,7 @@ public final class ScannerOptions {
     private int laserFrameCornerWidth = 2;//扫描框4角宽度，单位dp 默认2
     private int laserFrameTopMargin;//扫描框与顶部间距，单位dp，默认居中
     private boolean isLaserFrameHide;//是否隐藏扫描框，默认显示
+    private boolean isViewfinderHide;//是否隐藏整个取景视图，包括文字，默认显示
     private String tipText = "将二维码放入框内，即可自动扫描";//提示文字
     private int tipTextColor = Color.WHITE;//提示文字颜色rgb值，默认白色
     private int tipTextSize = 15;//提交文字大小，单位sp 默认15
@@ -90,6 +91,10 @@ public final class ScannerOptions {
 
     public boolean isLaserFrameHide() {
         return isLaserFrameHide;
+    }
+
+    public boolean isViewfinderHide() {
+        return isViewfinderHide;
     }
 
     public String getTipText() {
@@ -302,6 +307,17 @@ public final class ScannerOptions {
         }
 
         /**
+         * 是否隐藏扫描框
+         *
+         * @param hide
+         * @return
+         */
+        public Builder setLaserFrameHide(boolean hide) {
+            options.isLaserFrameHide = hide;
+            return this;
+        }
+
+        /**
          * 设置扫描解码类型（二维码、一维码、商品条码）
          *
          * @param scanMode {@linkplain Scanner.ScanMode mode}
@@ -368,13 +384,13 @@ public final class ScannerOptions {
         }
 
         /**
-         * 是否隐藏扫描框
+         * 设置隐藏取景视图，包括文字
          *
          * @param hide
          * @return
          */
-        public Builder setLaserFrameHide(boolean hide) {
-            options.isLaserFrameHide = hide;
+        public Builder setViewfinderHide(boolean hide) {
+            options.isViewfinderHide = hide;
             return this;
         }
 

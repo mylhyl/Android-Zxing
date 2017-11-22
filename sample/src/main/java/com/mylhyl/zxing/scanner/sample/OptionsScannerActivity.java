@@ -15,9 +15,10 @@ import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
 import com.mylhyl.zxing.scanner.ScannerOptions;
 import com.mylhyl.zxing.scanner.ScannerView;
 
-public class TestMainActivity extends Activity implements OnScannerCompletionListener {
+public class OptionsScannerActivity extends Activity implements OnScannerCompletionListener {
+
     public static void gotoActivity(Activity activity) {
-        activity.startActivity(new Intent(activity, TestMainActivity.class));
+        activity.startActivity(new Intent(activity, OptionsScannerActivity.class));
     }
 
     private ScannerView mScannerView;
@@ -26,7 +27,7 @@ public class TestMainActivity extends Activity implements OnScannerCompletionLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_test_main);
+        setContentView(R.layout.activity_scanner_options);
 
         mScannerView = (ScannerView) findViewById(R.id.scanner_view);
 
@@ -41,6 +42,7 @@ public class TestMainActivity extends Activity implements OnScannerCompletionLis
                 .setLaserFrameCornerColor(0xff06c1ae)
                 .setLaserLineColor(0xff06c1ae)
                 .setLaserLineHeight(8)
+                .setLaserFrameHide(true)
                 .setScanMode(BarcodeFormat.QR_CODE)
                 .setTipText("请联系其它已添加该设备用户获取二维码")
                 .setTipTextSize(19)

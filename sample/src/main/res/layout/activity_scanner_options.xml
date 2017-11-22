@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mylhyl.zxing.scanner.sample.TestMainActivity">
+    tools:context="com.mylhyl.zxing.scanner.sample.OptionsScannerActivity">
 
     <com.mylhyl.zxing.scanner.ScannerView
         android:id="@+id/scanner_view"

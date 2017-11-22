@@ -95,7 +95,7 @@ public class MainActivity extends BasicActivity {
                     ScannerActivity.gotoActivity(MainActivity.this,
                             checkBox.isChecked(), laserMode, scanMode, !toggleButton.isChecked()
                             , toggleButton1.isChecked(), toggleButton2.isChecked());
-//                    TestMainActivity.gotoActivity(MainActivity.this);
+//                    OptionsScannerActivity.gotoActivity(MainActivity.this);
                 }
             }
         });

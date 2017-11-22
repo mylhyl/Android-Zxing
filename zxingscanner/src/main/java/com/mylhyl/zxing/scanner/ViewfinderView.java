@@ -42,7 +42,6 @@ import com.mylhyl.zxing.scanner.common.Scanner;
 final class ViewfinderView extends View {
 
     private static final int CURRENT_POINT_OPACITY = 0xA0;
-    private static final int MAX_RESULT_POINTS = 20;
     private static final int POINT_SIZE = 6;
 
 
@@ -105,7 +104,8 @@ final class ViewfinderView extends View {
             paint.setAlpha(CURRENT_POINT_OPACITY);
             canvas.drawBitmap(resultBitmap, null, frame, paint);
         } else {
-            drawFrame(canvas, frame);//绘制扫描框
+            if (!scannerOptions.isLaserFrameHide())
+                drawFrame(canvas, frame);//绘制扫描框
             drawFrameCorner(canvas, frame);//绘制扫描框4角
             drawText(canvas, frame);// 画扫描框下面的字
             drawLaserLine(canvas, frame);//绘制扫描线
