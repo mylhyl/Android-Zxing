@@ -70,7 +70,7 @@ protected void onPause() {
 }
 ```
 
-注册扫描成功监听器`setOnScannerCompletionListener`
+注册扫描成功监听器`mScannerView.setOnScannerCompletionListener`
 
 ```java
 /**
@@ -81,6 +81,13 @@ protected void onPause() {
  * @param barcode      扫描后的图像
  */
 void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode);
+```
+
+开启闪光灯
+```java
+mScannerView.toggleLight(true);//开
+mScannerView.toggleLight(false);//关
+
 ```
 
 调用如下方法获取类型
@@ -94,8 +101,8 @@ ParsedResultType type = parsedResult.getType();
 ```java
 switch (type) {
     case ADDRESSBOOK:
-		 AddressBookParsedResult addressBook = (AddressBookParsedResult) parsedResult;
-         bundle.putSerializable(Intents.Scan.RESULT, new AddressBookResult(addressBook));
+	AddressBookParsedResult addressBook = (AddressBookParsedResult) parsedResult;
+        bundle.putSerializable(Intents.Scan.RESULT, new AddressBookResult(addressBook));
         break;
     case URI:
         URIParsedResult uriParsedResult = (URIParsedResult) parsedResult;
@@ -132,103 +139,8 @@ Bitmap bitmap = new QREncode.Builder(this)
 ```
 
 ### 六、样式设置
-<table class="table table-bordered table-striped table-condensed">
-<tr>
-<td>方法名</td>
-<td>说明</td>
-<td>默认值</td>
-</tr>
-<tr>
-<td>toggleLight</td>
-<td>切换闪光灯</td>
-<td>关false</td>
-</tr>
-<tr>
-<td>setMediaResId</td>
-<td>设置扫描完成播放声音</td>
-<td>无</td>
-</tr>
-<tr>
-<td>setLaserFrameBoundColor</td>
-<td>扫描框4角颜色</td>
-<td>绿色0xff00ff00</td>
-</tr>
-<tr>
-<td>setLaserFrameCornerLength</td>
-<td>扫描框4角长度</td>
-<td>15dp</td>
-</tr>
-<tr>
-<td>setLaserFrameCornerWidth</td>
-<td>扫描框4角宽度</td>
-<td>2dp</td>
-</tr>
-<tr>
-<td>setLaserColor</td>
-<td>扫描线颜色</td>
-<td>绿色0xff00ff00</td>
-</tr>
-<tr>
-<td>setLaserLineResId</td>
-<td>条形扫描线图片资源</td>
-<td>无</td>
-</tr>
-<tr>
-<td>setLaserGridLineResId</td>
-<td>网格扫描线资源</td>
-<td>无</td>
-</tr>
-<tr>
-<td>setLaserLineHeight</td>
-<td>扫描线高度</td>
-<td>2dp</td>
-</tr>
-<tr>
-<td>setLaserFrameSize</td>
-<td>设置扫描框大小</td>
-<td>屏幕5/8比例</td>
-</tr>
-<tr>
-<td>setLaserFrameTopMargin</td>
-<td>设置扫描框与屏幕距离</td>
-<td>屏幕5/8-状态</td>
-</tr>
-<tr>
-<td>setDrawText</td>
-<td> text -> 内容 <br>textSize -> 文字大小 <br>textColor -> 文字颜色 <br>isBottom -> 是否在扫描框下方 <br> textMargin -> 离扫描框间距</td>
-<td>text -> 将二维码放入框内，即可自动扫描 <br>textSize -> 16sp <br>textColor -> 白色 <br>isBottom -> true <br> textMargin -> 20dp</td>
-</tr>
-<tr>
-<td>setScanMode</td>
-<td>设置扫描类型：二维码、一维码</td>
-<td>全部</td>
-</tr>
-<tr>
-<td>isShowResThumbnail</td>
-<td>是否显示扫描结果缩略图</td>
-<td>false</td>
-</tr>
-<tr>
-<td>setLaserMoveSpeed</td>
-<td>设置扫描框线移动间距</td>
-<td>6px</td>
-</tr>
-<tr>
-<td>setCameraFacing</td>
-<td>设置扫描摄像头</td>
-<td>后置</td>
-</tr>
-<tr>
-<td>isScanFullScreen</td>
-<td>是否全屏扫描</td>
-<td>false</td>
-</tr>
-<tr>
-<td>isHideLaserFrame</td>
-<td>是否隐藏扫描框</td>
-<td>false</td>
-</tr>
-</table>
+说明：`1.6.0`以后版本将废弃`ScannerView`样式设置，使用新增`ScannerOptions`，后续版本只会在`ScannerOptions`中维护。  
+具体api请看[ScannerOptions.Builder](https://github.com/mylhyl/Android-Zxing/blob/master/zxingscanner/src/main/java/com/mylhyl/zxing/scanner/ScannerOptions.java)
 
 ### 七、注意事项
 权限
@@ -236,9 +148,10 @@ Bitmap bitmap = new QREncode.Builder(this)
 <uses-permission android:name="android.permission.CAMERA" />
 ```
 
-对于`setLaserFrameTopMargin`方法，扫描区域偏移的问题[issues-13](https://github.com/mylhyl/Android-Zxing/issues/13)  
-可以在扫描成功后，调用`restartPreviewAfterDelay`连续扫描  
-对于加密后的二维码，判断二维码类型可以如下：
+### 八、常见问题
+* 对于`setLaserFrameTopMargin`方法，扫描区域偏移的问题[issues-13](https://github.com/mylhyl/Android-Zxing/issues/13)  
+* 可以在扫描成功后，调用`restartPreviewAfterDelay`连续扫描  
+* 对于加密后的二维码，判断二维码类型可以如下：
 ```java
 	//重新包装`Result`，`decryptText`为解密后的内容
         Result decryptResult = new Result(decryptText, rawResult.getRawBytes(),
