@@ -22,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.Layout;
@@ -108,13 +109,18 @@ final class ViewfinderView extends View {
                 drawFrame(canvas, frame);//绘制扫描框
             drawFrameCorner(canvas, frame);//绘制扫描框4角
             drawText(canvas, frame);// 画扫描框下面的字
-            drawLaserLine(canvas, frame);//绘制扫描线
-            moveLaserSpeed(frame);//计算移动位置
+            if (!scannerOptions.isLaserLineMoveFullScreen()) {
+                drawLaserLine(canvas, frame);//绘制扫描框内扫描线
+                moveLaserSpeed(frame);//计算扫描框内移动位置
+            } else {
+                moveLaserSpeedFullScreen(cameraManager.getScreenResolution());//计算全屏移动位置
+                drawLaserLineFullScreen(canvas, cameraManager.getScreenResolution());//绘制全屏扫描线
+            }
         }
     }
 
     private void moveLaserSpeed(Rect frame) {
-        //初始化扫描线最顶端位置
+        //初始化扫描线起始点为扫描框顶部位置
         if (laserLineTop == 0) {
             laserLineTop = frame.top;
         }
@@ -131,6 +137,20 @@ final class ViewfinderView extends View {
         // 只刷新扫描框的内容，其他地方不刷新
         postInvalidateDelayed(animationDelay, frame.left - POINT_SIZE, frame.top - POINT_SIZE
                 , frame.right + POINT_SIZE, frame.bottom + POINT_SIZE);
+    }
+
+    private void moveLaserSpeedFullScreen(Point point) {
+        //初始化扫描线起始点为顶部位置
+        int laserMoveSpeed = scannerOptions.getLaserLineMoveSpeed();
+        // 每次刷新界面，扫描线往下移动 LASER_VELOCITY
+        laserLineTop += laserMoveSpeed;
+        if (laserLineTop >= point.y) {
+            laserLineTop = 0;
+        }
+        if (animationDelay == 0) {
+            animationDelay = (int) ((1.0f * 1000 * laserMoveSpeed) / point.y);
+        }
+        postInvalidateDelayed(animationDelay);
     }
 
     /**
@@ -262,6 +282,44 @@ final class ViewfinderView extends View {
                 }
                 Rect laserRect = new Rect(frame.left, laserLineTop, frame.right
                         , laserLineTop + laserLineHeight);
+                canvas.drawBitmap(laserLineBitmap, null, laserRect, paint);
+            }
+        }
+    }
+
+
+    /**
+     * 画全屏宽扫描线
+     *
+     * @param canvas
+     * @param point
+     */
+    private void drawLaserLineFullScreen(Canvas canvas, Point point) {
+        if (scannerOptions.getLaserLineResId() == 0) {
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(scannerOptions.getLaserLineColor());// 设置扫描线颜色
+            canvas.drawRect(0, laserLineTop, point.x, laserLineTop + laserLineHeight, paint);
+        } else {
+            if (laserLineBitmap == null)//图片资源文件转为 Bitmap
+                laserLineBitmap = BitmapFactory.decodeResource(getResources(), scannerOptions.getLaserLineResId());
+            int height = laserLineBitmap.getHeight();//取原图高
+            //网格图片
+            if (scannerOptions.isLaserGridLine()) {
+                int dstRectFTop = 0;
+                if (laserLineTop >= height) {
+                    dstRectFTop = laserLineTop - height;
+                }
+                RectF dstRectF = new RectF(0, dstRectFTop, point.x, laserLineTop);
+                Rect srcRect = new Rect(0, (int) (height - dstRectF.height()), laserLineBitmap.getWidth(), height);
+                canvas.drawBitmap(laserLineBitmap, srcRect, dstRectF, paint);
+            }
+            //线条图片
+            else {
+                //如果没有设置线条高度，则用图片原始高度
+                if (laserLineHeight == dp2px(ScannerOptions.DEFAULT_LASER_LINE_HEIGHT)) {
+                    laserLineHeight = laserLineBitmap.getHeight() / 2;
+                }
+                Rect laserRect = new Rect(0, laserLineTop, point.x, laserLineTop + laserLineHeight);
                 canvas.drawBitmap(laserLineBitmap, null, laserRect, paint);
             }
         }

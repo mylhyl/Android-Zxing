@@ -398,4 +398,9 @@ public final class CameraManager {
         return context.getResources().getConfiguration().orientation ==
                 Configuration.ORIENTATION_PORTRAIT;
     }
+
+    public Point getScreenResolution() {
+        return configManager.getScreenResolution();
+    }
+
 }

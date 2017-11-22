@@ -25,6 +25,7 @@ public final class ScannerOptions {
     private boolean laserGridLine;//扫描线资源文件是否为网格样式
     private int laserLineHeight = DEFAULT_LASER_LINE_HEIGHT;//扫描线高度，网络样式无效，单位dp
     private int laserLineMoveSpeed = 6;//扫描线移动间距，默认每毫秒移动6px，单位px
+    private boolean laserLineMoveFullScreen;//扫描线全屏移动，默认在扫描框内移动
     private int frameWidth;//扫描框的宽度，单位dp
     private int frameHeight;//扫描框的高度，单位dp
     private int frameCornerColor = laserLineColor;//扫描框4角颜色rgb值
@@ -67,6 +68,10 @@ public final class ScannerOptions {
 
     public int getLaserLineMoveSpeed() {
         return laserLineMoveSpeed;
+    }
+
+    public boolean isLaserLineMoveFullScreen() {
+        return laserLineMoveFullScreen;
     }
 
     public int getFrameWidth() {
@@ -210,6 +215,17 @@ public final class ScannerOptions {
          */
         public Builder setLaserMoveSpeed(int moveSpeed) {
             options.laserLineMoveSpeed = moveSpeed;
+            return this;
+        }
+
+        /**
+         * 扫描线是否全屏移动
+         *
+         * @param fullScreen true全屏，false扫描框内
+         * @return
+         */
+        public Builder setLaserLineMoveFullScreen(boolean fullScreen) {
+            options.laserLineMoveFullScreen = fullScreen;
             return this;
         }
 

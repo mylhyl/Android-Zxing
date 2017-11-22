@@ -41,8 +41,16 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
                 .setFrameCornerWidth(2)
                 .setFrameCornerColor(0xff06c1ae)
                 .setFrameCornerInside(true)
-                .setLaserLineColor(0xff06c1ae)
-                .setLaserLineHeight(8)
+                .setFrameHide(true)
+
+                //.setLaserLineColor(0xff06c1ae)
+//                .setLaserLineResId(R.mipmap.wx_scan_line)
+//                .setLaserLineHeight(18)
+
+                .setLaserGridLineResId(R.mipmap.zfb_grid_scan_line)//网格图
+                .setFrameCornerColor(0xFF26CEFF)//支付宝颜色
+
+                .setLaserLineMoveFullScreen(true)
                 .setFrameHide(true)
                 .setScanMode(BarcodeFormat.QR_CODE)
                 .setTipText("请联系其它已添加该设备用户获取二维码")
