@@ -44,6 +44,7 @@ public final class ScannerOptions {
     private int frameCornerLength = 15;//扫描框4角长度，单位dp 默认15
     private int frameCornerWidth = 2;//扫描框4角宽度，单位dp 默认2
     private boolean frameCornerInside;//扫描框4角是否在框内，默认框外
+    private boolean frameCornerHide;//是否隐藏扫描框4角，默认显示
     private int frameTopMargin;//扫描框与顶部间距，单位dp，默认居中
     private boolean frameHide;//是否隐藏扫描框，默认显示
     private boolean viewfinderHide;//是否隐藏整个取景视图，包括文字，默认显示
@@ -108,6 +109,10 @@ public final class ScannerOptions {
 
     public boolean isFrameCornerInside() {
         return frameCornerInside;
+    }
+
+    public boolean isFrameCornerHide() {
+        return frameCornerHide;
     }
 
     public int getFrameTopMargin() {
@@ -282,11 +287,24 @@ public final class ScannerOptions {
         /**
          * 设置扫描框4角是否在框内，默认框外
          *
-         * @param inside
+         * @param inside true内部
          * @return
          */
         public Builder setFrameCornerInside(boolean inside) {
             options.frameCornerInside = inside;
+            return this;
+        }
+
+        /**
+         * 是否隐藏扫描框4角
+         *
+         * @param hide true隐藏
+         * @return
+         */
+        public Builder setFrameCornerHide(boolean hide) {
+            options.frameCornerHide = hide;
+            if (!hide)
+                options.laserMoveFullScreen = false;
             return this;
         }
 
@@ -303,11 +321,13 @@ public final class ScannerOptions {
         /**
          * 是否隐藏扫描框
          *
-         * @param hide
+         * @param hide true隐藏
          * @return
          */
         public Builder setFrameHide(boolean hide) {
             options.frameHide = hide;
+            if (!hide)
+                options.laserMoveFullScreen = false;
             return this;
         }
 
@@ -427,13 +447,20 @@ public final class ScannerOptions {
         }
 
         /**
-         * 是否全屏扫描
+         * 是否全屏扫描。默认隐藏扫描框，扫描框4角，扫描线全屏上下移动。
+         * 如需显示扫描框，扫描框4角，扫描线在扫描框内上下移动，在调用该方法之后再调用：
+         * {@link #setFrameHide(boolean) setFrameHide(false)}，
+         * {@link #setFrameCornerHide(boolean) setFrameCornerHide(false)}，
+         * {@link #setLaserMoveFullScreen(boolean) setLaserMoveFullScreen(false)}
          *
          * @param scanFullScreen
          * @return
          */
         public Builder setScanFullScreen(boolean scanFullScreen) {
             options.scanFullScreen = scanFullScreen;
+            options.frameHide = true;
+            options.frameCornerHide = true;
+            options.laserMoveFullScreen = true;
             return this;
         }
 
