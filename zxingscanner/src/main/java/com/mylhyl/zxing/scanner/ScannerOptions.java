@@ -14,18 +14,30 @@ import java.util.Collection;
  */
 
 public final class ScannerOptions {
-    public enum LaserLineStyle {
-        Line, Grid
+
+    public enum LaserStyle {
+        /**
+         * 颜色线值样式
+         */
+        COLOR_LINE
+        /**
+         * 资源文件线样式
+         */
+        , RES_LINE
+        /**
+         * 资源文件网格样式
+         */
+        , RES_GRID
     }
 
     public static final int DEFAULT_LASER_LINE_HEIGHT = 2;//扫描线默认高度
 
+    private LaserStyle laserStyle = LaserStyle.COLOR_LINE;
     private int laserLineColor = Scanner.color.VIEWFINDER_LASER;//扫描线颜色rgb值
     private int laserLineResId;//扫描线资源文件
-    private boolean laserGridLine;//扫描线资源文件是否为网格样式
     private int laserLineHeight = DEFAULT_LASER_LINE_HEIGHT;//扫描线高度，网络样式无效，单位dp
     private int laserLineMoveSpeed = 6;//扫描线移动间距，默认每毫秒移动6px，单位px
-    private boolean laserLineMoveFullScreen;//扫描线全屏移动，默认在扫描框内移动
+    private boolean laserMoveFullScreen;//扫描线全屏移动，默认在扫描框内移动
     private int frameWidth;//扫描框的宽度，单位dp
     private int frameHeight;//扫描框的高度，单位dp
     private int frameCornerColor = laserLineColor;//扫描框4角颜色rgb值
@@ -50,16 +62,16 @@ public final class ScannerOptions {
     protected ScannerOptions() {
     }
 
+    public LaserStyle getLaserStyle() {
+        return laserStyle;
+    }
+
     public int getLaserLineColor() {
         return laserLineColor;
     }
 
     public int getLaserLineResId() {
         return laserLineResId;
-    }
-
-    public boolean isLaserGridLine() {
-        return laserGridLine;
     }
 
     public int getLaserLineHeight() {
@@ -70,8 +82,8 @@ public final class ScannerOptions {
         return laserLineMoveSpeed;
     }
 
-    public boolean isLaserLineMoveFullScreen() {
-        return laserLineMoveFullScreen;
+    public boolean isLaserMoveFullScreen() {
+        return laserMoveFullScreen;
     }
 
     public int getFrameWidth() {
@@ -166,34 +178,30 @@ public final class ScannerOptions {
         }
 
         /**
+         * 扫描线样式
+         *
+         * @param style 默认为{@link LaserStyle#COLOR_LINE 颜色线}
+         * @param value style=COLOR_LINE，value为颜色值rgb，其余样式value为resId
+         * @return
+         */
+        public Builder setLaserStyle(LaserStyle style, int value) {
+            options.laserStyle = style;
+            if (style == LaserStyle.COLOR_LINE) {
+                options.laserLineColor = value;
+            } else {
+                options.laserLineResId = value;
+            }
+            return this;
+        }
+
+        /**
          * 设置扫描线颜色值
          *
          * @param color rgb
          */
         public Builder setLaserLineColor(int color) {
+            options.laserStyle = LaserStyle.COLOR_LINE;
             options.laserLineColor = color;
-            return this;
-        }
-
-        /**
-         * 设置线形扫描线资源
-         *
-         * @param resId resId
-         */
-        public Builder setLaserLineResId(int resId) {
-            options.laserLineResId = resId;
-            options.laserGridLine = false;
-            return this;
-        }
-
-        /**
-         * 设置网格扫描线资源
-         *
-         * @param resId resId
-         */
-        public Builder setLaserGridLineResId(int resId) {
-            options.laserLineResId = resId;
-            options.laserGridLine = true;
             return this;
         }
 
@@ -224,8 +232,8 @@ public final class ScannerOptions {
          * @param fullScreen true全屏，false扫描框内
          * @return
          */
-        public Builder setLaserLineMoveFullScreen(boolean fullScreen) {
-            options.laserLineMoveFullScreen = fullScreen;
+        public Builder setLaserMoveFullScreen(boolean fullScreen) {
+            options.laserMoveFullScreen = fullScreen;
             return this;
         }
 

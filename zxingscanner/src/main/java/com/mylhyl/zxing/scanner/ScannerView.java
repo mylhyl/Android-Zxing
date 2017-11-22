@@ -261,7 +261,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     @Deprecated
     public ScannerView setLaserColor(int color) {
-        mScannerOptionsBuilder.setLaserLineColor(color);
+        mScannerOptionsBuilder.setLaserStyle(ScannerOptions.LaserStyle.COLOR_LINE, color);
         return this;
     }
 
@@ -272,7 +272,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     @Deprecated
     public ScannerView setLaserLineResId(int resId) {
-        mScannerOptionsBuilder.setLaserLineResId(resId);
+        mScannerOptionsBuilder.setLaserStyle(ScannerOptions.LaserStyle.RES_LINE, resId);
         return this;
     }
 
@@ -283,7 +283,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     @Deprecated
     public ScannerView setLaserGridLineResId(int resId) {
-        mScannerOptionsBuilder.setLaserGridLineResId(resId);
+        mScannerOptionsBuilder.setLaserStyle(ScannerOptions.LaserStyle.RES_GRID, resId);
         return this;
     }
 

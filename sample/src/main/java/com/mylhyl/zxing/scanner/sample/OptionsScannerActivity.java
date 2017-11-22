@@ -33,7 +33,7 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
 
         mScannerView.setOnScannerCompletionListener(this);
 
-        mScannerView.toggleLight(true);
+//        mScannerView.toggleLight(true);
 
         ScannerOptions.Builder builder = new ScannerOptions.Builder();
         builder.setFrameSize(256, 256)
@@ -43,14 +43,16 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
                 .setFrameCornerInside(true)
                 .setFrameHide(true)
 
-                //.setLaserLineColor(0xff06c1ae)
-//                .setLaserLineResId(R.mipmap.wx_scan_line)
+//                .setLaserLineColor(0xff06c1ae)
 //                .setLaserLineHeight(18)
 
-                .setLaserGridLineResId(R.mipmap.zfb_grid_scan_line)//网格图
+//                .setLaserStyle(ScannerOptions.LaserStyle.RES_LINE,R.mipmap.wx_scan_line)
+
+                .setLaserStyle(ScannerOptions.LaserStyle.RES_GRID, R.mipmap.zfb_grid_scan_line)//网格图
                 .setFrameCornerColor(0xFF26CEFF)//支付宝颜色
 
-                .setLaserLineMoveFullScreen(true)
+                .setScanFullScreen(true)
+                .setLaserMoveFullScreen(true)
                 .setFrameHide(true)
                 .setScanMode(BarcodeFormat.QR_CODE)
                 .setTipText("请联系其它已添加该设备用户获取二维码")

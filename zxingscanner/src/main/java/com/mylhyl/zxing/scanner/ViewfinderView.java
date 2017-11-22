@@ -109,7 +109,7 @@ final class ViewfinderView extends View {
                 drawFrame(canvas, frame);//绘制扫描框
             drawFrameCorner(canvas, frame);//绘制扫描框4角
             drawText(canvas, frame);// 画扫描框下面的字
-            if (!scannerOptions.isLaserLineMoveFullScreen()) {
+            if (!scannerOptions.isLaserMoveFullScreen()) {
                 drawLaserLine(canvas, frame);//绘制扫描框内扫描线
                 moveLaserSpeed(frame);//计算扫描框内移动位置
             } else {
@@ -258,7 +258,7 @@ final class ViewfinderView extends View {
      * @param frame
      */
     private void drawLaserLine(Canvas canvas, Rect frame) {
-        if (scannerOptions.getLaserLineResId() == 0) {
+        if (scannerOptions.getLaserStyle() == ScannerOptions.LaserStyle.COLOR_LINE) {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(scannerOptions.getLaserLineColor());// 设置扫描线颜色
             canvas.drawRect(frame.left, laserLineTop, frame.right
@@ -268,7 +268,7 @@ final class ViewfinderView extends View {
                 laserLineBitmap = BitmapFactory.decodeResource(getResources(), scannerOptions.getLaserLineResId());
             int height = laserLineBitmap.getHeight();//取原图高
             //网格图片
-            if (scannerOptions.isLaserGridLine()) {
+            if (scannerOptions.getLaserStyle() == ScannerOptions.LaserStyle.RES_GRID) {
                 RectF dstRectF = new RectF(frame.left, frame.top, frame.right, laserLineTop);
                 Rect srcRect = new Rect(0, (int) (height - dstRectF.height())
                         , laserLineBitmap.getWidth(), height);
@@ -295,7 +295,7 @@ final class ViewfinderView extends View {
      * @param point
      */
     private void drawLaserLineFullScreen(Canvas canvas, Point point) {
-        if (scannerOptions.getLaserLineResId() == 0) {
+        if (scannerOptions.getLaserStyle() == ScannerOptions.LaserStyle.COLOR_LINE) {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(scannerOptions.getLaserLineColor());// 设置扫描线颜色
             canvas.drawRect(0, laserLineTop, point.x, laserLineTop + laserLineHeight, paint);
@@ -304,7 +304,7 @@ final class ViewfinderView extends View {
                 laserLineBitmap = BitmapFactory.decodeResource(getResources(), scannerOptions.getLaserLineResId());
             int height = laserLineBitmap.getHeight();//取原图高
             //网格图片
-            if (scannerOptions.isLaserGridLine()) {
+            if (scannerOptions.getLaserStyle() == ScannerOptions.LaserStyle.RES_GRID) {
                 int dstRectFTop = 0;
                 if (laserLineTop >= height) {
                     dstRectFTop = laserLineTop - height;
