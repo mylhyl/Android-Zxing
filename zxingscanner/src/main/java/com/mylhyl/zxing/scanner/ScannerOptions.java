@@ -458,9 +458,11 @@ public final class ScannerOptions {
          */
         public Builder setScanFullScreen(boolean scanFullScreen) {
             options.scanFullScreen = scanFullScreen;
-            options.frameHide = true;
-            options.frameCornerHide = true;
-            options.laserMoveFullScreen = true;
+            if (scanFullScreen) {
+                options.frameHide = true;
+                options.frameCornerHide = true;
+                options.laserMoveFullScreen = true;
+            }
             return this;
         }
 
