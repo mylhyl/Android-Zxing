@@ -12,13 +12,14 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.client.result.ParsedResult;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
+import com.mylhyl.zxing.scanner.ScannerOptions;
 import com.mylhyl.zxing.scanner.ScannerView;
-import com.mylhyl.zxing.scanner.common.Scanner;
 
 public class TestMainActivity extends Activity implements OnScannerCompletionListener {
     public static void gotoActivity(Activity activity) {
-        activity.startActivity(new Intent(activity,TestMainActivity.class));
+        activity.startActivity(new Intent(activity, TestMainActivity.class));
     }
+
     private ScannerView mScannerView;
 
     @Override
@@ -29,19 +30,23 @@ public class TestMainActivity extends Activity implements OnScannerCompletionLis
 
         mScannerView = (ScannerView) findViewById(R.id.scanner_view);
 
-        mScannerView.setLaserFrameSize(256, 256)
+        mScannerView.setOnScannerCompletionListener(this);
+
+        mScannerView.toggleLight(true);
+
+        ScannerOptions.Builder builder = new ScannerOptions.Builder();
+        builder.setLaserFrameSize(256, 256)
                 .setLaserFrameCornerLength(22)
                 .setLaserFrameCornerWidth(2)
-                .setLaserFrameBoundColor(0xff06c1ae)
-                .setLaserColor(0xff06c1ae)
+                .setLaserFrameCornerColor(0xff06c1ae)
+                .setLaserLineColor(0xff06c1ae)
                 .setLaserLineHeight(8)
-                .toggleLight(false)
                 .setScanMode(BarcodeFormat.QR_CODE)
-                .setDrawText("请联系其它已添加该设备用户获取二维码", 12, 0x000000, true, 19)
-                .setLaserFrameTopMargin(10);
+                .setTipText("请联系其它已添加该设备用户获取二维码")
+                .setTipTextSize(19)
+                .setTipTextColor(getResources().getColor(R.color.colorAccent));
 
-
-        mScannerView.setOnScannerCompletionListener(this);
+        mScannerView.setScannerOptions(builder.build());
     }
 
 
@@ -63,6 +68,7 @@ public class TestMainActivity extends Activity implements OnScannerCompletionLis
         vibrate();
         mScannerView.restartPreviewAfterDelay(0);
     }
+
     private void vibrate() {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(200);

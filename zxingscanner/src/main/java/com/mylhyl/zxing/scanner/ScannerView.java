@@ -229,6 +229,10 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         return this;
     }
 
+    public void setScannerOptions(ScannerOptions scannerOptions) {
+        this.mScannerOptions = scannerOptions;
+    }
+
     /**
      * 切换闪光灯
      *

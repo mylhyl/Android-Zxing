@@ -53,9 +53,6 @@
         <activity
             android:name=".result.BarcodeActivity"
             android:label="barcode" />
-        <activity
-            android:name=".TestMainActivity"
-            android:label="扫" />
     </application>
 
 </manifest>
