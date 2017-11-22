@@ -44,6 +44,9 @@ compile 'com.google.zxing:core:3.3.0'
 - [直接下载jar](preview)
 
 ### 五、使用
+
+[例子](https://github.com/mylhyl/Android-Zxing/blob/master/sample/src/main/java/com/mylhyl/zxing/scanner/sample/OptionsScannerActivity.java)  
+
 直接在`layout xml`使用`ScannerView`即可
 
 ```xml
