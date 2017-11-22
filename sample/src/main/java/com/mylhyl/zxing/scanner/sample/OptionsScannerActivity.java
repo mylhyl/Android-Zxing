@@ -36,13 +36,14 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
         mScannerView.toggleLight(true);
 
         ScannerOptions.Builder builder = new ScannerOptions.Builder();
-        builder.setLaserFrameSize(256, 256)
-                .setLaserFrameCornerLength(22)
-                .setLaserFrameCornerWidth(2)
-                .setLaserFrameCornerColor(0xff06c1ae)
+        builder.setFrameSize(256, 256)
+                .setFrameCornerLength(22)
+                .setFrameCornerWidth(2)
+                .setFrameCornerColor(0xff06c1ae)
+                .setFrameCornerInside(true)
                 .setLaserLineColor(0xff06c1ae)
                 .setLaserLineHeight(8)
-                .setLaserFrameHide(true)
+                .setFrameHide(true)
                 .setScanMode(BarcodeFormat.QR_CODE)
                 .setTipText("请联系其它已添加该设备用户获取二维码")
                 .setTipTextSize(19)

@@ -57,10 +57,10 @@ final class ViewfinderView extends View {
     private int laserLineTop;// 扫描线最顶端位置
 
     private int laserLineHeight;//扫描线默认高度
-    private int laserFrameCornerWidth;//扫描框4角宽
-    private int laserFrameCornerLength;//扫描框4角高
-    private int drawTextSize;//提示文字大小
-    private int drawTextMargin;//提示文字与扫描框距离
+    private int frameCornerWidth;//扫描框4角宽
+    private int frameCornerLength;//扫描框4角高
+    private int tipTextSize;//提示文字大小
+    private int tipTextMargin;//提示文字与扫描框距离
     private ScannerOptions scannerOptions;
 
     public ViewfinderView(Context context, AttributeSet attrs) {
@@ -75,11 +75,11 @@ final class ViewfinderView extends View {
     void setScannerOptions(ScannerOptions scannerOptions) {
         this.scannerOptions = scannerOptions;
         laserLineHeight = dp2px(scannerOptions.getLaserLineHeight());
-        laserFrameCornerWidth = dp2px(scannerOptions.getLaserFrameCornerWidth());
-        laserFrameCornerLength = dp2px(scannerOptions.getLaserFrameCornerLength());
+        frameCornerWidth = dp2px(scannerOptions.getFrameCornerWidth());
+        frameCornerLength = dp2px(scannerOptions.getFrameCornerLength());
 
-        drawTextSize = Scanner.sp2px(getContext(), scannerOptions.getTipTextSize());
-        drawTextMargin = dp2px(scannerOptions.getTipTextLaserFrameMargin());
+        tipTextSize = Scanner.sp2px(getContext(), scannerOptions.getTipTextSize());
+        tipTextMargin = dp2px(scannerOptions.getTipTextToFrameMargin());
     }
 
     private int dp2px(int dp) {
@@ -104,7 +104,7 @@ final class ViewfinderView extends View {
             paint.setAlpha(CURRENT_POINT_OPACITY);
             canvas.drawBitmap(resultBitmap, null, frame, paint);
         } else {
-            if (!scannerOptions.isLaserFrameHide())
+            if (!scannerOptions.isFrameHide())
                 drawFrame(canvas, frame);//绘制扫描框
             drawFrameCorner(canvas, frame);//绘制扫描框4角
             drawText(canvas, frame);// 画扫描框下面的字
@@ -161,12 +161,12 @@ final class ViewfinderView extends View {
         textPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setColor(scannerOptions.getTipTextColor());
-        textPaint.setTextSize(drawTextSize);
+        textPaint.setTextSize(tipTextSize);
 
         float x = frame.left;//文字开始位置
-        //根据 drawTextGravityBottom 文字在扫描框上方还是下文，默认下方
-        float y = scannerOptions.isTipTextLaserFrameBottom() ? frame.bottom + drawTextMargin
-                : frame.top - drawTextMargin;
+        //根据 drawTextGravityBottom 文字在扫描框上方还是上文，默认下方
+        float y = !scannerOptions.isTipTextToFrameTop() ? frame.bottom + tipTextMargin
+                : frame.top - tipTextMargin;
 
         StaticLayout staticLayout = new StaticLayout(scannerOptions.getTipText(), textPaint, frame.width()
                 , Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
@@ -183,28 +183,39 @@ final class ViewfinderView extends View {
      * @param frame
      */
     private void drawFrameCorner(Canvas canvas, Rect frame) {
-        paint.setColor(scannerOptions.getLaserFrameCornerColor());
+        paint.setColor(scannerOptions.getFrameCornerColor());
         paint.setStyle(Paint.Style.FILL);
-        // 左上角
-        canvas.drawRect(frame.left - laserFrameCornerWidth, frame.top, frame.left, frame.top
-                + laserFrameCornerLength, paint);
-        canvas.drawRect(frame.left - laserFrameCornerWidth, frame.top - laserFrameCornerWidth
-                , frame.left + laserFrameCornerLength, frame.top, paint);
-        // 右上角
-        canvas.drawRect(frame.right, frame.top, frame.right + laserFrameCornerWidth,
-                frame.top + laserFrameCornerLength, paint);
-        canvas.drawRect(frame.right - laserFrameCornerLength, frame.top - laserFrameCornerWidth,
-                frame.right + laserFrameCornerWidth, frame.top, paint);
-        // 左下角
-        canvas.drawRect(frame.left - laserFrameCornerWidth, frame.bottom - laserFrameCornerLength,
-                frame.left, frame.bottom, paint);
-        canvas.drawRect(frame.left - laserFrameCornerWidth, frame.bottom, frame.left
-                + laserFrameCornerLength, frame.bottom + laserFrameCornerWidth, paint);
-        // 右下角
-        canvas.drawRect(frame.right, frame.bottom - laserFrameCornerLength, frame.right
-                + laserFrameCornerWidth, frame.bottom, paint);
-        canvas.drawRect(frame.right - laserFrameCornerLength, frame.bottom, frame.right
-                + laserFrameCornerWidth, frame.bottom + laserFrameCornerWidth, paint);
+        if (scannerOptions.isFrameCornerInside()) {
+            // 左上角，左
+            canvas.drawRect(frame.left, frame.top, frame.left + frameCornerWidth, frame.top + frameCornerLength, paint);
+            // 左上角，上
+            canvas.drawRect(frame.left, frame.top, frame.left + frameCornerLength, frame.top + frameCornerWidth, paint);
+            // 右上角，右
+            canvas.drawRect(frame.right - frameCornerWidth, frame.top, frame.right, frame.top + frameCornerLength, paint);
+            // 右上角，上
+            canvas.drawRect(frame.right - frameCornerLength, frame.top, frame.right, frame.top + frameCornerWidth, paint);
+            // 左下角，左
+            canvas.drawRect(frame.left, frame.bottom - frameCornerLength, frame.left + frameCornerWidth, frame.bottom, paint);
+            // 左下角，下
+            canvas.drawRect(frame.left, frame.bottom - frameCornerWidth, frame.left + frameCornerLength, frame.bottom, paint);
+            // 右下角，右
+            canvas.drawRect(frame.right - frameCornerWidth, frame.bottom - frameCornerLength, frame.right, frame.bottom, paint);
+            // 右下角，下
+            canvas.drawRect(frame.right - frameCornerLength, frame.bottom - frameCornerWidth, frame.right, frame.bottom, paint);
+        } else {
+            // 左上角
+            canvas.drawRect(frame.left - frameCornerWidth, frame.top, frame.left, frame.top + frameCornerLength, paint);
+            canvas.drawRect(frame.left - frameCornerWidth, frame.top - frameCornerWidth, frame.left + frameCornerLength, frame.top, paint);
+            // 右上角
+            canvas.drawRect(frame.right, frame.top, frame.right + frameCornerWidth, frame.top + frameCornerLength, paint);
+            canvas.drawRect(frame.right - frameCornerLength, frame.top - frameCornerWidth, frame.right + frameCornerWidth, frame.top, paint);
+            // 左下角
+            canvas.drawRect(frame.left - frameCornerWidth, frame.bottom - frameCornerLength, frame.left, frame.bottom, paint);
+            canvas.drawRect(frame.left - frameCornerWidth, frame.bottom, frame.left + frameCornerLength, frame.bottom + frameCornerWidth, paint);
+            // 右下角
+            canvas.drawRect(frame.right, frame.bottom - frameCornerLength, frame.right + frameCornerWidth, frame.bottom, paint);
+            canvas.drawRect(frame.right - frameCornerLength, frame.bottom, frame.right + frameCornerWidth, frame.bottom + frameCornerWidth, paint);
+        }
     }
 
     /**

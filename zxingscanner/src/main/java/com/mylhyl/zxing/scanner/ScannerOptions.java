@@ -14,33 +14,37 @@ import java.util.Collection;
  */
 
 public final class ScannerOptions {
+    public enum LaserLineStyle {
+        Line, Grid
+    }
 
     public static final int DEFAULT_LASER_LINE_HEIGHT = 2;//扫描线默认高度
 
     private int laserLineColor = Scanner.color.VIEWFINDER_LASER;//扫描线颜色rgb值
     private int laserLineResId;//扫描线资源文件
-    private boolean isLaserGridLine;//扫描线资源文件是否为网格样式
+    private boolean laserGridLine;//扫描线资源文件是否为网格样式
     private int laserLineHeight = DEFAULT_LASER_LINE_HEIGHT;//扫描线高度，网络样式无效，单位dp
     private int laserLineMoveSpeed = 6;//扫描线移动间距，默认每毫秒移动6px，单位px
-    private int laserFrameWidth;//扫描框的宽度，单位dp
-    private int laserFrameHeight;//扫描框的高度，单位dp
-    private int laserFrameCornerColor = laserLineColor;//扫描框4角颜色rgb值
-    private int laserFrameCornerLength = 15;//扫描框4角长度，单位dp 默认15
-    private int laserFrameCornerWidth = 2;//扫描框4角宽度，单位dp 默认2
-    private int laserFrameTopMargin;//扫描框与顶部间距，单位dp，默认居中
-    private boolean isLaserFrameHide;//是否隐藏扫描框，默认显示
-    private boolean isViewfinderHide;//是否隐藏整个取景视图，包括文字，默认显示
+    private int frameWidth;//扫描框的宽度，单位dp
+    private int frameHeight;//扫描框的高度，单位dp
+    private int frameCornerColor = laserLineColor;//扫描框4角颜色rgb值
+    private int frameCornerLength = 15;//扫描框4角长度，单位dp 默认15
+    private int frameCornerWidth = 2;//扫描框4角宽度，单位dp 默认2
+    private boolean frameCornerInside;//扫描框4角是否在框内，默认框外
+    private int frameTopMargin;//扫描框与顶部间距，单位dp，默认居中
+    private boolean frameHide;//是否隐藏扫描框，默认显示
+    private boolean viewfinderHide;//是否隐藏整个取景视图，包括文字，默认显示
     private String tipText = "将二维码放入框内，即可自动扫描";//提示文字
     private int tipTextColor = Color.WHITE;//提示文字颜色rgb值，默认白色
     private int tipTextSize = 15;//提交文字大小，单位sp 默认15
-    private boolean isTipTextLaserFrameBottom = true;//是否在扫描框下方，默认下方
-    private int tipTextLaserFrameMargin = 20;//离扫描框间距，单位dp 默认20
+    private boolean tipTextToFrameTop;//是否在扫描框上方，默认下方
+    private int tipTextToFrameMargin = 20;//离扫描框间距，单位dp 默认20
     private int mediaResId;//扫描成功音频资源文件
     private Collection<BarcodeFormat> decodeFormats;//解码类型，默认解全部
-    private boolean isCreateQrThumbnail;//生成扫描结果缩略图，默认不生成
+    private boolean createQrThumbnail;//生成扫描结果缩略图，默认不生成
     private CameraFacing cameraFacing = CameraFacing.BACK;//启动摄像头位置，默认后置
-    private boolean isScanFullScreen;//是否全屏扫描识别，默认扫描框内识别
-    private boolean isScanInvert;//是否扫描反色二维码（用于黑底白码）
+    private boolean scanFullScreen;//是否全屏扫描识别，默认扫描框内识别
+    private boolean scanInvert;//是否扫描反色二维码（用于黑底白码）
 
     protected ScannerOptions() {
     }
@@ -54,7 +58,7 @@ public final class ScannerOptions {
     }
 
     public boolean isLaserGridLine() {
-        return isLaserGridLine;
+        return laserGridLine;
     }
 
     public int getLaserLineHeight() {
@@ -65,36 +69,40 @@ public final class ScannerOptions {
         return laserLineMoveSpeed;
     }
 
-    public int getLaserFrameWidth() {
-        return laserFrameWidth;
+    public int getFrameWidth() {
+        return frameWidth;
     }
 
-    public int getLaserFrameHeight() {
-        return laserFrameHeight;
+    public int getFrameHeight() {
+        return frameHeight;
     }
 
-    public int getLaserFrameCornerColor() {
-        return laserFrameCornerColor;
+    public int getFrameCornerColor() {
+        return frameCornerColor;
     }
 
-    public int getLaserFrameCornerLength() {
-        return laserFrameCornerLength;
+    public int getFrameCornerLength() {
+        return frameCornerLength;
     }
 
-    public int getLaserFrameCornerWidth() {
-        return laserFrameCornerWidth;
+    public int getFrameCornerWidth() {
+        return frameCornerWidth;
     }
 
-    public int getLaserFrameTopMargin() {
-        return laserFrameTopMargin;
+    public boolean isFrameCornerInside() {
+        return frameCornerInside;
     }
 
-    public boolean isLaserFrameHide() {
-        return isLaserFrameHide;
+    public int getFrameTopMargin() {
+        return frameTopMargin;
+    }
+
+    public boolean isFrameHide() {
+        return frameHide;
     }
 
     public boolean isViewfinderHide() {
-        return isViewfinderHide;
+        return viewfinderHide;
     }
 
     public String getTipText() {
@@ -109,12 +117,12 @@ public final class ScannerOptions {
         return tipTextSize;
     }
 
-    public boolean isTipTextLaserFrameBottom() {
-        return isTipTextLaserFrameBottom;
+    public boolean isTipTextToFrameTop() {
+        return tipTextToFrameTop;
     }
 
-    public int getTipTextLaserFrameMargin() {
-        return tipTextLaserFrameMargin;
+    public int getTipTextToFrameMargin() {
+        return tipTextToFrameMargin;
     }
 
     public int getMediaResId() {
@@ -126,7 +134,7 @@ public final class ScannerOptions {
     }
 
     public boolean isCreateQrThumbnail() {
-        return isCreateQrThumbnail;
+        return createQrThumbnail;
     }
 
     public CameraFacing getCameraFacing() {
@@ -134,11 +142,11 @@ public final class ScannerOptions {
     }
 
     public boolean isScanFullScreen() {
-        return isScanFullScreen;
+        return scanFullScreen;
     }
 
     public boolean isScanInvert() {
-        return isScanInvert;
+        return scanInvert;
     }
 
     public static final class Builder {
@@ -169,7 +177,7 @@ public final class ScannerOptions {
          */
         public Builder setLaserLineResId(int resId) {
             options.laserLineResId = resId;
-            options.isLaserGridLine = false;
+            options.laserGridLine = false;
             return this;
         }
 
@@ -180,7 +188,7 @@ public final class ScannerOptions {
          */
         public Builder setLaserGridLineResId(int resId) {
             options.laserLineResId = resId;
-            options.isLaserGridLine = true;
+            options.laserGridLine = true;
             return this;
         }
 
@@ -195,12 +203,35 @@ public final class ScannerOptions {
         }
 
         /**
+         * 设置扫描框线移动间距
+         *
+         * @param moveSpeed 每毫秒移动 moveSpeed 像素 px
+         * @return
+         */
+        public Builder setLaserMoveSpeed(int moveSpeed) {
+            options.laserLineMoveSpeed = moveSpeed;
+            return this;
+        }
+
+        /**
+         * 设置扫描框大小
+         *
+         * @param width  dp
+         * @param height dp
+         */
+        public Builder setFrameSize(int width, int height) {
+            options.frameWidth = width;
+            options.frameHeight = height;
+            return this;
+        }
+
+        /**
          * 设置扫描框4角颜色值
          *
          * @param color rgb
          */
-        public Builder setLaserFrameCornerColor(int color) {
-            options.laserFrameCornerColor = color;
+        public Builder setFrameCornerColor(int color) {
+            options.frameCornerColor = color;
             return this;
         }
 
@@ -209,8 +240,8 @@ public final class ScannerOptions {
          *
          * @param length dp
          */
-        public Builder setLaserFrameCornerLength(int length) {
-            options.laserFrameCornerLength = length;
+        public Builder setFrameCornerLength(int length) {
+            options.frameCornerLength = length;
             return this;
         }
 
@@ -219,8 +250,51 @@ public final class ScannerOptions {
          *
          * @param width dp
          */
-        public Builder setLaserFrameCornerWidth(int width) {
-            options.laserFrameCornerWidth = width;
+        public Builder setFrameCornerWidth(int width) {
+            options.frameCornerWidth = width;
+            return this;
+        }
+
+        /**
+         * 设置扫描框4角是否在框内，默认框外
+         *
+         * @param inside
+         * @return
+         */
+        public Builder setFrameCornerInside(boolean inside) {
+            options.frameCornerInside = inside;
+            return this;
+        }
+
+        /**
+         * 设置扫描框与屏幕顶部距离
+         *
+         * @param margin dp
+         */
+        public Builder setFrameTopMargin(int margin) {
+            options.frameTopMargin = margin;
+            return this;
+        }
+
+        /**
+         * 是否隐藏扫描框
+         *
+         * @param hide
+         * @return
+         */
+        public Builder setFrameHide(boolean hide) {
+            options.frameHide = hide;
+            return this;
+        }
+
+        /**
+         * 设置隐藏取景视图，包括文字
+         *
+         * @param hide
+         * @return
+         */
+        public Builder setViewfinderHide(boolean hide) {
+            options.viewfinderHide = hide;
             return this;
         }
 
@@ -259,18 +333,18 @@ public final class ScannerOptions {
          *
          * @param margin 间距 单位dp
          */
-        public Builder setTipTextLaserFrameMargin(int margin) {
-            options.tipTextLaserFrameMargin = margin;
+        public Builder setTipTextToFrameMargin(int margin) {
+            options.tipTextToFrameMargin = margin;
             return this;
         }
 
         /**
-         * 设置文字是否在扫描框下方，默认下方
+         * 设置文字是否在扫描框上方，默认下方
          *
-         * @param bottom true=下方，false=上方
+         * @param top true=上方，false=下方
          */
-        public Builder setTipTextLaserFrameBottom(boolean bottom) {
-            options.isTipTextLaserFrameBottom = bottom;
+        public Builder setTipTextToFrameTop(boolean top) {
+            options.tipTextToFrameTop = top;
             return this;
         }
 
@@ -281,39 +355,6 @@ public final class ScannerOptions {
          */
         public Builder setMediaResId(int resId) {
             options.mediaResId = resId;
-            return this;
-        }
-
-        /**
-         * 设置扫描框大小
-         *
-         * @param width  dp
-         * @param height dp
-         */
-        public Builder setLaserFrameSize(int width, int height) {
-            options.laserFrameWidth = width;
-            options.laserFrameHeight = height;
-            return this;
-        }
-
-        /**
-         * 设置扫描框与屏幕顶部距离
-         *
-         * @param margin dp
-         */
-        public Builder setLaserFrameTopMargin(int margin) {
-            options.laserFrameTopMargin = margin;
-            return this;
-        }
-
-        /**
-         * 是否隐藏扫描框
-         *
-         * @param hide
-         * @return
-         */
-        public Builder setLaserFrameHide(boolean hide) {
-            options.isLaserFrameHide = hide;
             return this;
         }
 
@@ -346,18 +387,7 @@ public final class ScannerOptions {
          * @return
          */
         public Builder setCreateQrThumbnail(boolean thumbnail) {
-            options.isCreateQrThumbnail = thumbnail;
-            return this;
-        }
-
-        /**
-         * 设置扫描框线移动间距
-         *
-         * @param moveSpeed 每毫秒移动 moveSpeed 像素 px
-         * @return
-         */
-        public Builder setLaserMoveSpeed(int moveSpeed) {
-            options.laserLineMoveSpeed = moveSpeed;
+            options.createQrThumbnail = thumbnail;
             return this;
         }
 
@@ -379,18 +409,7 @@ public final class ScannerOptions {
          * @return
          */
         public Builder setScanFullScreen(boolean scanFullScreen) {
-            options.isScanFullScreen = scanFullScreen;
-            return this;
-        }
-
-        /**
-         * 设置隐藏取景视图，包括文字
-         *
-         * @param hide
-         * @return
-         */
-        public Builder setViewfinderHide(boolean hide) {
-            options.isViewfinderHide = hide;
+            options.scanFullScreen = scanFullScreen;
             return this;
         }
 
@@ -401,7 +420,7 @@ public final class ScannerOptions {
          * @return
          */
         public Builder setScanInvert(boolean invertScan) {
-            options.isScanInvert = invertScan;
+            options.scanInvert = invertScan;
             return this;
         }
     }

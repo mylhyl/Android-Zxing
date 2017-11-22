@@ -77,9 +77,9 @@ public final class CameraManager {
 
         this.statusBarHeight = getStatusBarHeight();
         this.scannerOptions = scannerOptions;
-        this.requestedFramingRectWidth = dp2px(scannerOptions.getLaserFrameWidth());
-        this.requestedFramingRectHeight = dp2px(scannerOptions.getLaserFrameHeight());
-        this.laserFrameTopMargin = dp2px(scannerOptions.getLaserFrameTopMargin());
+        this.requestedFramingRectWidth = dp2px(scannerOptions.getFrameWidth());
+        this.requestedFramingRectHeight = dp2px(scannerOptions.getFrameHeight());
+        this.laserFrameTopMargin = dp2px(scannerOptions.getFrameTopMargin());
         setManualCameraId(scannerOptions.getCameraFacing() == CameraFacing.BACK ? 0 : 1);
     }
 

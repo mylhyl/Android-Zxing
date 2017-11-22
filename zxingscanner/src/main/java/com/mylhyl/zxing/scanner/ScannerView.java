@@ -305,7 +305,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     @Deprecated
     public ScannerView setLaserFrameBoundColor(int color) {
-        mScannerOptionsBuilder.setLaserFrameCornerColor(color);
+        mScannerOptionsBuilder.setFrameCornerColor(color);
         return this;
     }
 
@@ -316,7 +316,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     @Deprecated
     public ScannerView setLaserFrameCornerLength(int length) {
-        mScannerOptionsBuilder.setLaserFrameCornerLength(length);
+        mScannerOptionsBuilder.setFrameCornerLength(length);
         return this;
     }
 
@@ -327,7 +327,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     @Deprecated
     public ScannerView setLaserFrameCornerWidth(int width) {
-        mScannerOptionsBuilder.setLaserFrameCornerWidth(width);
+        mScannerOptionsBuilder.setFrameCornerWidth(width);
         return this;
     }
 
@@ -362,7 +362,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     @Deprecated
     public ScannerView setDrawText(String text, boolean bottom) {
         mScannerOptionsBuilder.setTipText(text);
-        mScannerOptionsBuilder.setTipTextLaserFrameBottom(bottom);
+        mScannerOptionsBuilder.setTipTextToFrameTop(!bottom);
         return this;
     }
 
@@ -376,8 +376,8 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     @Deprecated
     public ScannerView setDrawText(String text, boolean bottom, int margin) {
         mScannerOptionsBuilder.setTipText(text);
-        mScannerOptionsBuilder.setTipTextLaserFrameBottom(bottom);
-        mScannerOptionsBuilder.setTipTextLaserFrameMargin(margin);
+        mScannerOptionsBuilder.setTipTextToFrameTop(!bottom);
+        mScannerOptionsBuilder.setTipTextToFrameMargin(margin);
         return this;
     }
 
@@ -395,8 +395,8 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         mScannerOptionsBuilder.setTipText(text);
         mScannerOptionsBuilder.setTipTextSize(size);
         mScannerOptionsBuilder.setTipTextColor(color);
-        mScannerOptionsBuilder.setTipTextLaserFrameBottom(bottom);
-        mScannerOptionsBuilder.setTipTextLaserFrameMargin(margin);
+        mScannerOptionsBuilder.setTipTextToFrameTop(!bottom);
+        mScannerOptionsBuilder.setTipTextToFrameMargin(margin);
         return this;
     }
 
@@ -419,7 +419,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     @Deprecated
     public ScannerView setLaserFrameSize(int width, int height) {
-        mScannerOptionsBuilder.setLaserFrameSize(width, height);
+        mScannerOptionsBuilder.setFrameSize(width, height);
         return this;
     }
 
@@ -430,7 +430,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      */
     @Deprecated
     public ScannerView setLaserFrameTopMargin(int margin) {
-        mScannerOptionsBuilder.setLaserFrameTopMargin(margin);
+        mScannerOptionsBuilder.setFrameTopMargin(margin);
         return this;
     }
 
