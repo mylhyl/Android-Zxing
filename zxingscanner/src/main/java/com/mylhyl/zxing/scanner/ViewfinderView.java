@@ -27,16 +27,11 @@ import android.graphics.RectF;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.google.zxing.ResultPoint;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This view is overlaid on top of the camera preview. It adds the viewfinder rectangle and partial
@@ -49,8 +44,7 @@ final class ViewfinderView extends View {
     private static final int CURRENT_POINT_OPACITY = 0xA0;
     private static final int MAX_RESULT_POINTS = 20;
     private static final int POINT_SIZE = 6;
-    private static final int DEFAULT_LASER_LINE_HEIGHT = 2;//扫描线默认高度
-    private static final int DEFAULT_LASER_MOVE_SPEED = 6;//默认每毫秒移动6px
+
 
     private CameraManager cameraManager;
     private final Paint paint;
@@ -61,34 +55,36 @@ final class ViewfinderView extends View {
 
     private int maskColor = Scanner.color.VIEWFINDER_MASK;//扫描框以外区域半透明黑色
     private int resultColor = Scanner.color.RESULT_VIEW;//扫描成功后扫描框以外区域白色
-    private int laserColor = Scanner.color.VIEWFINDER_LASER;//扫描线颜色
-    private int laserFrameBoundColor = laserColor;//扫描框4角颜色
     private int laserLineTop;// 扫描线最顶端位置
+
     private int laserLineHeight;//扫描线默认高度
-    private int laserMoveSpeed;// 扫描线默认移动距离px
     private int laserFrameCornerWidth;//扫描框4角宽
     private int laserFrameCornerLength;//扫描框4角高
-    private int laserLineResId;//扫描线图片资源
-    private String drawText = "将二维码放入框内，即可自动扫描";//提示文字
     private int drawTextSize;//提示文字大小
-    private int drawTextColor = Color.WHITE;//提示文字颜色
-    private boolean drawTextGravityBottom = true;//提示文字位置
     private int drawTextMargin;//提示文字与扫描框距离
-    private boolean isLaserGridLine;//是否为网格资源文件
+    private ScannerOptions scannerOptions;
 
     public ViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        laserMoveSpeed = DEFAULT_LASER_MOVE_SPEED;//默认每毫秒移动6px
-        laserLineHeight = Scanner.dp2px(context, DEFAULT_LASER_LINE_HEIGHT);
-        laserFrameCornerWidth = Scanner.dp2px(context, 2f);
-        laserFrameCornerLength = Scanner.dp2px(context, 15f);
-        drawTextSize = Scanner.sp2px(context, 15f);
-        drawTextMargin = Scanner.dp2px(context, 20f);
     }
 
     void setCameraManager(CameraManager cameraManager) {
         this.cameraManager = cameraManager;
+    }
+
+    void setScannerOptions(ScannerOptions scannerOptions) {
+        this.scannerOptions = scannerOptions;
+        laserLineHeight = dp2px(scannerOptions.getLaserLineHeight());
+        laserFrameCornerWidth = dp2px(scannerOptions.getLaserFrameCornerWidth());
+        laserFrameCornerLength = dp2px(scannerOptions.getLaserFrameCornerLength());
+
+        drawTextSize = Scanner.sp2px(getContext(), scannerOptions.getTipTextSize());
+        drawTextMargin = dp2px(scannerOptions.getTipTextLaserFrameMargin());
+    }
+
+    private int dp2px(int dp) {
+        return Scanner.dp2px(getContext(), dp);
     }
 
     @Override
@@ -122,6 +118,7 @@ final class ViewfinderView extends View {
         if (laserLineTop == 0) {
             laserLineTop = frame.top;
         }
+        int laserMoveSpeed = scannerOptions.getLaserLineMoveSpeed();
         // 每次刷新界面，扫描线往下移动 LASER_VELOCITY
         laserLineTop += laserMoveSpeed;
         if (laserLineTop >= frame.bottom) {
@@ -163,15 +160,15 @@ final class ViewfinderView extends View {
         textPaint.setAntiAlias(true);
         textPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setColor(drawTextColor);
+        textPaint.setColor(scannerOptions.getTipTextColor());
         textPaint.setTextSize(drawTextSize);
 
         float x = frame.left;//文字开始位置
         //根据 drawTextGravityBottom 文字在扫描框上方还是下文，默认下方
-        float y = drawTextGravityBottom ? frame.bottom + drawTextMargin
+        float y = scannerOptions.isTipTextLaserFrameBottom() ? frame.bottom + drawTextMargin
                 : frame.top - drawTextMargin;
 
-        StaticLayout staticLayout = new StaticLayout(drawText, textPaint, frame.width()
+        StaticLayout staticLayout = new StaticLayout(scannerOptions.getTipText(), textPaint, frame.width()
                 , Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
         canvas.save();
         canvas.translate(x, y);
@@ -186,7 +183,7 @@ final class ViewfinderView extends View {
      * @param frame
      */
     private void drawFrameCorner(Canvas canvas, Rect frame) {
-        paint.setColor(laserFrameBoundColor);
+        paint.setColor(scannerOptions.getLaserFrameCornerColor());
         paint.setStyle(Paint.Style.FILL);
         // 左上角
         canvas.drawRect(frame.left - laserFrameCornerWidth, frame.top, frame.left, frame.top
@@ -230,17 +227,17 @@ final class ViewfinderView extends View {
      * @param frame
      */
     private void drawLaserLine(Canvas canvas, Rect frame) {
-        if (laserLineResId == 0) {
+        if (scannerOptions.getLaserLineResId() == 0) {
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(laserColor);// 设置扫描线颜色
+            paint.setColor(scannerOptions.getLaserLineColor());// 设置扫描线颜色
             canvas.drawRect(frame.left, laserLineTop, frame.right
                     , laserLineTop + laserLineHeight, paint);
         } else {
             if (laserLineBitmap == null)//图片资源文件转为 Bitmap
-                laserLineBitmap = BitmapFactory.decodeResource(getResources(), laserLineResId);
+                laserLineBitmap = BitmapFactory.decodeResource(getResources(), scannerOptions.getLaserLineResId());
             int height = laserLineBitmap.getHeight();//取原图高
             //网格图片
-            if (isLaserGridLine) {
+            if (scannerOptions.isLaserGridLine()) {
                 RectF dstRectF = new RectF(frame.left, frame.top, frame.right, laserLineTop);
                 Rect srcRect = new Rect(0, (int) (height - dstRectF.height())
                         , laserLineBitmap.getWidth(), height);
@@ -249,7 +246,7 @@ final class ViewfinderView extends View {
             //线条图片
             else {
                 //如果没有设置线条高度，则用图片原始高度
-                if (laserLineHeight == Scanner.dp2px(getContext(), DEFAULT_LASER_LINE_HEIGHT)) {
+                if (laserLineHeight == dp2px(ScannerOptions.DEFAULT_LASER_LINE_HEIGHT)) {
                     laserLineHeight = laserLineBitmap.getHeight() / 2;
                 }
                 Rect laserRect = new Rect(frame.left, laserLineTop, frame.right
@@ -259,7 +256,7 @@ final class ViewfinderView extends View {
         }
     }
 
-    public void drawViewfinder() {
+    void drawViewfinder() {
         Bitmap resultBitmap = this.resultBitmap;
         this.resultBitmap = null;
         if (resultBitmap != null) {
@@ -273,73 +270,12 @@ final class ViewfinderView extends View {
      *
      * @param barcode An image of the decoded barcode.
      */
-    public void drawResultBitmap(Bitmap barcode) {
+    void drawResultBitmap(Bitmap barcode) {
         resultBitmap = barcode;
         invalidate();
     }
 
-    public void setLaserColor(int laserColor) {
-        this.laserColor = laserColor;
-    }
-
-    public void setLaserLineResId(int laserLineResId) {
-        this.laserLineResId = laserLineResId;
-        this.isLaserGridLine = false;
-    }
-
-    public void setLaserGridLineResId(int laserLineResId) {
-        this.laserLineResId = laserLineResId;
-        this.isLaserGridLine = true;
-    }
-
-    public void setLaserLineHeight(int laserLineHeight) {
-        this.laserLineHeight = Scanner.dp2px(getContext(), laserLineHeight);
-    }
-
-    public void setLaserFrameBoundColor(int laserFrameBoundColor) {
-        this.laserFrameBoundColor = laserFrameBoundColor;
-    }
-
-    public void setLaserFrameCornerLength(int laserFrameCornerLength) {
-        this.laserFrameCornerLength = Scanner.dp2px(getContext(), laserFrameCornerLength);
-    }
-
-    public void setLaserFrameCornerWidth(int laserFrameCornerWidth) {
-        this.laserFrameCornerWidth = Scanner.dp2px(getContext(), laserFrameCornerWidth);
-    }
-
-    public void setDrawText(String text, int textSize, int textColor
-            , boolean isBottom, int textMargin) {
-        if (!TextUtils.isEmpty(text))
-            drawText = text;
-        if (textSize > 0)
-            drawTextSize = Scanner.sp2px(getContext(), textSize);
-        if (textColor != 0)
-            drawTextColor = textColor;
-        drawTextGravityBottom = isBottom;
-        if (textMargin > 0)
-            drawTextMargin = Scanner.dp2px(getContext(), textMargin);
-    }
-
-    public void setDrawTextColor(int textColor) {
-        if (textColor != 0)
-            drawTextColor = textColor;
-    }
-
-    public void setDrawTextSize(int textSize) {
-        if (textSize > 0)
-            drawTextSize = Scanner.sp2px(getContext(), textSize);
-    }
-
-    public void setLaserMoveSpeed(int moveSpeed) {
-        if (moveSpeed <= 0) {
-            laserMoveSpeed = DEFAULT_LASER_MOVE_SPEED;
-        } else {
-            laserMoveSpeed = moveSpeed;
-        }
-    }
-
-    public void laserLineBitmapRecycle() {
+    void laserLineBitmapRecycle() {
         if (laserLineBitmap != null) {
             laserLineBitmap.recycle();
             laserLineBitmap = null;

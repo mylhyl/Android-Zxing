@@ -17,10 +17,8 @@ import com.google.zxing.ResultPoint;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
 import com.mylhyl.zxing.scanner.common.Scanner;
-import com.mylhyl.zxing.scanner.decode.DecodeFormatManager;
 
 import java.io.IOException;
-import java.util.Collection;
 
 /**
  * Created by hupei on 2016/7/1.
@@ -36,17 +34,12 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     private CameraManager mCameraManager;
     private ScannerViewHandler mScannerViewHandler;
     private BeepManager mBeepManager;
-    private int mMediaResId;
     private OnScannerCompletionListener mScannerCompletionListener;
 
     private boolean lightMode = false;//闪光灯，默认关闭
-    private int laserFrameWidth, laserFrameHeight;//扫描框大小
-    private int laserFrameTopMargin;//扫描框离屏幕上方距离
-    private Collection<BarcodeFormat> decodeFormats;//解码类型
-    private boolean mShowResThumbnail = false;//扫描成功是否显示缩略图
-    private CameraFacing mCameraFacing = CameraFacing.BACK;//默认后置摄像头
-    private boolean mScanFullScreen;//全屏扫描
-    private boolean invertScan;//扫描反色二维码（黑底白色码）
+
+    private ScannerOptions mScannerOptions;
+    private ScannerOptions.Builder mScannerOptionsBuilder;
 
     public ScannerView(Context context) {
         this(context, null);
@@ -69,14 +62,16 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
         mViewfinderView = new ViewfinderView(context, attrs);
         addView(mViewfinderView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+
+        mScannerOptionsBuilder = new ScannerOptions.Builder();
+        mScannerOptions = mScannerOptionsBuilder.build();
     }
 
     public void onResume() {
-        mCameraManager = new CameraManager(getContext(), mCameraFacing);
-        mCameraManager.setLaserFrameTopMargin(laserFrameTopMargin);//扫描框与屏幕距离
-        mCameraManager.setScanFullScreen(mScanFullScreen);//是否全屏扫描
-        mCameraManager.setInvertScan(invertScan);
+        mCameraManager = new CameraManager(getContext(), mScannerOptions);
         mViewfinderView.setCameraManager(mCameraManager);
+        mViewfinderView.setScannerOptions(mScannerOptions);
+        mViewfinderView.setVisibility(mScannerOptions.isLaserFrameHide() ? View.GONE : View.VISIBLE);
         if (mBeepManager != null) mBeepManager.updatePrefs();
 
         mScannerViewHandler = null;
@@ -118,11 +113,8 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             // Creating the mScannerViewHandler starts the preview, which can also throw a
             // RuntimeException.
             if (mScannerViewHandler == null) {
-                mScannerViewHandler = new ScannerViewHandler(this, decodeFormats, mCameraManager);
+                mScannerViewHandler = new ScannerViewHandler(this, mScannerOptions.getDecodeFormats(), mCameraManager);
             }
-            //设置扫描框大小
-            if (laserFrameWidth > 0 && laserFrameHeight > 0)
-                mCameraManager.setManualFramingRect(laserFrameWidth, laserFrameHeight);
         } catch (IOException ioe) {
             Log.w(TAG, ioe);
         } catch (RuntimeException e) {
@@ -151,10 +143,10 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             mViewfinderView.drawResultBitmap(barcode);
         }
 
-        if (mMediaResId != 0) {
+        if (mScannerOptions.getMediaResId() != 0) {
             if (mBeepManager == null) {
                 mBeepManager = new BeepManager(getContext());
-                mBeepManager.setMediaResId(mMediaResId);
+                mBeepManager.setMediaResId(mScannerOptions.getMediaResId());
             }
             mBeepManager.playBeepSoundAndVibrate();
             if (barcode != null)
@@ -228,146 +220,12 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
 
     /**
      * 设置扫描成功监听器
+     *
      * @param listener
      * @return
      */
     public ScannerView setOnScannerCompletionListener(OnScannerCompletionListener listener) {
         this.mScannerCompletionListener = listener;
-        return this;
-    }
-
-    /**
-     * 设置扫描线颜色
-     *
-     * @param laserColor
-     */
-    public ScannerView setLaserColor(int laserColor) {
-        mViewfinderView.setLaserColor(laserColor);
-        return this;
-    }
-
-    /**
-     * 设置线形扫描线资源
-     *
-     * @param laserLineResId resId
-     */
-    public ScannerView setLaserLineResId(int laserLineResId) {
-        mViewfinderView.setLaserLineResId(laserLineResId);
-        return this;
-    }
-
-    /**
-     * 设置网格扫描线资源
-     *
-     * @param laserLineResId resId
-     */
-    public ScannerView setLaserGridLineResId(int laserLineResId) {
-        mViewfinderView.setLaserGridLineResId(laserLineResId);
-        return this;
-    }
-
-    /**
-     * 设置扫描线高度
-     *
-     * @param laserLineHeight dp
-     */
-    public ScannerView setLaserLineHeight(int laserLineHeight) {
-        mViewfinderView.setLaserLineHeight(laserLineHeight);
-        return this;
-    }
-
-    /**
-     * 设置扫描框4角颜色
-     *
-     * @param laserFrameBoundColor
-     */
-    public ScannerView setLaserFrameBoundColor(int laserFrameBoundColor) {
-        mViewfinderView.setLaserFrameBoundColor(laserFrameBoundColor);
-        return this;
-    }
-
-    /**
-     * 设置扫描框4角长度
-     *
-     * @param laserFrameCornerLength dp
-     */
-    public ScannerView setLaserFrameCornerLength(int laserFrameCornerLength) {
-        mViewfinderView.setLaserFrameCornerLength(laserFrameCornerLength);
-        return this;
-    }
-
-    /**
-     * 设置扫描框4角宽度
-     *
-     * @param laserFrameCornerWidth dp
-     */
-    public ScannerView setLaserFrameCornerWidth(int laserFrameCornerWidth) {
-        mViewfinderView.setLaserFrameCornerWidth(laserFrameCornerWidth);
-        return this;
-    }
-
-    /**
-     * 设置文字颜色
-     *
-     * @param textColor 文字颜色
-     */
-    public ScannerView setDrawTextColor(int textColor) {
-        mViewfinderView.setDrawTextColor(textColor);
-        return this;
-    }
-
-    /**
-     * 设置文字大小
-     *
-     * @param textSize 文字大小 sp
-     */
-    public ScannerView setDrawTextSize(int textSize) {
-        mViewfinderView.setDrawTextSize(textSize);
-        return this;
-    }
-
-    /**
-     * 设置文字
-     *
-     * @param text
-     * @param isBottom 是否在扫描框下方
-     */
-    public ScannerView setDrawText(String text, boolean isBottom) {
-        return setDrawText(text, isBottom, 0);
-    }
-
-    /**
-     * 设置文字
-     *
-     * @param text
-     * @param isBottom   是否在扫描框下方
-     * @param textMargin 离扫描框间距 dp
-     */
-    public ScannerView setDrawText(String text, boolean isBottom, int textMargin) {
-        return setDrawText(text, 0, 0, isBottom, textMargin);
-    }
-
-    /**
-     * 设置文字
-     *
-     * @param text
-     * @param textSize   文字大小 sp
-     * @param textColor  文字颜色
-     * @param isBottom   是否在扫描框下方
-     * @param textMargin 离扫描框间距 dp
-     */
-    public ScannerView setDrawText(String text, int textSize, int textColor, boolean isBottom, int textMargin) {
-        mViewfinderView.setDrawText(text, textSize, textColor, isBottom, textMargin);
-        return this;
-    }
-
-    /**
-     * 设置扫描完成播放声音
-     *
-     * @param mediaResId
-     */
-    public ScannerView setMediaResId(int mediaResId) {
-        this.mMediaResId = mediaResId;
         return this;
     }
 
@@ -383,116 +241,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     /**
-     * 设置扫描框大小
-     *
-     * @param width  dp
-     * @param height dp
-     */
-    public ScannerView setLaserFrameSize(int width, int height) {
-        this.laserFrameWidth = Scanner.dp2px(getContext(), width);
-        this.laserFrameHeight = Scanner.dp2px(getContext(), height);
-        return this;
-    }
-
-    /**
-     * 设置扫描框与屏幕距离
-     *
-     * @param laserFrameTopMargin
-     */
-    public ScannerView setLaserFrameTopMargin(int laserFrameTopMargin) {
-        this.laserFrameTopMargin = Scanner.dp2px(getContext(), laserFrameTopMargin);
-        return this;
-    }
-
-    /**
-     * 设置扫描解码类型（二维码、一维码、商品条码）
-     *
-     * @param scanMode {@linkplain Scanner.ScanMode mode}
-     * @return
-     */
-    public ScannerView setScanMode(String scanMode) {
-        this.decodeFormats = DecodeFormatManager.parseDecodeFormats(scanMode);
-        return this;
-    }
-
-    /**
-     * 设置扫描解码类型
-     *
-     * @param barcodeFormat
-     * @return
-     */
-    public ScannerView setScanMode(BarcodeFormat... barcodeFormat) {
-        this.decodeFormats = DecodeFormatManager.parseDecodeFormats(barcodeFormat);
-        return this;
-    }
-
-    /**
-     * 是否显示扫描结果缩略图
-     *
-     * @param showResThumbnail
-     * @return
-     */
-    public ScannerView isShowResThumbnail(boolean showResThumbnail) {
-        this.mShowResThumbnail = showResThumbnail;
-        return this;
-    }
-
-    /**
-     * 设置扫描框线移动间距，每毫秒移动 moveSpeed 像素
-     *
-     * @param moveSpeed px
-     * @return
-     */
-    public ScannerView setLaserMoveSpeed(int moveSpeed) {
-        this.mViewfinderView.setLaserMoveSpeed(moveSpeed);
-        return this;
-    }
-
-    /**
-     * 设置扫描摄像头，默认后置
-     *
-     * @param cameraFacing
-     * @return
-     */
-    public ScannerView setCameraFacing(CameraFacing cameraFacing) {
-        this.mCameraFacing = cameraFacing;
-        return this;
-    }
-
-    /**
-     * 是否全屏扫描
-     *
-     * @param scanFullScreen
-     * @return
-     */
-    public ScannerView isScanFullScreen(boolean scanFullScreen) {
-        this.mScanFullScreen = scanFullScreen;
-        return this;
-    }
-
-    /**
-     * 是否隐藏扫描框
-     *
-     * @param hide
-     * @return
-     */
-    public ScannerView isHideLaserFrame(boolean hide) {
-        this.mViewfinderView.setVisibility(hide ? View.GONE : View.VISIBLE);
-        return this;
-    }
-
-    /**
-     * 是否扫描反色二维码（黑底白码）
-     *
-     * @param invertScan
-     * @return
-     */
-    public ScannerView isScanInvert(boolean invertScan) {
-        this.invertScan = invertScan;
-        return this;
-    }
-
-    /**
      * 在经过一段延迟后重置相机以进行下一次扫描。 成功扫描过后可调用此方法立刻准备进行下次扫描
      *
      * @param delayMS 毫秒
@@ -502,15 +250,287 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
             mScannerViewHandler.sendEmptyMessageDelayed(Scanner.RESTART_PREVIEW, delayMS);
     }
 
-    ViewfinderView getViewfinderView() {
-        return mViewfinderView;
+    /**
+     * 设置扫描线颜色
+     *
+     * @param color
+     */
+    @Deprecated
+    public ScannerView setLaserColor(int color) {
+        mScannerOptionsBuilder.setLaserLineColor(color);
+        return this;
+    }
+
+    /**
+     * 设置线形扫描线资源
+     *
+     * @param resId resId
+     */
+    @Deprecated
+    public ScannerView setLaserLineResId(int resId) {
+        mScannerOptionsBuilder.setLaserLineResId(resId);
+        return this;
+    }
+
+    /**
+     * 设置网格扫描线资源
+     *
+     * @param resId resId
+     */
+    @Deprecated
+    public ScannerView setLaserGridLineResId(int resId) {
+        mScannerOptionsBuilder.setLaserGridLineResId(resId);
+        return this;
+    }
+
+    /**
+     * 设置扫描线高度
+     *
+     * @param height dp
+     */
+    @Deprecated
+    public ScannerView setLaserLineHeight(int height) {
+        mScannerOptionsBuilder.setLaserLineHeight(height);
+        return this;
+    }
+
+    /**
+     * 设置扫描框4角颜色
+     *
+     * @param color
+     */
+    @Deprecated
+    public ScannerView setLaserFrameBoundColor(int color) {
+        mScannerOptionsBuilder.setLaserFrameCornerColor(color);
+        return this;
+    }
+
+    /**
+     * 设置扫描框4角长度
+     *
+     * @param length dp
+     */
+    @Deprecated
+    public ScannerView setLaserFrameCornerLength(int length) {
+        mScannerOptionsBuilder.setLaserFrameCornerLength(length);
+        return this;
+    }
+
+    /**
+     * 设置扫描框4角宽度
+     *
+     * @param width dp
+     */
+    @Deprecated
+    public ScannerView setLaserFrameCornerWidth(int width) {
+        mScannerOptionsBuilder.setLaserFrameCornerWidth(width);
+        return this;
+    }
+
+    /**
+     * 设置文字颜色
+     *
+     * @param color 文字颜色
+     */
+    @Deprecated
+    public ScannerView setDrawTextColor(int color) {
+        mScannerOptionsBuilder.setTipTextColor(color);
+        return this;
+    }
+
+    /**
+     * 设置文字大小
+     *
+     * @param size 文字大小 sp
+     */
+    @Deprecated
+    public ScannerView setDrawTextSize(int size) {
+        mScannerOptionsBuilder.setTipTextSize(size);
+        return this;
+    }
+
+    /**
+     * 设置文字
+     *
+     * @param text
+     * @param bottom 是否在扫描框下方
+     */
+    @Deprecated
+    public ScannerView setDrawText(String text, boolean bottom) {
+        mScannerOptionsBuilder.setTipText(text);
+        mScannerOptionsBuilder.setTipTextLaserFrameBottom(bottom);
+        return this;
+    }
+
+    /**
+     * 设置文字
+     *
+     * @param text
+     * @param bottom 是否在扫描框下方
+     * @param margin 离扫描框间距 dp
+     */
+    @Deprecated
+    public ScannerView setDrawText(String text, boolean bottom, int margin) {
+        mScannerOptionsBuilder.setTipText(text);
+        mScannerOptionsBuilder.setTipTextLaserFrameBottom(bottom);
+        mScannerOptionsBuilder.setTipTextLaserFrameMargin(margin);
+        return this;
+    }
+
+    /**
+     * 设置文字
+     *
+     * @param text
+     * @param size   文字大小 sp
+     * @param color  文字颜色
+     * @param bottom 是否在扫描框下方
+     * @param margin 离扫描框间距 dp
+     */
+    @Deprecated
+    public ScannerView setDrawText(String text, int size, int color, boolean bottom, int margin) {
+        mScannerOptionsBuilder.setTipText(text);
+        mScannerOptionsBuilder.setTipTextSize(size);
+        mScannerOptionsBuilder.setTipTextColor(color);
+        mScannerOptionsBuilder.setTipTextLaserFrameBottom(bottom);
+        mScannerOptionsBuilder.setTipTextLaserFrameMargin(margin);
+        return this;
+    }
+
+    /**
+     * 设置扫描完成播放声音
+     *
+     * @param resId
+     */
+    @Deprecated
+    public ScannerView setMediaResId(int resId) {
+        mScannerOptionsBuilder.setMediaResId(resId);
+        return this;
+    }
+
+    /**
+     * 设置扫描框大小
+     *
+     * @param width  dp
+     * @param height dp
+     */
+    @Deprecated
+    public ScannerView setLaserFrameSize(int width, int height) {
+        mScannerOptionsBuilder.setLaserFrameSize(width, height);
+        return this;
+    }
+
+    /**
+     * 设置扫描框与屏幕距离
+     *
+     * @param margin
+     */
+    @Deprecated
+    public ScannerView setLaserFrameTopMargin(int margin) {
+        mScannerOptionsBuilder.setLaserFrameTopMargin(margin);
+        return this;
+    }
+
+    /**
+     * 设置扫描解码类型（二维码、一维码、商品条码）
+     *
+     * @param scanMode {@linkplain Scanner.ScanMode mode}
+     * @return
+     */
+    @Deprecated
+    public ScannerView setScanMode(String scanMode) {
+        mScannerOptionsBuilder.setScanMode(scanMode);
+        return this;
+    }
+
+    /**
+     * 设置扫描解码类型
+     *
+     * @param barcodeFormat
+     * @return
+     */
+    @Deprecated
+    public ScannerView setScanMode(BarcodeFormat... barcodeFormat) {
+        mScannerOptionsBuilder.setScanMode(barcodeFormat);
+        return this;
+    }
+
+    /**
+     * 是否显示扫描结果缩略图
+     *
+     * @param showResThumbnail
+     * @return
+     */
+    @Deprecated
+    public ScannerView isShowResThumbnail(boolean showResThumbnail) {
+        mScannerOptionsBuilder.setCreateQrThumbnail(showResThumbnail);
+        return this;
+    }
+
+    /**
+     * 设置扫描框线移动间距，每毫秒移动 moveSpeed 像素
+     *
+     * @param moveSpeed px
+     * @return
+     */
+    @Deprecated
+    public ScannerView setLaserMoveSpeed(int moveSpeed) {
+        mScannerOptionsBuilder.setLaserMoveSpeed(moveSpeed);
+        return this;
+    }
+
+    /**
+     * 设置扫描摄像头，默认后置
+     *
+     * @param cameraFacing
+     * @return
+     */
+    @Deprecated
+    public ScannerView setCameraFacing(CameraFacing cameraFacing) {
+        mScannerOptionsBuilder.setCameraFacing(cameraFacing);
+        return this;
+    }
+
+    /**
+     * 是否全屏扫描
+     *
+     * @param scanFullScreen
+     * @return
+     */
+    @Deprecated
+    public ScannerView isScanFullScreen(boolean scanFullScreen) {
+        mScannerOptionsBuilder.setScanFullScreen(scanFullScreen);
+        return this;
+    }
+
+    /**
+     * 是否隐藏扫描框
+     *
+     * @param hide
+     * @return
+     */
+    @Deprecated
+    public ScannerView isHideLaserFrame(boolean hide) {
+        mScannerOptionsBuilder.setLaserFrameHide(hide);
+        return this;
+    }
+
+    /**
+     * 是否扫描反色二维码（黑底白码）
+     *
+     * @param invertScan
+     * @return
+     */
+    @Deprecated
+    public ScannerView isScanInvert(boolean invertScan) {
+        mScannerOptionsBuilder.setScanInvert(invertScan);
+        return this;
+    }
+
+    ScannerOptions getScannerOptions() {
+        return mScannerOptions;
     }
 
     void drawViewfinder() {
         mViewfinderView.drawViewfinder();
-    }
-
-    boolean getShowResThumbnail() {
-        return mShowResThumbnail;
     }
 }

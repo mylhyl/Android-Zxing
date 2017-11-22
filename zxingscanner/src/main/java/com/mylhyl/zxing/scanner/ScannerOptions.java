@@ -1,5 +1,7 @@
 package com.mylhyl.zxing.scanner;
 
+import android.graphics.Color;
+
 import com.google.zxing.BarcodeFormat;
 import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
 import com.mylhyl.zxing.scanner.common.Scanner;
@@ -13,29 +15,30 @@ import java.util.Collection;
 
 public final class ScannerOptions {
 
-    private int laserLineColor;//扫描线颜色rgb值
+    public static final int DEFAULT_LASER_LINE_HEIGHT = 2;//扫描线默认高度
+
+    private int laserLineColor = Scanner.color.VIEWFINDER_LASER;//扫描线颜色rgb值
     private int laserLineResId;//扫描线资源文件
     private boolean isLaserGridLine;//扫描线资源文件是否为网格样式
-    private int laserLineHeight;//扫描线高度，网络样式无效，单位dp
-    private int laserLineMoveSpeed;//扫描线移动间距，每毫秒移动 moveSpeed 像素，单位px
+    private int laserLineHeight = DEFAULT_LASER_LINE_HEIGHT;//扫描线高度，网络样式无效，单位dp
+    private int laserLineMoveSpeed = 6;//扫描线移动间距，默认每毫秒移动6px，单位px
     private int laserFrameWidth;//扫描框的宽度，单位dp
     private int laserFrameHeight;//扫描框的高度，单位dp
-    private int laserFrameCornerColor;//扫描框4角颜色rgb值
-    private int laserFrameCornerLength;//扫描框4角长度
-    private int laserFrameCornerWidth;//扫描框4角宽度
+    private int laserFrameCornerColor = laserLineColor;//扫描框4角颜色rgb值
+    private int laserFrameCornerLength = 15;//扫描框4角长度，单位dp 默认15
+    private int laserFrameCornerWidth = 2;//扫描框4角宽度，单位dp 默认2
     private int laserFrameTopMargin;//扫描框与顶部间距，单位dp，默认居中
-    private boolean isLaserFrameHide;//是否隐藏扫描框
-    private String tipText;//提示文字
-    private int tipTextColor;//提示文字颜色rgb值
-    private int tipTextSize;//提交文字大小，单位sp
+    private boolean isLaserFrameHide;//是否隐藏扫描框，默认显示
+    private String tipText = "将二维码放入框内，即可自动扫描";//提示文字
+    private int tipTextColor = Color.WHITE;//提示文字颜色rgb值，默认白色
+    private int tipTextSize = 15;//提交文字大小，单位sp 默认15
     private boolean isTipTextLaserFrameBottom = true;//是否在扫描框下方，默认下方
-    private int tipTextLaserFrameMargin;//离扫描框间距，单位dp
+    private int tipTextLaserFrameMargin = 20;//离扫描框间距，单位dp 默认20
     private int mediaResId;//扫描成功音频资源文件
-    private boolean isTorch;//是否打开手电筒，默认关闭
-    private Collection<BarcodeFormat> decodeFormats;//解码类型
-    private boolean isCreateQrThumbnail;//生成扫描结果缩略图
-    private CameraFacing cameraFacing;//启动摄像头位置，默认后置
-    private boolean isScanFullScreen;//是否全屏扫描，默认隐藏扫描框
+    private Collection<BarcodeFormat> decodeFormats;//解码类型，默认解全部
+    private boolean isCreateQrThumbnail;//生成扫描结果缩略图，默认不生成
+    private CameraFacing cameraFacing = CameraFacing.BACK;//启动摄像头位置，默认后置
+    private boolean isScanFullScreen;//是否全屏扫描识别，默认扫描框内识别
     private boolean isScanInvert;//是否扫描反色二维码（用于黑底白码）
 
     protected ScannerOptions() {
@@ -113,10 +116,6 @@ public final class ScannerOptions {
         return mediaResId;
     }
 
-    public boolean isTorch() {
-        return isTorch;
-    }
-
     public Collection<BarcodeFormat> getDecodeFormats() {
         return decodeFormats;
     }
@@ -137,14 +136,10 @@ public final class ScannerOptions {
         return isScanInvert;
     }
 
-    public static class Builder {
-        protected ScannerOptions options;
+    public static final class Builder {
+        private ScannerOptions options;
 
         public Builder() {
-            newImageOptions();
-        }
-
-        protected void newImageOptions() {
             options = new ScannerOptions();
         }
 
@@ -157,7 +152,7 @@ public final class ScannerOptions {
          *
          * @param color rgb
          */
-        public Builder setLaserColor(int color) {
+        public Builder setLaserLineColor(int color) {
             options.laserLineColor = color;
             return this;
         }
@@ -237,20 +232,20 @@ public final class ScannerOptions {
         /**
          * 设置文字颜色
          *
-         * @param textColor 文字颜色
+         * @param color 文字颜色
          */
-        public Builder setTipTextColor(int textColor) {
-            options.tipTextColor = textColor;
+        public Builder setTipTextColor(int color) {
+            options.tipTextColor = color;
             return this;
         }
 
         /**
          * 设置文字大小
          *
-         * @param textSize 文字大小 sp
+         * @param size 文字大小 sp
          */
-        public Builder setTipTextSize(int textSize) {
-            options.tipTextSize = textSize;
+        public Builder setTipTextSize(int size) {
+            options.tipTextSize = size;
             return this;
         }
 
@@ -285,16 +280,6 @@ public final class ScannerOptions {
         }
 
         /**
-         * 切换闪光灯
-         *
-         * @param mode true开；false关
-         */
-        public Builder toggleTorch(boolean mode) {
-            options.isTorch = mode;
-            return this;
-        }
-
-        /**
          * 设置扫描框大小
          *
          * @param width  dp
@@ -309,10 +294,10 @@ public final class ScannerOptions {
         /**
          * 设置扫描框与屏幕顶部距离
          *
-         * @param topMargin dp
+         * @param margin dp
          */
-        public Builder setLaserFrameTopMargin(int topMargin) {
-            options.laserFrameTopMargin = topMargin;
+        public Builder setLaserFrameTopMargin(int margin) {
+            options.laserFrameTopMargin = margin;
             return this;
         }
 
@@ -350,9 +335,9 @@ public final class ScannerOptions {
         }
 
         /**
-         * 设置扫描框线移动间距，每毫秒移动 moveSpeed 像素
+         * 设置扫描框线移动间距
          *
-         * @param moveSpeed px
+         * @param moveSpeed 每毫秒移动 moveSpeed 像素 px
          * @return
          */
         public Builder setLaserMoveSpeed(int moveSpeed) {
@@ -377,7 +362,7 @@ public final class ScannerOptions {
          * @param scanFullScreen
          * @return
          */
-        public Builder isScanFullScreen(boolean scanFullScreen) {
+        public Builder setScanFullScreen(boolean scanFullScreen) {
             options.isScanFullScreen = scanFullScreen;
             return this;
         }
@@ -399,7 +384,7 @@ public final class ScannerOptions {
          * @param invertScan
          * @return
          */
-        public Builder isScanInvert(boolean invertScan) {
+        public Builder setScanInvert(boolean invertScan) {
             options.isScanInvert = invertScan;
             return this;
         }

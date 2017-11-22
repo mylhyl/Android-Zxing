@@ -26,9 +26,11 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.PlanarYUVLuminanceSource;
+import com.mylhyl.zxing.scanner.ScannerOptions;
 import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
 import com.mylhyl.zxing.scanner.camera.open.OpenCamera;
 import com.mylhyl.zxing.scanner.camera.open.OpenCameraInterface;
+import com.mylhyl.zxing.scanner.common.Scanner;
 
 import java.io.IOException;
 
@@ -65,20 +67,20 @@ public final class CameraManager {
      */
     private final PreviewCallback previewCallback;
     private final int statusBarHeight;//状态栏高度
-    private int laserFrameTopMargin;//扫描框离屏幕上方距离
-    private boolean scanFullScreen;
-    private boolean invertScan;
+    private int laserFrameTopMargin;
+    private ScannerOptions scannerOptions;
 
-    public CameraManager(Context context, CameraFacing cameraFacing) {
+    public CameraManager(Context context, ScannerOptions scannerOptions) {
         this.context = context;
         this.configManager = new CameraConfigurationManager(context);
-        previewCallback = new PreviewCallback(configManager);
-        statusBarHeight = getStatusBarHeight();
-        setManualCameraId(cameraFacing == CameraFacing.BACK ? 0 : 1);
-    }
+        this.previewCallback = new PreviewCallback(configManager);
 
-    public Context getContext() {
-        return context;
+        this.statusBarHeight = getStatusBarHeight();
+        this.scannerOptions = scannerOptions;
+        this.requestedFramingRectWidth = dp2px(scannerOptions.getLaserFrameWidth());
+        this.requestedFramingRectHeight = dp2px(scannerOptions.getLaserFrameHeight());
+        this.laserFrameTopMargin = dp2px(scannerOptions.getLaserFrameTopMargin());
+        setManualCameraId(scannerOptions.getCameraFacing() == CameraFacing.BACK ? 0 : 1);
     }
 
     /**
@@ -112,7 +114,7 @@ public final class CameraManager {
         Camera.Parameters parameters = cameraObject.getParameters();
         String parametersFlattened = parameters == null ? null : parameters.flatten(); // Save these, temporarily
         try {
-            configManager.setDesiredCameraParameters(theCamera, false, invertScan);
+            configManager.setDesiredCameraParameters(theCamera, false, scannerOptions.isScanInvert());
         } catch (RuntimeException re) {
             // Driver failed
             Log.w(TAG, "Camera rejected parameters. Setting only minimal safe-mode parameters");
@@ -123,7 +125,7 @@ public final class CameraManager {
                 parameters.unflatten(parametersFlattened);
                 try {
                     cameraObject.setParameters(parameters);
-                    configManager.setDesiredCameraParameters(theCamera, true, invertScan);
+                    configManager.setDesiredCameraParameters(theCamera, true, scannerOptions.isScanInvert());
                 } catch (RuntimeException re2) {
                     // Well, darn. Give up
                     Log.w(TAG, "Camera rejected even safe-mode parameters! No configuration");
@@ -363,7 +365,7 @@ public final class CameraManager {
      * @return A PlanarYUVLuminanceSource instance.
      */
     public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
-        if (scanFullScreen) {
+        if (scannerOptions.isScanFullScreen()) {
             return new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false);
         }
         Rect rect = getFramingRectInPreview();
@@ -388,19 +390,12 @@ public final class CameraManager {
         return result;
     }
 
-    /**
-     * 设置扫描框与屏幕上方距离
-     *
-     * @param laserFrameTopMargin
-     */
-    public void setLaserFrameTopMargin(int laserFrameTopMargin) {
-        this.laserFrameTopMargin = laserFrameTopMargin;
+    private int dp2px(int dp) {
+        return Scanner.dp2px(context, dp);
     }
 
-    public void setScanFullScreen(boolean scanFullScreen) {
-        this.scanFullScreen = scanFullScreen;
-    }
-    public void setInvertScan(boolean invertScan){
-        this.invertScan = invertScan;
+    public boolean isPortrait() {
+        return context.getResources().getConfiguration().orientation ==
+                Configuration.ORIENTATION_PORTRAIT;
     }
 }

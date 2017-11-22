@@ -81,8 +81,7 @@ final class DecodeHandler extends Handler {
      */
     private void decode(byte[] data, int width, int height) {
         //竖屏识别一维
-        if (cameraManager.getContext().getResources().getConfiguration().orientation ==
-                Configuration.ORIENTATION_PORTRAIT) {
+        if (cameraManager.isPortrait()) {
             byte[] rotatedData = new byte[data.length];
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++)
