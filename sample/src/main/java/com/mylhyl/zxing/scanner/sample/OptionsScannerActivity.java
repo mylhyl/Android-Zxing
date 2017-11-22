@@ -3,8 +3,16 @@ package com.mylhyl.zxing.scanner.sample;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -53,8 +61,16 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
                 .setScanFullScreen(true)
 
 //                .setFrameHide(false)
-//                .setFrameCornerHide(false)
+                .setFrameCornerHide(false)
 //                .setLaserMoveFullScreen(false)
+
+                .setViewfinderCallback(new ScannerOptions.ViewfinderCallback() {
+                    @Override
+                    public void onDraw(Canvas canvas, Rect frame) {
+                        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.connect_logo);
+                        canvas.drawBitmap(bmp, frame.right / 2, frame.top - bmp.getHeight(), null);
+                    }
+                })
 
                 .setScanMode(BarcodeFormat.QR_CODE)
                 .setTipText("请联系其它已添加该设备用户获取二维码")

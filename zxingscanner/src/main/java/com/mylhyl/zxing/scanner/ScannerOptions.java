@@ -1,6 +1,8 @@
 package com.mylhyl.zxing.scanner;
 
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 
 import com.google.zxing.BarcodeFormat;
 import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
@@ -14,6 +16,10 @@ import java.util.Collection;
  */
 
 public final class ScannerOptions {
+
+    public interface ViewfinderCallback {
+        void onDraw(Canvas canvas, Rect frame);
+    }
 
     public enum LaserStyle {
         /**
@@ -59,6 +65,7 @@ public final class ScannerOptions {
     private CameraFacing cameraFacing = CameraFacing.BACK;//启动摄像头位置，默认后置
     private boolean scanFullScreen;//是否全屏扫描识别，默认扫描框内识别
     private boolean scanInvert;//是否扫描反色二维码（用于黑底白码）
+    private ViewfinderCallback viewfinderCallback;
 
     protected ScannerOptions() {
     }
@@ -169,6 +176,10 @@ public final class ScannerOptions {
 
     public boolean isScanInvert() {
         return scanInvert;
+    }
+
+    public ViewfinderCallback getViewfinderCallback() {
+        return viewfinderCallback;
     }
 
     public static final class Builder {
@@ -474,6 +485,11 @@ public final class ScannerOptions {
          */
         public Builder setScanInvert(boolean invertScan) {
             options.scanInvert = invertScan;
+            return this;
+        }
+
+        public Builder setViewfinderCallback(ViewfinderCallback callback) {
+            options.viewfinderCallback = callback;
             return this;
         }
     }

@@ -99,9 +99,9 @@ final class ViewfinderView extends View {
             return;
         }
         //全屏不绘制
-        if (!scannerOptions.isScanFullScreen())
-            // 绘制扫描框以外4个区域
-            drawMask(canvas, frame);
+        if (!scannerOptions.isScanFullScreen()) {
+            drawMask(canvas, frame);// 绘制扫描框以外4个区域
+        }
         // 如果有二维码结果的Bitmap，在扫取景框内绘制不透明的result Bitmap
         if (resultBitmap != null) {
             paint.setAlpha(CURRENT_POINT_OPACITY);
@@ -118,6 +118,9 @@ final class ViewfinderView extends View {
             } else {
                 moveLaserSpeedFullScreen(cameraManager.getScreenResolution());//计算全屏移动位置
                 drawLaserLineFullScreen(canvas, cameraManager.getScreenResolution());//绘制全屏扫描线
+            }
+            if (scannerOptions.getViewfinderCallback() != null) {
+                scannerOptions.getViewfinderCallback().onDraw(canvas, frame);
             }
         }
     }
