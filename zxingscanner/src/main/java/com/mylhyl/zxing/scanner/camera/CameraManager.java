@@ -72,7 +72,7 @@ public final class CameraManager {
 
     public CameraManager(Context context, ScannerOptions scannerOptions) {
         this.context = context;
-        this.configManager = new CameraConfigurationManager(context);
+        this.configManager = new CameraConfigurationManager(context, scannerOptions);
         this.previewCallback = new PreviewCallback(configManager);
 
         this.statusBarHeight = getStatusBarHeight();

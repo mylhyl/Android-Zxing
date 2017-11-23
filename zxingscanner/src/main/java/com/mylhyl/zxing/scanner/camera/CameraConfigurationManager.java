@@ -24,6 +24,7 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.mylhyl.zxing.scanner.ScannerOptions;
 import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
 import com.mylhyl.zxing.scanner.camera.open.OpenCamera;
 
@@ -47,10 +48,12 @@ final class CameraConfigurationManager {
     // 相机分辨率
     private Point cameraResolution;
     private Point bestPreviewSize;
-//    private Point previewSizeOnScreen;
+    //    private Point previewSizeOnScreen;
+    private ScannerOptions scannerOptions;
 
-    CameraConfigurationManager(Context context) {
+    CameraConfigurationManager(Context context, ScannerOptions scannerOptions) {
         this.context = context;
+        this.scannerOptions = scannerOptions;
     }
 
     /**
@@ -104,7 +107,7 @@ final class CameraConfigurationManager {
         Point theScreenResolution = new Point();
         display.getSize(theScreenResolution);
         screenResolution = theScreenResolution;
-        //拉抻问题
+
         Point screenResolutionForCamera = new Point();
         screenResolutionForCamera.x = screenResolution.x;
         screenResolutionForCamera.y = screenResolution.y;
@@ -174,20 +177,21 @@ final class CameraConfigurationManager {
                 CameraConfigurationUtils.setFocusArea(parameters);
                 CameraConfigurationUtils.setMetering(parameters);
             }
-
         }
 
         parameters.setPreviewSize(bestPreviewSize.x, bestPreviewSize.y);
 
-        theCamera.setParameters(parameters);
+        if (scannerOptions.getCameraZoomRatio() > 0) {
+            CameraConfigurationUtils.setZoom(parameters, scannerOptions.getCameraZoomRatio());
+        }
 
+        theCamera.setParameters(parameters);
         theCamera.setDisplayOrientation(cwRotationFromDisplayToCamera);
 
         Camera.Parameters afterParameters = theCamera.getParameters();
         Camera.Size afterSize = afterParameters.getPreviewSize();
         if (afterSize != null
-                && (bestPreviewSize.x != afterSize.width
-                || bestPreviewSize.y != afterSize.height)) {
+                && (bestPreviewSize.x != afterSize.width || bestPreviewSize.y != afterSize.height)) {
             bestPreviewSize.x = afterSize.width;
             bestPreviewSize.y = afterSize.height;
         }

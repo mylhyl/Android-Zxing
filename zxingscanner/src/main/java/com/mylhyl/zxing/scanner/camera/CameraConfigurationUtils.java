@@ -42,7 +42,7 @@ public final class CameraConfigurationUtils {
     private static final float MAX_EXPOSURE_COMPENSATION = 1.5f;
     private static final float MIN_EXPOSURE_COMPENSATION = 0.0f;
     private static final double MAX_ASPECT_DISTORTION = 0.15;
-//    private static final int MIN_FPS = 10;
+//        private static final int MIN_FPS = 10;
 //    private static final int MAX_FPS = 20;
     private static final int AREA_PER_1000 = 400;
 
@@ -326,7 +326,8 @@ public final class CameraConfigurationUtils {
         // of the additional computation needed. We're likely to get here on newer Android 4+ devices, where
         // the CPU is much more powerful.
         if (maxResPreviewSize != null) {
-            Point largestSize = new Point(maxResPreviewSize.width, maxResPreviewSize.height);
+            Camera.Size closelySize = findCloselySize(maxResPreviewSize.width, maxResPreviewSize.height, rawSupportedSizes);
+            Point largestSize = new Point(closelySize.width, closelySize.height);
             Log.i(TAG, "Using largest suitable preview size: " + largestSize);
             return largestSize;
         }
@@ -424,4 +425,17 @@ public final class CameraConfigurationUtils {
 //        return result.toString();
 //    }
 
+    /**
+     * 通过对比得到与宽高比最接近的尺寸（如果有相同尺寸，优先选择）
+     *
+     * @param surfaceWidth  需要被进行对比的原宽
+     * @param surfaceHeight 需要被进行对比的原高
+     * @param preSizeList   需要对比的预览尺寸列表
+     * @return 得到与原宽高比例最接近的尺寸
+     */
+    protected static Camera.Size findCloselySize(int surfaceWidth, int surfaceHeight
+            , List<Camera.Size> preSizeList) {
+        Collections.sort(preSizeList, new SizeComparator(surfaceWidth, surfaceHeight));
+        return preSizeList.get(0);
+    }
 }

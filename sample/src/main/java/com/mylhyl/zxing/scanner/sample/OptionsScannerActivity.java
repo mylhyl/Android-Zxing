@@ -75,7 +75,9 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
                 .setScanMode(BarcodeFormat.QR_CODE)
                 .setTipText("请联系其它已添加该设备用户获取二维码")
                 .setTipTextSize(19)
-                .setTipTextColor(getResources().getColor(R.color.colorAccent));
+                .setTipTextColor(getResources().getColor(R.color.colorAccent))
+//                .setCameraZoomRatio(2)
+        ;
 
         mScannerView.setScannerOptions(builder.build());
     }

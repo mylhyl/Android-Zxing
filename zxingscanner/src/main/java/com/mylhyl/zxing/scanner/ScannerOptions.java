@@ -65,6 +65,7 @@ public final class ScannerOptions {
     private CameraFacing cameraFacing = CameraFacing.BACK;//启动摄像头位置，默认后置
     private boolean scanFullScreen;//是否全屏扫描识别，默认扫描框内识别
     private boolean scanInvert;//是否扫描反色二维码（用于黑底白码）
+    private double cameraZoomRatio;//相机变焦比率
     private ViewfinderCallback viewfinderCallback;
 
     protected ScannerOptions() {
@@ -176,6 +177,10 @@ public final class ScannerOptions {
 
     public boolean isScanInvert() {
         return scanInvert;
+    }
+
+    public double getCameraZoomRatio() {
+        return cameraZoomRatio;
     }
 
     public ViewfinderCallback getViewfinderCallback() {
@@ -485,6 +490,17 @@ public final class ScannerOptions {
          */
         public Builder setScanInvert(boolean invertScan) {
             options.scanInvert = invertScan;
+            return this;
+        }
+
+        /**
+         * 设置相机变焦比率
+         *
+         * @param cameraZoomRatio >0 建议2倍
+         * @return
+         */
+        public Builder setCameraZoomRatio(double cameraZoomRatio) {
+            options.cameraZoomRatio = cameraZoomRatio;
             return this;
         }
 
