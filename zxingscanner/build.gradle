@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 23
@@ -7,9 +8,10 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 20170902
-        versionName '1.6.0'
+        versionCode 20171215
+        versionName '2.0.2'
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -22,18 +24,11 @@ android {
     }
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.google.zxing:core:3.3.0'
-}
-
-apply plugin: 'com.novoda.bintray-release'
-
 publish {
     userOrg = 'mylhyl'
     groupId = 'com.mylhyl'
     artifactId = 'zxingscanner'
-    version = '2.0.0'
+    version = android.defaultConfig.versionName
     description = 'android zxing style'
     website = "https://github.com/mylhyl/Android-Zxing"
 }
@@ -47,4 +42,9 @@ task makeJar(type: Copy) {
     rename('classes.jar', jarName)
     exclude('BuildConfig.class', 'R.class')
     exclude { it.name.startsWith('R$'); }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.google.zxing:core:3.3.0'
 }

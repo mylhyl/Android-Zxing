@@ -22,13 +22,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.decode.DecodeThread;
-
-import java.util.Collection;
 
 /**
  * 针对扫描任务的Handler，可接收的message有启动扫描（restart_preview）、扫描成功（decode_succeeded）、扫描失败（decode_failed）等等
@@ -39,22 +36,26 @@ import java.util.Collection;
  */
 final class ScannerViewHandler extends Handler {
 
-    private final ScannerView scannerView;
+    public interface HandleDecodeListener {
+        void restartPreview();
+
+        void decodeSucceeded(Result rawResult, Bitmap barcode, float scaleFactor);
+    }
+
     private final DecodeThread decodeThread;
     private State state;
     private final CameraManager cameraManager;
+    private HandleDecodeListener handleDecodeListener;
 
     private enum State {
         PREVIEW, SUCCESS, DONE
     }
 
-    ScannerViewHandler(ScannerView scannerView, Collection<BarcodeFormat> decodeFormats,
-                       CameraManager cameraManager) {
-        this.scannerView = scannerView;
+    ScannerViewHandler(ScannerOptions scannerOptions, CameraManager cameraManager) {
         this.cameraManager = cameraManager;
         //启动扫描线程
-        decodeThread = new DecodeThread(cameraManager, this, decodeFormats
-                , scannerView.getScannerOptions().isCreateQrThumbnail());
+        decodeThread = new DecodeThread(cameraManager, this, scannerOptions.getDecodeFormats()
+                , scannerOptions.isCreateQrThumbnail());
 
         decodeThread.start();
         state = State.SUCCESS;
@@ -62,6 +63,10 @@ final class ScannerViewHandler extends Handler {
         cameraManager.startPreview();
         //将preview回调函数与decodeHandler绑定、调用viewfinderView
         restartPreviewAndDecode();
+    }
+
+    public void setHandleDecodeListener(HandleDecodeListener handleDecodeListener) {
+        this.handleDecodeListener = handleDecodeListener;
     }
 
     @Override
@@ -85,7 +90,8 @@ final class ScannerViewHandler extends Handler {
                     }
                     scaleFactor = bundle.getFloat(DecodeThread.BARCODE_SCALED_FACTOR);
                 }
-                scannerView.handleDecode((Result) message.obj, barcode, scaleFactor);
+                if (handleDecodeListener != null)
+                    handleDecodeListener.decodeSucceeded((Result) message.obj, barcode, scaleFactor);
                 break;
             case Scanner.DECODE_FAILED:
                 state = State.PREVIEW;
@@ -117,7 +123,8 @@ final class ScannerViewHandler extends Handler {
         if (state == State.SUCCESS) {
             state = State.PREVIEW;
             cameraManager.requestPreviewFrame(decodeThread.getHandler(), Scanner.DECODE);
-            scannerView.drawViewfinder();
+            if (handleDecodeListener != null)
+                handleDecodeListener.restartPreview();
         }
     }
 }

@@ -403,4 +403,7 @@ public final class CameraManager {
         return configManager.getScreenResolution();
     }
 
+    public Point getCameraResolution() {
+        return configManager.getCameraResolution();
+    }
 }

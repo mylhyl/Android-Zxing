@@ -5,38 +5,27 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
-import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
 import com.mylhyl.zxing.scanner.common.Scanner;
-
-import java.io.IOException;
 
 /**
  * Created by hupei on 2016/7/1.
  */
-public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
+public class ScannerView extends RelativeLayout {
 
     private static final String TAG = ScannerView.class.getSimpleName();
 
-    private SurfaceView mSurfaceView;
+    private CameraSurfaceView mSurfaceView;
     private ViewfinderView mViewfinderView;
 
-    private boolean hasSurface;
-    private CameraManager mCameraManager;
-    private ScannerViewHandler mScannerViewHandler;
     private BeepManager mBeepManager;
     private OnScannerCompletionListener mScannerCompletionListener;
-
-    private boolean lightMode = false;//闪光灯，默认关闭
 
     private ScannerOptions mScannerOptions;
     private ScannerOptions.Builder mScannerOptionsBuilder;
@@ -55,74 +44,34 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyle) {
-        hasSurface = false;
-
-        mSurfaceView = new SurfaceView(context, attrs, defStyle);
-        addView(mSurfaceView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        mSurfaceView = new CameraSurfaceView(context, this);
+        mSurfaceView.setId(android.R.id.list);
+        addView(mSurfaceView);
 
         mViewfinderView = new ViewfinderView(context, attrs);
-        addView(mViewfinderView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(context, attrs);
+        layoutParams.addRule(RelativeLayout.ALIGN_TOP, mSurfaceView.getId());
+        layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, mSurfaceView.getId());
+        addView(mViewfinderView, layoutParams);
 
         mScannerOptionsBuilder = new ScannerOptions.Builder();
         mScannerOptions = mScannerOptionsBuilder.build();
     }
 
     public void onResume() {
-        mCameraManager = new CameraManager(getContext(), mScannerOptions);
-        mViewfinderView.setCameraManager(mCameraManager);
+        mSurfaceView.onResume(mScannerOptions);
+        mViewfinderView.setCameraManager(mSurfaceView.getCameraManager());
         mViewfinderView.setScannerOptions(mScannerOptions);
         mViewfinderView.setVisibility(mScannerOptions.isViewfinderHide() ? View.GONE : View.VISIBLE);
         if (mBeepManager != null) mBeepManager.updatePrefs();
-
-        mScannerViewHandler = null;
-
-        SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
-        if (hasSurface) {
-            // The activity was paused but not stopped, so the surface still
-            // exists. Therefore
-            // surfaceCreated() won't be called, so init the camera here.
-            initCamera(surfaceHolder);
-        } else {
-            // Install the callback and wait for surfaceCreated() to init the
-            // camera.
-            surfaceHolder.addCallback(this);
-        }
     }
 
     public void onPause() {
-        if (mScannerViewHandler != null) {
-            mScannerViewHandler.quitSynchronously();
-            mScannerViewHandler = null;
-        }
+        mSurfaceView.onPause();
         if (mBeepManager != null) mBeepManager.close();
-        mCameraManager.closeDriver();
         mViewfinderView.laserLineBitmapRecycle();
     }
 
-    private void initCamera(SurfaceHolder surfaceHolder) {
-        if (surfaceHolder == null) {
-            throw new IllegalStateException("No SurfaceHolder provided");
-        }
-        if (mCameraManager.isOpen()) {
-            Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
-            return;
-        }
-        try {
-            mCameraManager.openDriver(surfaceHolder);
-            mCameraManager.setTorch(lightMode);
-            // Creating the mScannerViewHandler starts the preview, which can also throw a
-            // RuntimeException.
-            if (mScannerViewHandler == null) {
-                mScannerViewHandler = new ScannerViewHandler(this, mScannerOptions.getDecodeFormats(), mCameraManager);
-            }
-        } catch (IOException ioe) {
-            Log.w(TAG, ioe);
-        } catch (RuntimeException e) {
-            // Barcode Scanner has seen crashes in the wild of this variety:
-            // java.?lang.?RuntimeException: Fail to connect to camera service
-            Log.w(TAG, "Unexpected error initializing camera", e);
-        }
-    }
 
     /**
      * A valid barcode has been found, so give an indication of success and show
@@ -194,30 +143,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
         }
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-//        if (surfaceHolder == null) {
-//            Log.e(TAG, "*** WARNING *** surfaceCreated() gave us a null surface!");
-//        }
-        if (!hasSurface) {
-            hasSurface = true;
-            initCamera(surfaceHolder);
-        }
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        hasSurface = false;
-        if (!hasSurface && surfaceHolder != null) {
-            surfaceHolder.removeCallback(this);
-        }
-    }
-
     /**
      * 设置扫描成功监听器
      *
@@ -239,8 +164,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param mode true开；false关
      */
     public ScannerView toggleLight(boolean mode) {
-        this.lightMode = mode;
-        if (mCameraManager != null) mCameraManager.setTorch(lightMode);
+        mSurfaceView.setTorch(mode);
         return this;
     }
 
@@ -250,8 +174,7 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
      * @param delayMS 毫秒
      */
     public void restartPreviewAfterDelay(long delayMS) {
-        if (mScannerViewHandler != null)
-            mScannerViewHandler.sendEmptyMessageDelayed(Scanner.RESTART_PREVIEW, delayMS);
+        mSurfaceView.restartPreviewAfterDelay(delayMS);
     }
 
     /**
@@ -528,10 +451,6 @@ public class ScannerView extends FrameLayout implements SurfaceHolder.Callback {
     public ScannerView isScanInvert(boolean invertScan) {
         mScannerOptionsBuilder.setScanInvert(invertScan);
         return this;
-    }
-
-    ScannerOptions getScannerOptions() {
-        return mScannerOptions;
     }
 
     void drawViewfinder() {

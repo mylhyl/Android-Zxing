@@ -33,6 +33,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".OptionsScannerActivity"
+            android:label="扫一扫" />
+        <activity
             android:name=".result.UriActivity"
             android:label="uri" />
         <activity

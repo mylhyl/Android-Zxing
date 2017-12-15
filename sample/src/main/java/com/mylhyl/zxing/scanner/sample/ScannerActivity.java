@@ -104,11 +104,11 @@ public class ScannerActivity extends DeCodeActivity {
 //        mScannerView.setCameraFacing(CameraFacing.FRONT);
 //        mScannerView.setLaserMoveSpeed(1);//速度
 
-//        mScannerView.setFrameTopMargin(100);//扫描框与屏幕上方距离
-//        mScannerView.setFrameSize(400, 400);//扫描框大小
-//        mScannerView.setFrameCornerLength(25);//设置4角长度
+//        mScannerView.setLaserFrameTopMargin(100);//扫描框与屏幕上方距离
+//        mScannerView.setLaserFrameSize(400, 400);//扫描框大小
+//        mScannerView.setLaserFrameCornerLength(25);//设置4角长度
 //        mScannerView.setLaserLineHeight(5);//设置扫描线高度
-//        mScannerView.setFrameCornerWidth(5);
+//        mScannerView.setLaserFrameCornerWidth(5);
 
         switch (laserMode) {
             case EXTRA_LASER_LINE_MODE_0:
