@@ -138,19 +138,27 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, S
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         int height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
-        if (mCameraManager != null && mCameraManager.getCameraResolution() != null) {
-            Point cameraResolution = mCameraManager.getCameraResolution();
-            int cameraPreviewWidth = cameraResolution.y;
-            int cameraPreviewHeight = cameraResolution.x;
-            if (width * 1f / height < cameraPreviewWidth * 1f / cameraPreviewHeight) {
-                float ratio = cameraPreviewHeight * 1f / cameraPreviewWidth;
-                width = (int) (height / ratio + 0.5f);
-            } else {
-                float ratio = cameraPreviewWidth * 1f / cameraPreviewHeight;
-                height = (int) (width / ratio + 0.5f);
+        boolean portrait = true;
+        if (mCameraManager != null) {
+            portrait = mCameraManager.isPortrait();
+            if (portrait && mCameraManager.getCameraResolution() != null) {
+                Point cameraResolution = mCameraManager.getCameraResolution();
+                int cameraPreviewWidth = cameraResolution.y;
+                int cameraPreviewHeight = cameraResolution.x;
+                if (width * 1f / height < cameraPreviewWidth * 1f / cameraPreviewHeight) {
+                    float ratio = cameraPreviewHeight * 1f / cameraPreviewWidth;
+                    width = (int) (height / ratio + 0.5f);
+                } else {
+                    float ratio = cameraPreviewWidth * 1f / cameraPreviewHeight;
+                    height = (int) (width / ratio + 0.5f);
+                }
             }
         }
-        super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+        if (portrait) {
+            super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        }
     }
 }
