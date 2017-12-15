@@ -295,7 +295,7 @@ public final class CameraManager {
             }
 
             //竖屏识别一维
-            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (isPortrait()) {
                 rect.left = rect.left * cameraResolution.y / screenResolution.x;
                 rect.right = rect.right * cameraResolution.y / screenResolution.x;
                 rect.top = rect.top * cameraResolution.x / screenResolution.y;
@@ -347,7 +347,7 @@ public final class CameraManager {
                 laserFrameTopMargin += statusBarHeight;
             }
             framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width, laserFrameTopMargin + height);
-            //   Log.d(TAG, "Calculated manual framing rect: " + framingRect);
+            Log.d(TAG, "Calculated manual framing rect: " + framingRect);
             framingRectInPreview = null;
         } else {
             requestedFramingRectWidth = width;
