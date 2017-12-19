@@ -245,20 +245,12 @@ public final class CameraManager {
             int height;
             int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
             //竖屏则为正方形
-            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (isPortrait()) {
                 height = width;
             } else {
                 height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
             }
-            int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2;
-            if (laserFrameTopMargin == 0)
-                laserFrameTopMargin = topOffset - statusBarHeight;
-            else {
-                laserFrameTopMargin += statusBarHeight;
-            }
-            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width, laserFrameTopMargin + height);
-            Log.d(TAG, "Calculated framing rect: " + framingRect);
+            createFramingRect(width, height, screenResolution);
         }
         return framingRect;
     }
@@ -308,6 +300,7 @@ public final class CameraManager {
             }
             framingRectInPreview = rect;
         }
+        Log.d(TAG, "framing Rect In Preview rect: " + framingRectInPreview);
         return framingRectInPreview;
     }
 
@@ -339,20 +332,25 @@ public final class CameraManager {
                 height = screenResolution.y;
             }
 
-            int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2 - statusBarHeight;
-            if (laserFrameTopMargin == 0)
-                laserFrameTopMargin = topOffset;
-            else {
-                laserFrameTopMargin += statusBarHeight;
-            }
-            framingRect = new Rect(leftOffset, laserFrameTopMargin, leftOffset + width, laserFrameTopMargin + height);
-            Log.d(TAG, "Calculated manual framing rect: " + framingRect);
+            createFramingRect(width, height, screenResolution);
             framingRectInPreview = null;
         } else {
             requestedFramingRectWidth = width;
             requestedFramingRectHeight = height;
         }
+    }
+
+    private void createFramingRect(int width, int height, Point screenResolution) {
+        int leftOffset = (screenResolution.x - width) / 2;
+        int topOffset = (screenResolution.y - height) / 2;
+        int top = laserFrameTopMargin;
+        if (top == 0)
+            top = topOffset - statusBarHeight;
+        else {
+            top += statusBarHeight;
+        }
+        framingRect = new Rect(leftOffset, top, leftOffset + width, top + height);
+        Log.d(TAG, "Calculated framing rect: " + framingRect);
     }
 
     /**
