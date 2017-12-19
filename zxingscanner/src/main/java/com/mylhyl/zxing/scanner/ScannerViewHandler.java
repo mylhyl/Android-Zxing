@@ -51,8 +51,10 @@ final class ScannerViewHandler extends Handler {
         PREVIEW, SUCCESS, DONE
     }
 
-    ScannerViewHandler(ScannerOptions scannerOptions, CameraManager cameraManager) {
+    ScannerViewHandler(ScannerOptions scannerOptions, CameraManager cameraManager
+            , HandleDecodeListener handleDecodeListener) {
         this.cameraManager = cameraManager;
+        this.handleDecodeListener = handleDecodeListener;
         //启动扫描线程
         decodeThread = new DecodeThread(cameraManager, this, scannerOptions.getDecodeFormats()
                 , scannerOptions.isCreateQrThumbnail());
@@ -63,10 +65,6 @@ final class ScannerViewHandler extends Handler {
         cameraManager.startPreview();
         //将preview回调函数与decodeHandler绑定、调用viewfinderView
         restartPreviewAndDecode();
-    }
-
-    public void setHandleDecodeListener(HandleDecodeListener handleDecodeListener) {
-        this.handleDecodeListener = handleDecodeListener;
     }
 
     @Override

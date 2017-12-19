@@ -66,8 +66,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, S
             // Creating the mScannerViewHandler starts the preview, which can also throw a
             // RuntimeException.
             if (mScannerViewHandler == null) {
-                mScannerViewHandler = new ScannerViewHandler(mScannerOptions, mCameraManager);
-                mScannerViewHandler.setHandleDecodeListener(this);
+                mScannerViewHandler = new ScannerViewHandler(mScannerOptions, mCameraManager,this);
             }
         } catch (IOException ioe) {
             Log.w(TAG, ioe);
