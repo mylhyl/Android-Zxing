@@ -13,6 +13,7 @@ import android.os.Vibrator;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -66,7 +67,7 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
 
                 .setViewfinderCallback(new ScannerOptions.ViewfinderCallback() {
                     @Override
-                    public void onDraw(Canvas canvas, Rect frame) {
+                    public void onDraw(View view, Canvas canvas, Rect frame) {
                         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.connect_logo);
                         canvas.drawBitmap(bmp, frame.right / 2, frame.top - bmp.getHeight(), null);
                     }

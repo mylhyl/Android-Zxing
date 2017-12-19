@@ -87,19 +87,17 @@ public class ScannerView extends RelativeLayout {
             //转换结果
             mScannerCompletionListener.onScannerCompletion(rawResult, Scanner.parseResult(rawResult), barcode);
         }
-        //设置扫描结果图片
-        if (barcode != null) {
-            mViewfinderView.drawResultBitmap(barcode);
-        }
-
         if (mScannerOptions.getMediaResId() != 0) {
             if (mBeepManager == null) {
                 mBeepManager = new BeepManager(getContext());
                 mBeepManager.setMediaResId(mScannerOptions.getMediaResId());
             }
             mBeepManager.playBeepSoundAndVibrate();
-            if (barcode != null)
-                drawResultPoints(barcode, scaleFactor, rawResult);
+        }
+
+        if (barcode != null) {
+            mViewfinderView.drawResultBitmap(barcode);
+            drawResultPoints(barcode, scaleFactor, rawResult);
         }
     }
 

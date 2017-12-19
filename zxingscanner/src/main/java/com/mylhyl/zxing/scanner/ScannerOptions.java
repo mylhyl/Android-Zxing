@@ -3,6 +3,7 @@ package com.mylhyl.zxing.scanner;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.view.View;
 
 import com.google.zxing.BarcodeFormat;
 import com.mylhyl.zxing.scanner.camera.open.CameraFacing;
@@ -18,7 +19,7 @@ import java.util.Collection;
 public final class ScannerOptions {
 
     public interface ViewfinderCallback {
-        void onDraw(Canvas canvas, Rect frame);
+        void onDraw(View view, Canvas canvas, Rect frame);
     }
 
     public enum LaserStyle {
@@ -67,6 +68,7 @@ public final class ScannerOptions {
     private boolean scanInvert;//是否扫描反色二维码（用于黑底白码）
     private double cameraZoomRatio;//相机变焦比率
     private ViewfinderCallback viewfinderCallback;
+    private int frameOutsideColor = Scanner.color.VIEWFINDER_MASK;//扫描框以外区域半透明黑色
 
     protected ScannerOptions() {
     }
@@ -187,6 +189,10 @@ public final class ScannerOptions {
         return viewfinderCallback;
     }
 
+    public int getFrameOutsideColor() {
+        return frameOutsideColor;
+    }
+
     public static final class Builder {
         private ScannerOptions options;
 
@@ -216,9 +222,10 @@ public final class ScannerOptions {
         }
 
         /**
-         * 设置扫描线颜色值
+         * 设置扫描线颜色值<br>
+         * 只支持扫描线样式为{@link LaserStyle#COLOR_LINE 颜色线}
          *
-         * @param color rgb
+         * @param color rgb 颜色值
          */
         public Builder setLaserLineColor(int color) {
             options.laserStyle = LaserStyle.COLOR_LINE;
@@ -227,7 +234,9 @@ public final class ScannerOptions {
         }
 
         /**
-         * 设置扫描线高度
+         * 设置扫描线高度<br>
+         * 支持扫描线样式为{@link LaserStyle#COLOR_LINE 颜色线}
+         * or {@link LaserStyle#RES_LINE 资源文件}
          *
          * @param height dp
          */
@@ -335,20 +344,20 @@ public final class ScannerOptions {
         }
 
         /**
-         * 是否隐藏扫描框
+         * 是否隐藏扫描框，默认不隐藏
          *
          * @param hide true隐藏
          * @return
          */
         public Builder setFrameHide(boolean hide) {
             options.frameHide = hide;
-            if (!hide)
+            if (!hide)//非显示则关闭全屏移动扫描线
                 options.laserMoveFullScreen = false;
             return this;
         }
 
         /**
-         * 设置隐藏取景视图，包括文字
+         * 设置隐藏取景视图包括文字，默认不隐藏
          *
          * @param hide
          * @return
@@ -463,8 +472,9 @@ public final class ScannerOptions {
         }
 
         /**
-         * 是否全屏扫描。默认隐藏扫描框，扫描框4角，扫描线全屏上下移动。
-         * 如需显示扫描框，扫描框4角，扫描线在扫描框内上下移动，在调用该方法之后再调用：
+         * 是否全屏扫描，默认非全屏扫描<br>
+         * true=全屏扫描，则隐藏扫描框，扫描框4角，扫描线全屏上下移动<br>
+         * 如全屏扫描情况下，仍需显示扫描框、扫描框4角及扫描线在扫描框内上下的移动，则调用该方法之后再调用：
          * {@link #setFrameHide(boolean) setFrameHide(false)}，
          * {@link #setFrameCornerHide(boolean) setFrameCornerHide(false)}，
          * {@link #setLaserMoveFullScreen(boolean) setLaserMoveFullScreen(false)}
@@ -506,6 +516,16 @@ public final class ScannerOptions {
 
         public Builder setViewfinderCallback(ViewfinderCallback callback) {
             options.viewfinderCallback = callback;
+            return this;
+        }
+
+        /**
+         * 设置扫描框以外区域颜色值
+         * @param color rgb
+         * @return
+         */
+        public Builder setFrameOutsideColor(int color){
+            options.frameOutsideColor = color;
             return this;
         }
     }

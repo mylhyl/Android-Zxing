@@ -53,7 +53,6 @@ final class ViewfinderView extends View {
     private int animationDelay = 0;
     private Bitmap laserLineBitmap;
 
-    private int maskColor = Scanner.color.VIEWFINDER_MASK;//扫描框以外区域半透明黑色
     private int resultColor = Scanner.color.RESULT_VIEW;//扫描成功后扫描框以外区域白色
     private int laserLineTop;// 扫描线最顶端位置
 
@@ -98,9 +97,9 @@ final class ViewfinderView extends View {
         if (frame == null || previewFrame == null) {
             return;
         }
-        //全屏不绘制
+        //全屏不绘制扫描框以外4个区域
         if (!scannerOptions.isScanFullScreen()) {
-            drawMask(canvas, frame);// 绘制扫描框以外4个区域
+            drawMask(canvas, frame);
         }
         // 如果有二维码结果的Bitmap，在扫取景框内绘制不透明的result Bitmap
         if (resultBitmap != null) {
@@ -112,15 +111,17 @@ final class ViewfinderView extends View {
             if (!scannerOptions.isFrameCornerHide())
                 drawFrameCorner(canvas, frame);//绘制扫描框4角
             drawText(canvas, frame);// 画扫描框下面的字
-            if (!scannerOptions.isLaserMoveFullScreen()) {
-                drawLaserLine(canvas, frame);//绘制扫描框内扫描线
-                moveLaserSpeed(frame);//计算扫描框内移动位置
-            } else {
+
+            //全屏移动扫描线
+            if (scannerOptions.isLaserMoveFullScreen()) {
                 moveLaserSpeedFullScreen(cameraManager.getScreenResolution());//计算全屏移动位置
                 drawLaserLineFullScreen(canvas, cameraManager.getScreenResolution());//绘制全屏扫描线
+            } else {
+                drawLaserLine(canvas, frame);//绘制扫描框内扫描线
+                moveLaserSpeed(frame);//计算扫描框内移动位置
             }
             if (scannerOptions.getViewfinderCallback() != null) {
-                scannerOptions.getViewfinderCallback().onDraw(canvas, frame);
+                scannerOptions.getViewfinderCallback().onDraw(this, canvas, frame);
             }
         }
     }
@@ -168,7 +169,7 @@ final class ViewfinderView extends View {
     private void drawMask(Canvas canvas, Rect frame) {
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-        paint.setColor(resultBitmap != null ? resultColor : maskColor);
+        paint.setColor(resultBitmap != null ? resultColor : scannerOptions.getFrameOutsideColor());
         canvas.drawRect(0, 0, width, frame.top, paint);
         canvas.drawRect(0, frame.top, frame.left, frame.bottom + 1, paint);
         canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
