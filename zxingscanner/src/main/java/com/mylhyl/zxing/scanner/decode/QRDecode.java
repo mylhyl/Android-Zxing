@@ -85,7 +85,7 @@ public final class QRDecode {
             }
         }
         if (listener != null) {
-            listener.OnScannerCompletion(result, Scanner.parseResult(result), srcBitmap);
+            listener.onScannerCompletion(result, Scanner.parseResult(result), srcBitmap);
         }
     }
 

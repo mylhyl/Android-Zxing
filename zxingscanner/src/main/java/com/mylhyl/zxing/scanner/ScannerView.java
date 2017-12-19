@@ -85,7 +85,7 @@ public class ScannerView extends RelativeLayout {
         //扫描成功
         if (mScannerCompletionListener != null) {
             //转换结果
-            mScannerCompletionListener.OnScannerCompletion(rawResult, Scanner.parseResult(rawResult), barcode);
+            mScannerCompletionListener.onScannerCompletion(rawResult, Scanner.parseResult(rawResult), barcode);
         }
         //设置扫描结果图片
         if (barcode != null) {

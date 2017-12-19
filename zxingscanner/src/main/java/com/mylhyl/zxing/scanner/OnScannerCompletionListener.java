@@ -27,5 +27,5 @@ public interface OnScannerCompletionListener {
      * @param parsedResult 抽象类，结果转换成目标类型
      * @param barcode      位图
      */
-    void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode);
+    void onScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode);
 }

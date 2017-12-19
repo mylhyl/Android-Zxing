@@ -96,7 +96,7 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
     }
 
     @Override
-    public void OnScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
+    public void onScannerCompletion(Result rawResult, ParsedResult parsedResult, Bitmap barcode) {
         Toast.makeText(this, rawResult.getText(), Toast.LENGTH_SHORT).show();
         vibrate();
         mScannerView.restartPreviewAfterDelay(0);
