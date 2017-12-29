@@ -62,6 +62,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, S
         }
         try {
             mCameraManager.openDriver(surfaceHolder);
+            requestLayout();
             mCameraManager.setTorch(lightMode);
             // Creating the mScannerViewHandler starts the preview, which can also throw a
             // RuntimeException.
