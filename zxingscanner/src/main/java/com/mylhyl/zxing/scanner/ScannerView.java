@@ -95,7 +95,7 @@ public class ScannerView extends RelativeLayout {
             mBeepManager.playBeepSoundAndVibrate();
         }
 
-        if (barcode != null) {
+        if (barcode != null && mScannerOptions.isShowQrThumbnail()) {
             mViewfinderView.drawResultBitmap(barcode);
             drawResultPoints(barcode, scaleFactor, rawResult);
         }

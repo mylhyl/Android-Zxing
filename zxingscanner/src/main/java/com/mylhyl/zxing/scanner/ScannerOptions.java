@@ -62,7 +62,8 @@ public final class ScannerOptions {
     private int tipTextToFrameMargin = 20;//离扫描框间距，单位dp 默认20
     private int mediaResId;//扫描成功音频资源文件
     private Collection<BarcodeFormat> decodeFormats;//解码类型，默认解全部
-    private boolean createQrThumbnail;//生成扫描结果缩略图，默认不生成
+    private boolean createQrThumbnail;//生成扫描结果缩略图，默认不生成，也就是扫描成功后的第三个参数
+    private boolean showQrThumbnail;//是否显示扫描结果缩略图在扫描界面
     private CameraFacing cameraFacing = CameraFacing.BACK;//启动摄像头位置，默认后置
     private boolean scanFullScreen;//是否全屏扫描识别，默认扫描框内识别
     private boolean scanInvert;//是否扫描反色二维码（用于黑底白码）
@@ -167,6 +168,10 @@ public final class ScannerOptions {
 
     public boolean isCreateQrThumbnail() {
         return createQrThumbnail;
+    }
+
+    public boolean isShowQrThumbnail() {
+        return showQrThumbnail;
     }
 
     public CameraFacing getCameraFacing() {
@@ -450,13 +455,25 @@ public final class ScannerOptions {
         }
 
         /**
-         * 是否创建扫描结果缩略图
+         * 是否创建扫描结果缩略图，也就是扫描成功后的第三个参数，默认不创建
          *
          * @param thumbnail
          * @return
          */
         public Builder setCreateQrThumbnail(boolean thumbnail) {
             options.createQrThumbnail = thumbnail;
+            return this;
+        }
+
+        /**
+         * 是否显示扫描结果缩略图在扫描界面，默认不显示<br>
+         * {@link #setCreateQrThumbnail(boolean) setCreateQrThumbnail(true)才有效}
+         *
+         * @param show
+         * @return
+         */
+        public Builder setShowQrThumbnail(boolean show) {
+            options.showQrThumbnail = show;
             return this;
         }
 
@@ -521,10 +538,11 @@ public final class ScannerOptions {
 
         /**
          * 设置扫描框以外区域颜色值
+         *
          * @param color rgb
          * @return
          */
-        public Builder setFrameOutsideColor(int color){
+        public Builder setFrameOutsideColor(int color) {
             options.frameOutsideColor = color;
             return this;
         }
