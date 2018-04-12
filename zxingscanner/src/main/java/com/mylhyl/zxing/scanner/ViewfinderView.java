@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -252,8 +251,8 @@ final class ViewfinderView extends View {
      * @param frame
      */
     private void drawFrame(Canvas canvas, Rect frame) {
-        paint.setColor(Color.WHITE);//扫描边框白色
-        paint.setStrokeWidth(1);
+        paint.setColor(scannerOptions.getFrameStrokeColor());//扫描边框色
+        paint.setStrokeWidth(scannerOptions.getFrameStrokeWidth());
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawRect(frame, paint);
     }

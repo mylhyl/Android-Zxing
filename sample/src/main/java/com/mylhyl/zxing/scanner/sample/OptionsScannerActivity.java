@@ -45,24 +45,27 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
 //        mScannerView.toggleLight(true);
 
         ScannerOptions.Builder builder = new ScannerOptions.Builder();
-        builder.setFrameSize(256, 256)
-                .setFrameCornerLength(22)
-                .setFrameCornerWidth(2)
-                .setFrameCornerColor(0xff06c1ae)
-                .setFrameCornerInside(true)
+        builder
+                .setFrameStrokeColor(Color.RED)
+                .setFrameStrokeWidth(1.5f)
+//                .setFrameSize(256, 256)
+//                .setFrameCornerLength(22)
+//                .setFrameCornerWidth(2)
+//                .setFrameCornerColor(0xff06c1ae)
+//                .setFrameCornerInside(true)
 
 //                .setLaserLineColor(0xff06c1ae)
 //                .setLaserLineHeight(18)
 
 //                .setLaserStyle(ScannerOptions.LaserStyle.RES_LINE,R.mipmap.wx_scan_line)
 
-                .setLaserStyle(ScannerOptions.LaserStyle.RES_GRID, R.mipmap.zfb_grid_scan_line)//网格图
-                .setFrameCornerColor(0xFF26CEFF)//支付宝颜色
+//                .setLaserStyle(ScannerOptions.LaserStyle.RES_GRID, R.mipmap.zfb_grid_scan_line)//网格图
+//                .setFrameCornerColor(0xFF26CEFF)//支付宝颜色
 
-                .setScanFullScreen(true)
+//                .setScanFullScreen(true)
 
 //                .setFrameHide(false)
-                .setFrameCornerHide(false)
+//                .setFrameCornerHide(false)
 //                .setLaserMoveFullScreen(false)
 
                 .setViewfinderCallback(new ScannerOptions.ViewfinderCallback() {
