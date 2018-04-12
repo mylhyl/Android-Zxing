@@ -249,7 +249,7 @@ public final class QREncode {
         }
 
         /**
-         * 二维码中间的logo，logoSize不能 > Math.min(logoBitmap.getWidth(), logoBitmap.getHeight())
+         * 二维码中间的logo，logoSize不能大于 Math.min(logoBitmap.getWidth(), logoBitmap.getHeight())
          *
          * @param logoBitmap
          * @param logoSize

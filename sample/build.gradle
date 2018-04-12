@@ -8,8 +8,8 @@ android {
         applicationId "com.mylhyl.zxing.scanner.sample"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 3
-        versionName "20171219"
+        versionCode 4
+        versionName "20180412"
     }
     buildTypes {
         release {
