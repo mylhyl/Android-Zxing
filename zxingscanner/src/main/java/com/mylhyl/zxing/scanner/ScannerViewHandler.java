@@ -56,7 +56,8 @@ final class ScannerViewHandler extends Handler {
         this.cameraManager = cameraManager;
         this.handleDecodeListener = handleDecodeListener;
         //启动扫描线程
-        decodeThread = new DecodeThread(cameraManager, this, scannerOptions.getDecodeFormats()
+        decodeThread = new DecodeThread(cameraManager, this
+                , scannerOptions.getDecodeFormats(),scannerOptions.getCharacterSet()
                 , scannerOptions.isCreateQrThumbnail());
 
         decodeThread.start();

@@ -43,12 +43,13 @@ public final class DecodeThread extends Thread {
     private final CameraManager cameraManager;
     private final Handler scannerViewHandler;
     private final Map<DecodeHintType, Object> hints;
-    private DecodeHandler handler;
     private final CountDownLatch handlerInitLatch;
+    private DecodeHandler handler;
     private boolean bundleThumbnail = false;
 
     public DecodeThread(CameraManager cameraManager, Handler scannerViewHandler,
-                        Collection<BarcodeFormat> decodeFormats, boolean bundleThumbnail) {
+                        Collection<BarcodeFormat> decodeFormats, String characterSet
+            , boolean bundleThumbnail) {
         this.cameraManager = cameraManager;
         this.scannerViewHandler = scannerViewHandler;
         this.bundleThumbnail = bundleThumbnail;
@@ -83,7 +84,9 @@ public final class DecodeThread extends Thread {
             }
         }
         hints.put(DecodeHintType.POSSIBLE_FORMATS, decodeFormats);
-
+        if (characterSet != null) {
+            hints.put(DecodeHintType.CHARACTER_SET, characterSet);
+        }
         Log.i("DecodeThread", "Hints: " + hints);
     }
 

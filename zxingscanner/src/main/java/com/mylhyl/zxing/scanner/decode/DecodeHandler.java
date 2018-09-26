@@ -16,7 +16,6 @@
 
 package com.mylhyl.zxing.scanner.decode;
 
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;

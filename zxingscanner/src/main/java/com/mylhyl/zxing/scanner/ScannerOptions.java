@@ -18,27 +18,7 @@ import java.util.Collection;
 
 public final class ScannerOptions {
 
-    public interface ViewfinderCallback {
-        void onDraw(View view, Canvas canvas, Rect frame);
-    }
-
-    public enum LaserStyle {
-        /**
-         * 颜色线值样式
-         */
-        COLOR_LINE
-        /**
-         * 资源文件线样式
-         */
-        , RES_LINE
-        /**
-         * 资源文件网格样式
-         */
-        , RES_GRID
-    }
-
     public static final int DEFAULT_LASER_LINE_HEIGHT = 2;//扫描线默认高度
-
     private LaserStyle laserStyle = LaserStyle.COLOR_LINE;
     private int laserLineColor = Scanner.color.VIEWFINDER_LASER;//扫描线颜色rgb值
     private int laserLineResId;//扫描线资源文件
@@ -72,6 +52,7 @@ public final class ScannerOptions {
     private double cameraZoomRatio;//相机变焦比率
     private ViewfinderCallback viewfinderCallback;
     private int frameOutsideColor = Scanner.color.VIEWFINDER_MASK;//扫描框以外区域半透明黑色
+    private String characterSet;
 
     protected ScannerOptions() {
     }
@@ -206,6 +187,29 @@ public final class ScannerOptions {
 
     public int getFrameOutsideColor() {
         return frameOutsideColor;
+    }
+
+    public String getCharacterSet() {
+        return characterSet;
+    }
+
+    public enum LaserStyle {
+        /**
+         * 颜色线值样式
+         */
+        COLOR_LINE
+        /**
+         * 资源文件线样式
+         */
+        , RES_LINE
+        /**
+         * 资源文件网格样式
+         */
+        , RES_GRID
+    }
+
+    public interface ViewfinderCallback {
+        void onDraw(View view, Canvas canvas, Rect frame);
     }
 
     public static final class Builder {
@@ -576,6 +580,17 @@ public final class ScannerOptions {
          */
         public Builder setFrameOutsideColor(int color) {
             options.frameOutsideColor = color;
+            return this;
+        }
+
+        /**
+         * 指定编码解析二维码
+         *
+         * @param characterSet
+         * @return
+         */
+        public Builder setCharacterSet(String characterSet) {
+            options.characterSet = characterSet;
             return this;
         }
     }
