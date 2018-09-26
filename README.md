@@ -24,7 +24,7 @@
 - 本库依赖使用Gradle构建时添加一下即可
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:2.1.1'
+compile 'com.mylhyl:zxingscanner:2.1.2'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
