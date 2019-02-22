@@ -169,7 +169,3 @@ Bitmap bitmap = new QREncode.Builder(this)
 	    	break;
         }
 ```
-
-QQ交流群：630413339 [点击链接加入群Android-Zxing](https://jq.qq.com/?_wv=1027&k=4BR729O)
-
-<img src="preview/qrcode.png"/>
