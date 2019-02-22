@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.Display;
@@ -328,7 +329,11 @@ final class QRCodeEncoder {
         float left = (bgWidth - fgWidth) / 2;
         float top = (bgHeight - fgHeight) / 2;
         canvas.drawBitmap(qrBitmap, left, top, null);
-        canvas.save(Canvas.ALL_SAVE_FLAG);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
+            canvas.save();
+        } else {
+            canvas.save(Canvas.ALL_SAVE_FLAG);
+        }
         canvas.restore();
         return bitmap;
     }
