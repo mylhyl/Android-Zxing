@@ -42,20 +42,6 @@ public final class QREncode {
     }
 
     /**
-     * {@linkplain Builder#build()} () QREncode.Builder().build()}
-     *
-     * @return
-     */
-    public Bitmap encodeAsBitmap() {
-        try {
-            return mQRCodeEncoder.encodeAsBitmap();
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
      * @param codeEncoder {@linkplain Builder#buildDeprecated()} () QREncode.Builder()
      *                    .buildDeprecated()}
      * @return
@@ -70,10 +56,24 @@ public final class QREncode {
         return null;
     }
 
+    /**
+     * {@linkplain Builder#build()} () QREncode.Builder().build()}
+     *
+     * @return
+     */
+    public Bitmap encodeAsBitmap() {
+        try {
+            return mQRCodeEncoder.encodeAsBitmap();
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static class Builder {
 
-        private Context context;
         BarcodeFormat barcodeFormat;
+        private Context context;
         private ParsedResultType parsedResultType = ParsedResultType.TEXT;
         private Bundle bundle;
         private String contents;//原内容
@@ -86,6 +86,7 @@ public final class QREncode {
         private Bitmap logoBitmap;
         private int logoSize;
         private Bitmap qrBackground;
+        private int qrBackgroundColor;
         private int margin = 4;
 
         public Builder(Context context) {
@@ -222,6 +223,10 @@ public final class QREncode {
             return this;
         }
 
+        int getSize() {
+            return size;
+        }
+
         /**
          * 二维码大小
          *
@@ -230,21 +235,6 @@ public final class QREncode {
          */
         public Builder setSize(int size) {
             this.size = size;
-            return this;
-        }
-
-        int getSize() {
-            return size;
-        }
-
-        /**
-         * 二维码中间的logo
-         *
-         * @param logoBitmap
-         * @return
-         */
-        public Builder setLogoBitmap(Bitmap logoBitmap) {
-            this.logoBitmap = logoBitmap;
             return this;
         }
 
@@ -263,6 +253,17 @@ public final class QREncode {
 
         Bitmap getLogoBitmap() {
             return logoBitmap;
+        }
+
+        /**
+         * 二维码中间的logo
+         *
+         * @param logoBitmap
+         * @return
+         */
+        public Builder setLogoBitmap(Bitmap logoBitmap) {
+            this.logoBitmap = logoBitmap;
+            return this;
         }
 
         int getLogoSize() {
@@ -285,6 +286,25 @@ public final class QREncode {
         }
 
         /**
+         * 设置二维码背景
+         *
+         * @param background
+         * @return
+         */
+        public Builder setQrBackground(int background) {
+            this.qrBackgroundColor = background;
+            return this;
+        }
+
+        int getQrBackgroundColor() {
+            return qrBackgroundColor;
+        }
+
+        int getMargin() {
+            return margin;
+        }
+
+        /**
          * 设置二维码边框
          *
          * @param margin 范围值：0-4
@@ -293,10 +313,6 @@ public final class QREncode {
         public Builder setMargin(int margin) {
             this.margin = margin;
             return this;
-        }
-
-        int getMargin() {
-            return margin;
         }
 
         /**
@@ -322,14 +338,13 @@ public final class QREncode {
             if (parsedResultType == null) {
                 throw new IllegalArgumentException("parsedResultType no found...");
             }
-            if (parsedResultType != ParsedResultType.ADDRESSBOOK && parsedResultType !=
-                    ParsedResultType.GEO && contents == null) {
+            if (parsedResultType != ParsedResultType.ADDRESSBOOK && parsedResultType != ParsedResultType.GEO
+                    && contents == null) {
                 throw new IllegalArgumentException("parsedResultType not" +
                         " ParsedResultType.ADDRESSBOOK and ParsedResultType.GEO, contents no " +
                         "found...");
             }
-            if ((parsedResultType == ParsedResultType.ADDRESSBOOK || parsedResultType ==
-                    ParsedResultType.GEO)
+            if ((parsedResultType == ParsedResultType.ADDRESSBOOK || parsedResultType == ParsedResultType.GEO)
                     && bundle == null && addressBookUri == null) {
                 throw new IllegalArgumentException("parsedResultType yes" +
                         " ParsedResultType.ADDRESSBOOK or ParsedResultType.GEO, bundle and " +

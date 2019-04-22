@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -112,9 +113,10 @@ public class MainActivity extends BasicActivity {
                         .wb_wlog_blow_bg_night);
                 String qrContent = editText.getText().toString();
                 Bitmap bitmap = new QREncode.Builder(MainActivity.this)
-//                        .setColor(getResources().getColor(R.color.colorPrimary))//二维码颜色
-                        .setColors(0xFF0094FF, 0xFFFED545, 0xFF5ACF00, 0xFFFF4081)//二维码彩色
-                        .setQrBackground(qrBg)//二维码背景
+                        .setColor(getResources().getColor(R.color.colorPrimary))//二维码颜色
+//                        .setColors(0xFF0094FF, 0xFFFED545, 0xFF5ACF00, 0xFFFF4081)//二维码彩色
+//                        .setQrBackground(qrBg)//二维码背景
+                        .setQrBackground(Color.YELLOW)
                         .setMargin(0)//二维码边框
                         //二维码类型
                         .setParsedResultType(TextUtils.isEmpty(qrContent) ? ParsedResultType.URI

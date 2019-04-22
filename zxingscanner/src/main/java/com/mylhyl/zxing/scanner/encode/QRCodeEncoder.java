@@ -75,9 +75,50 @@ final class QRCodeEncoder {
         encodeContentsFromZXing(build);
     }
 
+    private static List<String> getAllBundleValues(Bundle bundle, String[] keys) {
+        List<String> values = new ArrayList<>(keys.length);
+        for (String key : keys) {
+            Object value = bundle.get(key);
+            values.add(value == null ? null : value.toString());
+        }
+        return values;
+    }
+
+    private static int getSmallerDimension(Context context) {
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        Point displaySize = new Point();
+        display.getSize(displaySize);
+        int width = displaySize.x;
+        int height = displaySize.y;
+        int smallerDimension = width < height ? width : height;
+        smallerDimension = smallerDimension * 7 / 8;
+        return smallerDimension;
+    }
+
+    private static Bitmap addBackground(Bitmap qrBitmap, Bitmap background) {
+        int bgWidth = background.getWidth();
+        int bgHeight = background.getHeight();
+        int fgWidth = qrBitmap.getWidth();
+        int fgHeight = qrBitmap.getHeight();
+        Bitmap bitmap = Bitmap.createBitmap(bgWidth, bgHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawBitmap(background, 0, 0, null);
+        //二维码在背景图中间
+        float left = (bgWidth - fgWidth) / 2;
+        float top = (bgHeight - fgHeight) / 2;
+        canvas.drawBitmap(qrBitmap, left, top, null);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
+            canvas.save();
+        } else {
+            canvas.save(Canvas.ALL_SAVE_FLAG);
+        }
+        canvas.restore();
+        return bitmap;
+    }
+
     private void encodeContentsFromZXing(QREncode.Builder build) {
-        if (build.getBarcodeFormat() == null
-                || build.getBarcodeFormat() == BarcodeFormat.QR_CODE) {
+        if (build.getBarcodeFormat() == null || build.getBarcodeFormat() == BarcodeFormat.QR_CODE) {
             build.setBarcodeFormat(BarcodeFormat.QR_CODE);
             encodeQRCodeContents(build);
         }
@@ -88,39 +129,30 @@ final class QRCodeEncoder {
             case WIFI:
                 encodeBuild.setEncodeContents(build.getContents());
                 break;
-
             case CALENDAR:
                 encodeBuild.setEncodeContents(build.getContents());
                 break;
-
             case ISBN:
                 encodeBuild.setEncodeContents(build.getContents());
                 break;
-
             case PRODUCT:
                 encodeBuild.setEncodeContents(build.getContents());
                 break;
-
             case VIN:
                 encodeBuild.setEncodeContents(build.getContents());
                 break;
-
             case URI:
                 encodeBuild.setEncodeContents(build.getContents());
                 break;
-
             case TEXT:
                 encodeBuild.setEncodeContents(build.getContents());
                 break;
-
             case EMAIL_ADDRESS:
                 encodeBuild.setEncodeContents("mailto:" + build.getContents());
                 break;
-
             case TEL:
                 encodeBuild.setEncodeContents("tel:" + build.getContents());
                 break;
-
             case SMS:
                 encodeBuild.setEncodeContents("sms:" + build.getContents());
                 break;
@@ -135,24 +167,18 @@ final class QRCodeEncoder {
                     contactBundle = build.getBundle();
                 if (contactBundle != null) {
                     String name = contactBundle.getString(ContactsContract.Intents.Insert.NAME);
-                    String organization = contactBundle
-                            .getString(ContactsContract.Intents.Insert.COMPANY);
-                    String address = contactBundle.getString(ContactsContract.Intents.Insert
-                            .POSTAL);
-                    List<String> phones = getAllBundleValues(contactBundle, ParserUriToVCard
-                            .PHONE_KEYS);
-                    List<String> phoneTypes = getAllBundleValues(contactBundle, ParserUriToVCard
-                            .PHONE_TYPE_KEYS);
-                    List<String> emails = getAllBundleValues(contactBundle, ParserUriToVCard
-                            .EMAIL_KEYS);
+                    String organization = contactBundle.getString(ContactsContract.Intents.Insert.COMPANY);
+                    String address = contactBundle.getString(ContactsContract.Intents.Insert.POSTAL);
+                    List<String> phones = getAllBundleValues(contactBundle, ParserUriToVCard.PHONE_KEYS);
+                    List<String> phoneTypes = getAllBundleValues(contactBundle, ParserUriToVCard.PHONE_TYPE_KEYS);
+                    List<String> emails = getAllBundleValues(contactBundle, ParserUriToVCard.EMAIL_KEYS);
                     String url = contactBundle.getString(ParserUriToVCard.URL_KEY);
                     List<String> urls = url == null ? null : Collections.singletonList(url);
                     String note = contactBundle.getString(ParserUriToVCard.NOTE_KEY);
                     ContactEncoder encoder = build.isUseVCard() ?
                             new VCardContactEncoder() : new MECARDContactEncoder();
-                    String[] encoded = encoder.encode(Collections.singletonList(name), organization,
-                            Collections.singletonList(address), phones, phoneTypes, emails, urls,
-                            note);
+                    String[] encoded = encoder.encode(Collections.singletonList(name), organization
+                            , Collections.singletonList(address), phones, phoneTypes, emails, urls, note);
                     // Make sure we've encoded at least one field.
                     if (!encoded[1].isEmpty()) {
                         encodeBuild.setEncodeContents(encoded[0]);
@@ -172,15 +198,6 @@ final class QRCodeEncoder {
         }
     }
 
-    private static List<String> getAllBundleValues(Bundle bundle, String[] keys) {
-        List<String> values = new ArrayList<>(keys.length);
-        for (String key : keys) {
-            Object value = bundle.get(key);
-            values.add(value == null ? null : value.toString());
-        }
-        return values;
-    }
-
     Bitmap encodeAsBitmap() throws WriterException {
         String content = encodeBuild.getEncodeContents();
         BarcodeFormat barcodeFormat = encodeBuild.getBarcodeFormat();
@@ -188,14 +205,12 @@ final class QRCodeEncoder {
         int size = encodeBuild.getSize();
         Bitmap logoBitmap = encodeBuild.getLogoBitmap();
         if (logoBitmap != null)
-            return encodeAsBitmap(content, barcodeFormat, qrColor, size,
-                    logoBitmap, encodeBuild.getLogoSize());
+            return encodeAsBitmap(content, barcodeFormat, qrColor, size, logoBitmap, encodeBuild.getLogoSize());
         return encodeAsBitmap(content, barcodeFormat, qrColor, size);
     }
 
-    private Bitmap encodeAsBitmap(String content, BarcodeFormat barcodeFormat, int qrColor,
-                                  int size) throws
-            WriterException {
+    private Bitmap encodeAsBitmap(String content, BarcodeFormat barcodeFormat, int qrColor, int size)
+            throws WriterException {
         if (content == null) {
             return null;
         }
@@ -233,7 +248,8 @@ final class QRCodeEncoder {
                         pixels[offset + x] = qrColor;
                     }
                 } else {
-                    pixels[offset + x] = WHITE;
+                    int qrBgColor = encodeBuild.getQrBackgroundColor();
+                    pixels[offset + x] = qrBgColor == 0 ? WHITE : qrBgColor;
                 }
             }
         }
@@ -243,9 +259,8 @@ final class QRCodeEncoder {
         return bitmap;
     }
 
-    private Bitmap encodeAsBitmap(String content, BarcodeFormat barcodeFormat, int qrColor,
-                                  int size, Bitmap logoBitmap, int logoSize) throws
-            WriterException {
+    private Bitmap encodeAsBitmap(String content, BarcodeFormat barcodeFormat, int qrColor, int size
+            , Bitmap logoBitmap, int logoSize) throws WriterException {
         if (content == null) {
             return null;
         }
@@ -269,10 +284,8 @@ final class QRCodeEncoder {
         for (int y = 0; y < height; y++) {
             int offset = y * width;
             for (int x = 0; x < width; x++) {
-                if (x > halfW - logoSize && x < halfW + logoSize && y > halfH - logoSize
-                        && y < halfH + logoSize) {
-                    pixels[y * width + x] = logoBitmap.getPixel(x - halfW + logoSize, y - halfH
-                            + logoSize);
+                if (x > halfW - logoSize && x < halfW + logoSize && y > halfH - logoSize && y < halfH + logoSize) {
+                    pixels[y * width + x] = logoBitmap.getPixel(x - halfW + logoSize, y - halfH + logoSize);
                 } else {
                     // 处理二维码颜色
                     if (result.get(x, y)) {
@@ -291,7 +304,8 @@ final class QRCodeEncoder {
                             pixels[offset + x] = qrColor;
                         }
                     } else {
-                        pixels[offset + x] = WHITE;
+                        int qrBgColor = encodeBuild.getQrBackgroundColor();
+                        pixels[offset + x] = qrBgColor == 0 ? WHITE : qrBgColor;
                     }
                 }
             }
@@ -302,39 +316,6 @@ final class QRCodeEncoder {
         if (encodeBuild.getQrBackground() != null) {
             return addBackground(bitmap, encodeBuild.getQrBackground());
         }
-        return bitmap;
-    }
-
-    private static int getSmallerDimension(Context context) {
-        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
-        Point displaySize = new Point();
-        display.getSize(displaySize);
-        int width = displaySize.x;
-        int height = displaySize.y;
-        int smallerDimension = width < height ? width : height;
-        smallerDimension = smallerDimension * 7 / 8;
-        return smallerDimension;
-    }
-
-    private static Bitmap addBackground(Bitmap qrBitmap, Bitmap background) {
-        int bgWidth = background.getWidth();
-        int bgHeight = background.getHeight();
-        int fgWidth = qrBitmap.getWidth();
-        int fgHeight = qrBitmap.getHeight();
-        Bitmap bitmap = Bitmap.createBitmap(bgWidth, bgHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawBitmap(background, 0, 0, null);
-        //二维码在背景图中间
-        float left = (bgWidth - fgWidth) / 2;
-        float top = (bgHeight - fgHeight) / 2;
-        canvas.drawBitmap(qrBitmap, left, top, null);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
-            canvas.save();
-        } else {
-            canvas.save(Canvas.ALL_SAVE_FLAG);
-        }
-        canvas.restore();
         return bitmap;
     }
 }
