@@ -16,6 +16,8 @@
 
 package com.mylhyl.zxing.scanner.encode;
 
+import android.telephony.PhoneNumberUtils;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -27,20 +29,6 @@ import java.util.List;
  * @author Sean Owen
  */
 abstract class ContactEncoder {
-
-    /**
-     * @return first, the best effort encoding of all data in the appropriate format; second, a
-     * display-appropriate version of the contact information
-     */
-    abstract String[] encode(List<String> names,
-                             String organization,
-                             List<String> addresses,
-                             List<String> phones,
-                             List<String> phoneTypes,
-                             List<String> emails,
-                             List<String> urls,
-                             String note);
-
     /**
      * @return null if s is null or empty, or result of s.trim() otherwise
      */
@@ -92,5 +80,23 @@ abstract class ContactEncoder {
             }
         }
     }
+
+    static String formatPhone(String phoneData) {
+        // Just collect the call to a deprecated method in one place
+        return PhoneNumberUtils.formatNumber(phoneData);
+    }
+
+    /**
+     * @return first, the best effort encoding of all data in the appropriate format; second, a
+     * display-appropriate version of the contact information
+     */
+    abstract String[] encode(List<String> names,
+                             String organization,
+                             List<String> addresses,
+                             List<String> phones,
+                             List<String> phoneTypes,
+                             List<String> emails,
+                             List<String> urls,
+                             String note);
 
 }

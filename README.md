@@ -20,11 +20,11 @@
 
 ### 四、引用
 
-## 1、在线 已集成`zxing:core:3.3.0`
-- 本库依赖使用Gradle构建时添加一下即可
+## 1、在线 本库内部已集成`zxing:core:3.3.3`
+- 依赖使用 Gradle 构建时添加一下即可
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:2.1.4'
+compile 'com.mylhyl:zxingscanner:2.1.5'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
@@ -34,7 +34,7 @@ compile 'com.mylhyl:zxingscanner:2.1.4'
 - 也可使用Gradle构建时如下:
 
 ```javascript
-compile 'com.google.zxing:core:3.3.0'
+compile 'com.google.zxing:core:3.3.3'
 ```
  
 [gradle makeJar](http://blog.csdn.net/hupei/article/details/51886221) 或者参考下图，在android studio中执行

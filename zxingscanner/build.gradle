@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 20190422
-        versionName '2.1.4'
+        versionCode 20190514
+        versionName '2.1.5'
     }
     buildTypes {
         release {
@@ -41,10 +41,10 @@ task makeJar(type: Copy) {
     include('classes.jar')
     rename('classes.jar', jarName)
     exclude('BuildConfig.class', 'R.class')
-    exclude { it.name.startsWith('R$'); }
+    exclude { it.name.startsWith('R$') }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.google.zxing:core:3.3.0'
+    compile 'com.google.zxing:core:3.3.3'
 }

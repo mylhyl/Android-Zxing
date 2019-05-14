@@ -34,6 +34,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -117,6 +118,17 @@ final class QRCodeEncoder {
         return bitmap;
     }
 
+    Bitmap encodeAsBitmap() throws WriterException {
+        String content = encodeBuild.getEncodeContents();
+        BarcodeFormat barcodeFormat = encodeBuild.getBarcodeFormat();
+        int qrColor = encodeBuild.getColor();
+        int size = encodeBuild.getSize();
+        Bitmap logoBitmap = encodeBuild.getLogoBitmap();
+        if (logoBitmap != null)
+            return encodeAsBitmap(content, barcodeFormat, qrColor, size, logoBitmap, encodeBuild.getLogoSize());
+        return encodeAsBitmap(content, barcodeFormat, qrColor, size);
+    }
+
     private void encodeContentsFromZXing(QREncode.Builder build) {
         if (build.getBarcodeFormat() == null || build.getBarcodeFormat() == BarcodeFormat.QR_CODE) {
             build.setBarcodeFormat(BarcodeFormat.QR_CODE);
@@ -198,17 +210,6 @@ final class QRCodeEncoder {
         }
     }
 
-    Bitmap encodeAsBitmap() throws WriterException {
-        String content = encodeBuild.getEncodeContents();
-        BarcodeFormat barcodeFormat = encodeBuild.getBarcodeFormat();
-        int qrColor = encodeBuild.getColor();
-        int size = encodeBuild.getSize();
-        Bitmap logoBitmap = encodeBuild.getLogoBitmap();
-        if (logoBitmap != null)
-            return encodeAsBitmap(content, barcodeFormat, qrColor, size, logoBitmap, encodeBuild.getLogoSize());
-        return encodeAsBitmap(content, barcodeFormat, qrColor, size);
-    }
-
     private Bitmap encodeAsBitmap(String content, BarcodeFormat barcodeFormat, int qrColor, int size)
             throws WriterException {
         if (content == null) {
@@ -216,7 +217,7 @@ final class QRCodeEncoder {
         }
 
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
-        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        hints.put(EncodeHintType.CHARACTER_SET, Charset.forName("UTF-8"));
         hints.put(EncodeHintType.MARGIN, encodeBuild.getMargin());
         BitMatrix result;
         try {
@@ -265,7 +266,7 @@ final class QRCodeEncoder {
             return null;
         }
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
-        hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+        hints.put(EncodeHintType.CHARACTER_SET, Charset.forName("UTF-8"));
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);// 容错率
         hints.put(EncodeHintType.MARGIN, encodeBuild.getMargin()); // default is 4
 
