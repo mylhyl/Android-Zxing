@@ -24,7 +24,7 @@
 - 依赖使用 Gradle 构建时添加一下即可
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:2.1.5'
+compile 'com.mylhyl:zxingscanner:2.1.6'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
