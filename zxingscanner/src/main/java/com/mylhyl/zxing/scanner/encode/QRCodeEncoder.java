@@ -217,7 +217,7 @@ final class QRCodeEncoder {
         }
 
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
-        hints.put(EncodeHintType.CHARACTER_SET, Charset.forName("UTF-8"));
+        hints.put(EncodeHintType.CHARACTER_SET, Charset.forName("UTF-8").name());
         hints.put(EncodeHintType.MARGIN, encodeBuild.getMargin());
         BitMatrix result;
         try {
@@ -266,7 +266,7 @@ final class QRCodeEncoder {
             return null;
         }
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
-        hints.put(EncodeHintType.CHARACTER_SET, Charset.forName("UTF-8"));
+        hints.put(EncodeHintType.CHARACTER_SET, Charset.forName("UTF-8").name());
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);// 容错率
         hints.put(EncodeHintType.MARGIN, encodeBuild.getMargin()); // default is 4
 
