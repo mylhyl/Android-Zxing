@@ -17,18 +17,22 @@
 package com.mylhyl.zxing.scanner.decode;
 
 import android.graphics.Bitmap;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.google.zxing.Binarizer;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
-import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
+import com.google.zxing.ResultPoint;
 import com.google.zxing.common.GlobalHistogramBinarizer;
+import com.google.zxing.common.HybridBinarizer;
 import com.mylhyl.zxing.scanner.camera.CameraManager;
 import com.mylhyl.zxing.scanner.common.Scanner;
 
@@ -41,15 +45,25 @@ final class DecodeHandler extends Handler {
     private final Handler scannerViewHandler;
     private final MultiFormatReader multiFormatReader;
     private boolean running = true;
-    private boolean bundleThumbnail = false;
+    private boolean bundleThumbnail;
 
-    DecodeHandler(CameraManager cameraManager, Handler scannerViewHandler,
-                  Map<DecodeHintType, Object> hints, boolean bundleThumbnail) {
-        this.cameraManager = cameraManager;
-        this.scannerViewHandler = scannerViewHandler;
+    DecodeHandler(CameraManager cm, Handler svh, Map<DecodeHintType, Object> hints, boolean bundleThumbnail) {
+        this.cameraManager = cm;
+        this.scannerViewHandler = svh;
         this.bundleThumbnail = bundleThumbnail;
         multiFormatReader = new MultiFormatReader();
         multiFormatReader.setHints(hints);
+    }
+
+    private static void bundleThumbnail(PlanarYUVLuminanceSource source, Bundle bundle) {
+        int[] pixels = source.renderThumbnail();
+        int width = source.getThumbnailWidth();
+        int height = source.getThumbnailHeight();
+        Bitmap bitmap = Bitmap.createBitmap(pixels, 0, width, width, height, Bitmap.Config.ARGB_8888);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
+        bundle.putByteArray(DecodeThread.BARCODE_BITMAP, out.toByteArray());
+        bundle.putFloat(DecodeThread.BARCODE_SCALED_FACTOR, (float) width / source.getWidth());
     }
 
     @Override
@@ -94,24 +108,36 @@ final class DecodeHandler extends Handler {
         Result rawResult = null;
         PlanarYUVLuminanceSource source = cameraManager.buildLuminanceSource(data, width, height);
         if (source != null) {
-            BinaryBitmap bitmap = new BinaryBitmap(new GlobalHistogramBinarizer(source));
-            try {
-                rawResult = multiFormatReader.decodeWithState(bitmap);
-            } catch (ReaderException re) {
-                // continue
-            } finally {
-                multiFormatReader.reset();
+            rawResult = decodeWithState(new BinaryBitmap(new GlobalHistogramBinarizer(source)));
+            if (rawResult == null) {
+                rawResult = decodeWithState(new BinaryBitmap(new HybridBinarizer(source)));
             }
+            // add: 2020/7/21 mylhyl since 2.1.7 增加反色二维码识别
+            if (rawResult == null) {
+                Binarizer binarizer = new HybridBinarizer(new InvertedLuminanceSource(source));
+                rawResult = decodeWithState(new BinaryBitmap(binarizer));
+            }
+            // continue
+            multiFormatReader.reset();
         }
 
         Handler handler = scannerViewHandler;
         if (rawResult != null) {
+            ResultPoint[] resultPoints = rawResult.getResultPoints();
+            final PointF[] pointArr = new PointF[resultPoints.length];
+            int pointIndex = 0;
+            for (ResultPoint resultPoint : resultPoints) {
+                pointArr[pointIndex] = new PointF(resultPoint.getX(), resultPoint.getY());
+                pointIndex++;
+            }
+
             if (handler != null) {
                 //会向 ScannerViewHandler 发消息
                 Message message = Message.obtain(handler, Scanner.DECODE_SUCCEEDED, rawResult);
                 Bundle bundle = new Bundle();
-                if (bundleThumbnail)
+                if (bundleThumbnail) {
                     bundleThumbnail(source, bundle);
+                }
                 message.setData(bundle);
                 message.sendToTarget();
             }
@@ -123,18 +149,12 @@ final class DecodeHandler extends Handler {
         }
     }
 
-    private static void bundleThumbnail(PlanarYUVLuminanceSource source,
-                                        Bundle bundle) {
-        int[] pixels = source.renderThumbnail();
-        int width = source.getThumbnailWidth();
-        int height = source.getThumbnailHeight();
-        Bitmap bitmap = Bitmap.createBitmap(pixels, 0, width, width, height,
-                Bitmap.Config.ARGB_8888);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
-        bundle.putByteArray(DecodeThread.BARCODE_BITMAP, out.toByteArray());
-        bundle.putFloat(DecodeThread.BARCODE_SCALED_FACTOR, (float) width
-                / source.getWidth());
+    private Result decodeWithState(BinaryBitmap image) {
+        try {
+            return multiFormatReader.decodeWithState(image);
+        } catch (NotFoundException e) {
+        }
+        return null;
     }
 
 }
