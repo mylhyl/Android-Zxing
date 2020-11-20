@@ -25,6 +25,7 @@ import android.widget.ToggleButton;
 import com.google.zxing.client.result.ParsedResultType;
 import com.mylhyl.zxing.scanner.common.Scanner;
 import com.mylhyl.zxing.scanner.encode.QREncode;
+import com.mylhyl.zxing.scanner.encode.QRLogoBorderType;
 
 import java.io.ByteArrayOutputStream;
 
@@ -130,8 +131,9 @@ public class MainActivity extends BasicActivity {
 //                                R.mipmap.connect_logo)
                                 R.mipmap.wb_wlog_blow_bg_night)
                                 )
-                        .setLogoBorder(10)
+                        .setLogoBorder(20)
                         .setLogoBorderColor(Color.GREEN)
+                        .setLogoBorderType(QRLogoBorderType.CIRCLE)
                         .build()
                         .encodeAsBitmap();
                 imageView.setImageBitmap(bitmap);

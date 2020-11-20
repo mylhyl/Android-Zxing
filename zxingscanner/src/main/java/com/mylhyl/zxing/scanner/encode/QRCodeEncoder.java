@@ -23,7 +23,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -56,6 +59,44 @@ final class QRCodeEncoder {
 
     private Context context;
     private QREncode.Builder encodeBuild;
+
+    private static Bitmap getRoundedBitmap(Bitmap bitmap, float roundPx, int color) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+    }
+
+    private static Bitmap getCircleBitmap(Bitmap bitmap, int color) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawOval(rectF, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+    }
 
     QRCodeEncoder(QREncode.Builder build, Context context) {
         this.context = context;
@@ -144,18 +185,41 @@ final class QRCodeEncoder {
         Bitmap bitmapLogo = Bitmap.createBitmap(srcLogo, 0, 0, logoWidth, logoHeight, matrix, false);
 
         float logoBorder = encodeBuild.getLogoBorder();
-            // 先画边框
+        // 先画边框
         if (logoBorder > 0) {
-            int logoBorderColor = encodeBuild.getLogoBorderColor();
+            int borderColor = encodeBuild.getLogoBorderColor() == -1 ? Color.WHITE : encodeBuild.getLogoBorderColor();
             Bitmap borderBitmap = Bitmap.createBitmap((int) (bitmapLogo.getWidth() + logoBorder),
                     (int) (bitmapLogo.getHeight() + logoBorder), Bitmap.Config.ARGB_8888);
-            Canvas canvasLogoBorder = new Canvas(borderBitmap);
-            canvasLogoBorder.drawBitmap(srcLogo, 0, 0, null);
+            Canvas borderCanvas = new Canvas(borderBitmap);
+            borderCanvas.drawARGB(0, 0, 0, 0);
 
-            Rect rect = canvasLogoBorder.getClipBounds();
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setColor(logoBorderColor == -1 ? Color.WHITE : logoBorderColor);
-            canvasLogoBorder.drawRect(rect, paint);
+            Paint borderPaint = new Paint();
+            borderPaint.setAntiAlias(true);
+            borderPaint.setColor(borderColor);
+
+            QRLogoBorderType logoBorderType = encodeBuild.getLogoBorderType();
+            Rect rectBorder = borderCanvas.getClipBounds();
+            // 矩形
+            if (logoBorderType == QRLogoBorderType.RECTANGLE) {
+                borderCanvas.drawRect(rectBorder, borderPaint);
+            }
+            // 圆形
+            else if (logoBorderType == QRLogoBorderType.CIRCLE) {
+                borderCanvas.drawOval(new RectF(rectBorder), borderPaint);
+                borderPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+                bitmapLogo = getCircleBitmap(bitmapLogo, borderColor);
+            }
+            // 圆角矩形
+            else {
+                float logoBorderRadius = encodeBuild.getLogoBorderRadius();
+                borderCanvas.drawRoundRect(new RectF(rectBorder), logoBorderRadius, logoBorderRadius, borderPaint);
+                borderPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+                // 原logo图片也画成圆角
+                bitmapLogo = getRoundedBitmap(bitmapLogo, logoBorderRadius, borderColor);
+            }
+
             canvas.drawBitmap(borderBitmap, left - (logoBorder / 2), top - (logoBorder / 2), null);
             if (!borderBitmap.isRecycled()) {
                 borderBitmap.recycle();

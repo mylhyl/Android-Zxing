@@ -87,6 +87,8 @@ public final class QREncode {
         private int logoSize;
         private float logoBorder;
         private int logoBorderColor = -1;
+        private QRLogoBorderType logoBorderType = QRLogoBorderType.ROUNDED;
+        private float logoBorderRadius = 30f;
         private Bitmap qrBackground;
         private int qrBackgroundColor;
         private int margin = 4;
@@ -282,6 +284,38 @@ public final class QREncode {
          */
         public Builder setLogoBorderColor(int color) {
             this.logoBorderColor = color;
+            return this;
+        }
+
+        QRLogoBorderType getLogoBorderType() {
+            return logoBorderType;
+        }
+
+        /**
+         * 二维码logo边框类型
+         *
+         * @param type 矩形，圆角矩形，圆形
+         * @return
+         * @since 2.1.8
+         */
+        public Builder setLogoBorderType(QRLogoBorderType type) {
+            this.logoBorderType = type;
+            return this;
+        }
+
+        float getLogoBorderRadius() {
+            return logoBorderRadius;
+        }
+
+        /**
+         * 二维码logo边框圆角矩形半径
+         *
+         * @param radius 圆角半径，默认30
+         * @return
+         * @since 2.1.8
+         */
+        public Builder setLogoBorderRadius(float radius) {
+            this.logoBorderRadius = radius;
             return this;
         }
 
