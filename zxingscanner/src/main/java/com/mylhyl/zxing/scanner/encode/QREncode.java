@@ -85,6 +85,8 @@ public final class QREncode {
         private int size;
         private Bitmap logoBitmap;
         private int logoSize;
+        private float logoBorder;
+        private int logoBorderColor = -1;
         private Bitmap qrBackground;
         private int qrBackgroundColor;
         private int margin = 4;
@@ -239,10 +241,10 @@ public final class QREncode {
         }
 
         /**
-         * 二维码中间的logo，logoSize不能大于 Math.min(logoBitmap.getWidth(), logoBitmap.getHeight())
+         * 二维码中间的logo
          *
          * @param logoBitmap
-         * @param logoSize
+         * @param logoSize   为0则默认大小为二维码的1/5
          * @return
          */
         public Builder setLogoBitmap(Bitmap logoBitmap, int logoSize) {
@@ -251,18 +253,71 @@ public final class QREncode {
             return this;
         }
 
-        Bitmap getLogoBitmap() {
-            return logoBitmap;
+        float getLogoBorder() {
+            return logoBorder;
         }
 
         /**
-         * 二维码中间的logo
+         * 二维码logo边框
          *
-         * @param logoBitmap
+         * @param width 宽度
+         * @return
+         * @since 2.1.8
+         */
+        public Builder setLogoBorder(float width) {
+            this.logoBorder = width;
+            return this;
+        }
+
+        int getLogoBorderColor() {
+            return logoBorderColor;
+        }
+
+        /**
+         * 二维码logo边框颜色
+         *
+         * @param color RGB颜色值
+         * @return
+         * @since 2.1.8
+         */
+        public Builder setLogoBorderColor(int color) {
+            this.logoBorderColor = color;
+            return this;
+        }
+
+        /**
+         * @return
+         * @deprecated {@link #build()}
+         */
+        @Deprecated
+        public QRCodeEncoder buildDeprecated() {
+            checkParams();
+            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(this, context.getApplicationContext());
+            return qrCodeEncoder;
+        }
+
+        public QREncode build() {
+            checkParams();
+            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(this, context.getApplicationContext());
+            return new QREncode(qrCodeEncoder);
+        }
+
+        int getQrBackgroundColor() {
+            return qrBackgroundColor;
+        }
+
+        int getMargin() {
+            return margin;
+        }
+
+        /**
+         * 设置二维码边框
+         *
+         * @param margin 范围值：0-4
          * @return
          */
-        public Builder setLogoBitmap(Bitmap logoBitmap) {
-            this.logoBitmap = logoBitmap;
+        public Builder setMargin(int margin) {
+            this.margin = margin;
             return this;
         }
 
@@ -296,40 +351,19 @@ public final class QREncode {
             return this;
         }
 
-        int getQrBackgroundColor() {
-            return qrBackgroundColor;
-        }
-
-        int getMargin() {
-            return margin;
+        Bitmap getLogoBitmap() {
+            return logoBitmap;
         }
 
         /**
-         * 设置二维码边框
+         * 二维码中间的logo
          *
-         * @param margin 范围值：0-4
+         * @param logoBitmap
          * @return
          */
-        public Builder setMargin(int margin) {
-            this.margin = margin;
+        public Builder setLogoBitmap(Bitmap logoBitmap) {
+            this.logoBitmap = logoBitmap;
             return this;
-        }
-
-        /**
-         * @return
-         * @deprecated {@link #build()}
-         */
-        @Deprecated
-        public QRCodeEncoder buildDeprecated() {
-            checkParams();
-            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(this, context.getApplicationContext());
-            return qrCodeEncoder;
-        }
-
-        public QREncode build() {
-            checkParams();
-            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(this, context.getApplicationContext());
-            return new QREncode(qrCodeEncoder);
         }
 
         private void checkParams() {

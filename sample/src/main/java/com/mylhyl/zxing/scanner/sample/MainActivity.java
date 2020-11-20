@@ -124,12 +124,14 @@ public class MainActivity extends BasicActivity {
                         .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" :
                                 qrContent)
                         // 二维码等比大小
-                        .setSize(500)
+                        .setSize(700)
                         // 二维码logo
                         .setLogoBitmap(BitmapFactory.decodeResource(res,
 //                                R.mipmap.connect_logo)
                                 R.mipmap.wb_wlog_blow_bg_night)
-                                , 120)
+                                )
+                        .setLogoBorder(10)
+                        .setLogoBorderColor(Color.GREEN)
                         .build()
                         .encodeAsBitmap();
                 imageView.setImageBitmap(bitmap);
