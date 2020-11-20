@@ -270,6 +270,10 @@ public final class QREncode {
             return logoSize;
         }
 
+        Bitmap getQrBackground() {
+            return qrBackground;
+        }
+
         /**
          * 设置二维码背景
          *
@@ -281,14 +285,10 @@ public final class QREncode {
             return this;
         }
 
-        Bitmap getQrBackground() {
-            return qrBackground;
-        }
-
         /**
          * 设置二维码背景
          *
-         * @param background
+         * @param background rgb颜色值
          * @return
          */
         public Builder setQrBackground(int background) {

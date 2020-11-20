@@ -31,7 +31,6 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -113,14 +112,53 @@ final class QRCodeEncoder {
         return bitmap;
     }
 
+    private static Bitmap addLogo(Bitmap src, Bitmap logo) {
+
+        if (src == null) {
+            return null;
+        }
+
+        if (logo == null) {
+            return src;
+        }
+
+        //获取图片的宽高
+        int srcWidth = src.getWidth();
+        int srcHeight = src.getHeight();
+        int logoWidth = logo.getWidth();
+        int logoHeight = logo.getHeight();
+
+        if (srcWidth == 0 || srcHeight == 0) {
+            return null;
+        }
+
+        if (logoWidth == 0 || logoHeight == 0) {
+            return src;
+        }
+
+        //logo大小为二维码整体大小的1/5
+        float scaleFactor = srcWidth * 1.0f / 5 / logoWidth;
+        Bitmap bitmap = Bitmap.createBitmap(srcWidth, srcHeight, Bitmap.Config.ARGB_8888);
+        try {
+            Canvas canvas = new Canvas(bitmap);
+            canvas.drawBitmap(src, 0, 0, null);
+            canvas.scale(scaleFactor, scaleFactor, srcWidth / 2, srcHeight / 2);
+            canvas.drawBitmap(logo, (srcWidth - logoWidth) / 2, (srcHeight - logoHeight) / 2, null);
+            canvas.save();
+            canvas.restore();
+        } catch (Exception e) {
+            bitmap = null;
+            e.getStackTrace();
+        }
+
+        return bitmap;
+    }
+
     Bitmap encodeAsBitmap() throws WriterException {
         String content = encodeBuild.getEncodeContents();
         BarcodeFormat barcodeFormat = encodeBuild.getBarcodeFormat();
         int qrColor = encodeBuild.getColor();
         int size = encodeBuild.getSize();
-        Bitmap logoBitmap = encodeBuild.getLogoBitmap();
-        if (logoBitmap != null)
-            return encodeAsBitmap(content, barcodeFormat, qrColor, size, logoBitmap, encodeBuild.getLogoSize());
         return encodeAsBitmap(content, barcodeFormat, qrColor, size);
     }
 
@@ -252,66 +290,15 @@ final class QRCodeEncoder {
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-        return bitmap;
-    }
 
-    private Bitmap encodeAsBitmap(String content, BarcodeFormat barcodeFormat, int qrColor, int size
-            , Bitmap logoBitmap, int logoSize) throws WriterException {
-        if (content == null) {
-            return null;
-        }
-        Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
-        hints.put(EncodeHintType.CHARACTER_SET, Charset.forName("UTF-8").name());
-        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);// 容错率
-        hints.put(EncodeHintType.MARGIN, encodeBuild.getMargin()); // default is 4
+        Bitmap qrCodeBitmap=null;
 
-        BitMatrix result;
-        try {
-            result = new MultiFormatWriter().encode(content, barcodeFormat, size, size, hints);
-        } catch (IllegalArgumentException iae) {
-            // Unsupported format
-            return null;
-        }
-        int width = result.getWidth();
-        int height = result.getHeight();
-        int halfW = width / 2;
-        int halfH = height / 2;
-        int[] pixels = new int[width * height];
-        for (int y = 0; y < height; y++) {
-            int offset = y * width;
-            for (int x = 0; x < width; x++) {
-                if (x > halfW - logoSize && x < halfW + logoSize && y > halfH - logoSize && y < halfH + logoSize) {
-                    pixels[y * width + x] = logoBitmap.getPixel(x - halfW + logoSize, y - halfH + logoSize);
-                } else {
-                    // 处理二维码颜色
-                    if (result.get(x, y)) {
-                        int[] colors = encodeBuild.getColors();
-                        if (colors != null) {
-                            if (x < size / 2 && y < size / 2) {
-                                pixels[y * size + x] = colors[0];// 左上
-                            } else if (x < size / 2 && y > size / 2) {
-                                pixels[y * size + x] = colors[1];// 左下
-                            } else if (x > size / 2 && y > size / 2) {
-                                pixels[y * size + x] = colors[2];// 右下
-                            } else {
-                                pixels[y * size + x] = colors[3];// 右上
-                            }
-                        } else {
-                            pixels[offset + x] = qrColor;
-                        }
-                    } else {
-                        int qrBgColor = encodeBuild.getQrBackgroundColor();
-                        pixels[offset + x] = qrBgColor == 0 ? WHITE : qrBgColor;
-                    }
-                }
-            }
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
         if (encodeBuild.getQrBackground() != null) {
-            return addBackground(bitmap, encodeBuild.getQrBackground());
+            qrCodeBitmap = addBackground(bitmap, encodeBuild.getQrBackground());
         }
-        return bitmap;
+        if (encodeBuild.getLogoBitmap() != null) {
+            return addLogo(qrCodeBitmap == null ? bitmap : qrCodeBitmap, encodeBuild.getLogoBitmap());
+        }
+        return qrCodeBitmap == null ? bitmap : qrCodeBitmap;
     }
 }

@@ -107,26 +107,31 @@ public class MainActivity extends BasicActivity {
             @Override
             public void onClick(View v) {
                 Resources res = getResources();
-                Bitmap logoBitmap = BitmapFactory.decodeResource(res, R.mipmap
-                        .connect_logo);
-                Bitmap qrBg = BitmapFactory.decodeResource(res, R.mipmap
-                        .wb_wlog_blow_bg_night);
                 String qrContent = editText.getText().toString();
                 Bitmap bitmap = new QREncode.Builder(MainActivity.this)
                         .setColor(getResources().getColor(R.color.colorPrimary))//二维码颜色
 //                        .setColors(0xFF0094FF, 0xFFFED545, 0xFF5ACF00, 0xFFFF4081)//二维码彩色
-//                        .setQrBackground(qrBg)//二维码背景
+                        // 二维码背景图
+//                        .setQrBackground(BitmapFactory.decodeResource(res, R.mipmap.wb_wlog_blow_bg_night))
+                        // 二维码背景颜色值
                         .setQrBackground(Color.YELLOW)
-                        .setMargin(0)//二维码边框
+                        //二维码边框
+                        .setMargin(0)
                         //二维码类型
                         .setParsedResultType(TextUtils.isEmpty(qrContent) ? ParsedResultType.URI
                                 : ParsedResultType.TEXT)
                         //二维码内容
                         .setContents(TextUtils.isEmpty(qrContent) ? "https://github.com/mylhyl" :
                                 qrContent)
-                        .setSize(500)//二维码等比大小
-                        .setLogoBitmap(logoBitmap, 90)
-                        .build().encodeAsBitmap();
+                        // 二维码等比大小
+                        .setSize(500)
+                        // 二维码logo
+                        .setLogoBitmap(BitmapFactory.decodeResource(res,
+//                                R.mipmap.connect_logo)
+                                R.mipmap.wb_wlog_blow_bg_night)
+                                , 120)
+                        .build()
+                        .encodeAsBitmap();
                 imageView.setImageBitmap(bitmap);
                 tvResult.setText("单击识别图中二维码");
 
