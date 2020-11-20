@@ -24,7 +24,7 @@
 - 依赖使用 Gradle 构建时添加一下即可
 
 ```javascript
-compile 'com.mylhyl:zxingscanner:2.1.7'
+compile 'com.mylhyl:zxingscanner:2.1.8'
 ```
 
 ## 2、离线jar，需要手动添加 Zxing 核心库
@@ -171,4 +171,4 @@ Bitmap bitmap = new QREncode.Builder(this)
 ```
 
 ### 联系方式
- * 可能会因为工作忙碌原因没有及时回复，大家方便的话可以加我个人微信号：48025211
+ * 可能会因为工作忙碌原因没有及时回复，大家方便的话可以加我个人微信号：48025211，备注：github
