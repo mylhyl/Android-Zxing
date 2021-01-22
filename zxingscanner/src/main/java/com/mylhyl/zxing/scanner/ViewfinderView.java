@@ -316,34 +316,41 @@ final class ViewfinderView extends View {
      * @param point
      */
     private void drawLaserLineFullScreen(Canvas canvas, Point point) {
-        if (scannerOptions.getLaserStyle() == ScannerOptions.LaserStyle.COLOR_LINE) {
+        ScannerOptions.LaserStyle laserLineStyle = scannerOptions.getLaserStyle();
+        if (laserLineStyle == ScannerOptions.LaserStyle.COLOR_LINE) {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(scannerOptions.getLaserLineColor());// 设置扫描线颜色
             canvas.drawRect(0, laserLineTop, point.x, laserLineTop + laserLineHeight, paint);
-        } else {
-            if (laserLineBitmap == null)//图片资源文件转为 Bitmap
+            return;
+        }
+        // 图片资源文件转为 Bitmap
+        if (laserLineBitmap == null) {
+            if (laserLineStyle == ScannerOptions.LaserStyle.DRAWABLE_LINE ||
+                    laserLineStyle == ScannerOptions.LaserStyle.DRAWABLE_GRID) {
+                laserLineBitmap = Scanner.drawableToBitmap(scannerOptions.getLaserLineDrawable());
+            } else {
                 laserLineBitmap = BitmapFactory.decodeResource(getResources(), scannerOptions.getLaserLineResId());
-            int height = laserLineBitmap.getHeight();//取原图高
-            //网格图片
-            if (scannerOptions.getLaserStyle() == ScannerOptions.LaserStyle.RES_GRID) {
-                int dstRectFTop = 0;
-                if (laserLineTop >= height) {
-                    dstRectFTop = laserLineTop - height;
-                }
-                RectF dstRectF = new RectF(0, dstRectFTop, point.x, laserLineTop);
-                Rect srcRect = new Rect(0, (int) (height - dstRectF.height()), laserLineBitmap.getWidth(), height);
-                canvas.drawBitmap(laserLineBitmap, srcRect, dstRectF, paint);
-            }
-            //线条图片
-            else {
-                //如果没有设置线条高度，则用图片原始高度
-                if (laserLineHeight == dp2px(ScannerOptions.DEFAULT_LASER_LINE_HEIGHT)) {
-                    laserLineHeight = laserLineBitmap.getHeight() / 2;
-                }
-                Rect laserRect = new Rect(0, laserLineTop, point.x, laserLineTop + laserLineHeight);
-                canvas.drawBitmap(laserLineBitmap, null, laserRect, paint);
             }
         }
+        int height = laserLineBitmap.getHeight();//取原图高
+        // 网格图片
+        if (laserLineStyle == ScannerOptions.LaserStyle.RES_GRID ||
+                laserLineStyle == ScannerOptions.LaserStyle.DRAWABLE_GRID) {
+            int dstRectFTop = 0;
+            if (laserLineTop >= height) {
+                dstRectFTop = laserLineTop - height;
+            }
+            RectF dstRectF = new RectF(0, dstRectFTop, point.x, laserLineTop);
+            Rect srcRect = new Rect(0, (int) (height - dstRectF.height()), laserLineBitmap.getWidth(), height);
+            canvas.drawBitmap(laserLineBitmap, srcRect, dstRectF, paint);
+            return;
+        }
+        // 线条图片， 如果没有设置线条高度，则用图片原始高度
+        if (laserLineHeight == dp2px(ScannerOptions.DEFAULT_LASER_LINE_HEIGHT)) {
+            laserLineHeight = laserLineBitmap.getHeight() / 2;
+        }
+        Rect laserRect = new Rect(0, laserLineTop, point.x, laserLineTop + laserLineHeight);
+        canvas.drawBitmap(laserLineBitmap, null, laserRect, paint);
     }
 
     void drawViewfinder() {

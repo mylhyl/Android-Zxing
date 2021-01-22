@@ -48,11 +48,6 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
         Drawable tintDrawable = DrawableCompat.wrap(originalDrawable).mutate();
         DrawableCompat.setTint(tintDrawable, Color.RED);
 
-        Bitmap bitmap = Scanner.drawableToBitmap(tintDrawable);
-
-        ImageView imageView = findViewById(R.id.imageView);
-        imageView.setImageBitmap(bitmap);
-
         ScannerOptions.Builder builder = new ScannerOptions.Builder();
         builder
 //                .setFrameStrokeColor(Color.RED)
@@ -74,7 +69,7 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
 //                .setLaserLine(ScannerOptions.LaserStyle.RES_GRID, R.mipmap.zfb_grid_scan_line)//网格图
 //                .setFrameCornerColor(0xFF26CEFF)//支付宝颜色
 
-//                .setScanFullScreen(true)
+                .setScanFullScreen(true)
 
 //                .setFrameHide(false)
 //                .setFrameCornerHide(true)
