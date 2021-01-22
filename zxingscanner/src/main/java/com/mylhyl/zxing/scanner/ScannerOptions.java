@@ -3,6 +3,7 @@ package com.mylhyl.zxing.scanner;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.google.zxing.BarcodeFormat;
@@ -22,6 +23,7 @@ public final class ScannerOptions {
     private LaserStyle laserStyle = LaserStyle.COLOR_LINE;
     private int laserLineColor = Scanner.color.VIEWFINDER_LASER;//扫描线颜色rgb值
     private int laserLineResId;//扫描线资源文件
+    private Drawable laserLineDrawable;//扫描线资源文件
     private int laserLineHeight = DEFAULT_LASER_LINE_HEIGHT;//扫描线高度，网络样式无效，单位dp
     private int laserLineMoveSpeed = 6;//扫描线移动间距，默认每毫秒移动6px，单位px
     private boolean laserMoveFullScreen;//扫描线全屏移动，默认在扫描框内移动
@@ -67,6 +69,10 @@ public final class ScannerOptions {
 
     public int getLaserLineResId() {
         return laserLineResId;
+    }
+
+    public Drawable getLaserLineDrawable() {
+        return laserLineDrawable;
     }
 
     public int getLaserLineHeight() {
@@ -197,15 +203,20 @@ public final class ScannerOptions {
         /**
          * 颜色线值样式
          */
-        COLOR_LINE
+        COLOR_LINE,
+
         /**
          * 资源文件线样式
          */
-        , RES_LINE
+        RES_LINE,
+
+        DRAWABLE_LINE,
+
         /**
          * 资源文件网格样式
          */
-        , RES_GRID
+        RES_GRID,
+        DRAWABLE_GRID
     }
 
     public interface ViewfinderCallback {
@@ -224,13 +235,24 @@ public final class ScannerOptions {
         }
 
         /**
+         * 设置扫描线颜色值<br>
+         * 只支持扫描线样式为{@link LaserStyle#COLOR_LINE 颜色线}
+         *
+         * @param color rgb 颜色值
+         */
+        public Builder setLaserLineColor(int color) {
+            options.laserStyle = LaserStyle.COLOR_LINE;
+            options.laserLineColor = color;
+            return this;
+        }
+        /**
          * 扫描线样式
          *
          * @param style 默认为{@link LaserStyle#COLOR_LINE 颜色线}
          * @param value style=COLOR_LINE，value为颜色值rgb，其余样式value为resId
          * @return
          */
-        public Builder setLaserStyle(LaserStyle style, int value) {
+        public Builder setLaserLine(LaserStyle style, int value) {
             options.laserStyle = style;
             if (style == LaserStyle.COLOR_LINE) {
                 options.laserLineColor = value;
@@ -241,14 +263,14 @@ public final class ScannerOptions {
         }
 
         /**
-         * 设置扫描线颜色值<br>
-         * 只支持扫描线样式为{@link LaserStyle#COLOR_LINE 颜色线}
+         * 设置扫描线<br>
          *
-         * @param color rgb 颜色值
+         * @param style    默认为{@link LaserStyle#COLOR_LINE 颜色线}
+         * @param drawable
          */
-        public Builder setLaserLineColor(int color) {
-            options.laserStyle = LaserStyle.COLOR_LINE;
-            options.laserLineColor = color;
+        public Builder setLaserLine(LaserStyle style, Drawable drawable) {
+            options.laserStyle = style;
+            options.laserLineDrawable = drawable;
             return this;
         }
 
@@ -471,7 +493,7 @@ public final class ScannerOptions {
         /**
          * 设置扫描解码类型（二维码、一维码、商品条码）
          *
-         * @param scanMode {@linkplain Scanner.ScanMode mode}
+         * @param scanMode {@link Scanner.ScanMode scanMode}
          * @return
          */
         public Builder setScanMode(String scanMode) {

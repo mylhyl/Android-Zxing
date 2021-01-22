@@ -3,18 +3,14 @@ package com.mylhyl.zxing.scanner.sample;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
-import android.view.View;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -23,14 +19,15 @@ import com.google.zxing.client.result.ParsedResult;
 import com.mylhyl.zxing.scanner.OnScannerCompletionListener;
 import com.mylhyl.zxing.scanner.ScannerOptions;
 import com.mylhyl.zxing.scanner.ScannerView;
+import com.mylhyl.zxing.scanner.common.Scanner;
 
 public class OptionsScannerActivity extends Activity implements OnScannerCompletionListener {
+
+    private ScannerView mScannerView;
 
     public static void gotoActivity(Activity activity) {
         activity.startActivity(new Intent(activity, OptionsScannerActivity.class));
     }
-
-    private ScannerView mScannerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,37 +41,53 @@ public class OptionsScannerActivity extends Activity implements OnScannerComplet
 
 //        mScannerView.toggleLight(true);
 
+
+        // 扫描线条使用 tint 着色
+        Drawable originalDrawable = ContextCompat.getDrawable(this, R.mipmap.wx_scan_line);
+//        Drawable originalDrawable = ContextCompat.getDrawable(this, R.mipmap.zfb_grid_scan_line);
+        Drawable tintDrawable = DrawableCompat.wrap(originalDrawable).mutate();
+        DrawableCompat.setTint(tintDrawable, Color.RED);
+
+        Bitmap bitmap = Scanner.drawableToBitmap(tintDrawable);
+
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setImageBitmap(bitmap);
+
         ScannerOptions.Builder builder = new ScannerOptions.Builder();
         builder
-                .setFrameStrokeColor(Color.RED)
-                .setFrameStrokeWidth(1.5f)
+//                .setFrameStrokeColor(Color.RED)
+//                .setFrameStrokeWidth(1.5f)
 //                .setFrameSize(256, 256)
 //                .setFrameCornerLength(22)
 //                .setFrameCornerWidth(2)
 //                .setFrameCornerColor(0xff06c1ae)
 //                .setFrameCornerInside(true)
 
+                .setLaserLine(ScannerOptions.LaserStyle.DRAWABLE_LINE, tintDrawable)
+//                .setLaserLine(ScannerOptions.LaserStyle.DRAWABLE_GRID, tintDrawable)
+//                .setLaserLine(ScannerOptions.LaserStyle.DRAWABLE_LINE,
+//                        getResources().getDrawable(R.mipmap.wx_scan_line))
 //                .setLaserLineColor(0xff06c1ae)
 //                .setLaserLineHeight(18)
 
-//                .setLaserStyle(ScannerOptions.LaserStyle.RES_LINE,R.mipmap.wx_scan_line)
-
-//                .setLaserStyle(ScannerOptions.LaserStyle.RES_GRID, R.mipmap.zfb_grid_scan_line)//网格图
+//                .setLaserLine(ScannerOptions.LaserStyle.RES_LINE,R.mipmap.wx_scan_line)
+//                .setLaserLine(ScannerOptions.LaserStyle.RES_GRID, R.mipmap.zfb_grid_scan_line)//网格图
 //                .setFrameCornerColor(0xFF26CEFF)//支付宝颜色
 
 //                .setScanFullScreen(true)
 
 //                .setFrameHide(false)
-//                .setFrameCornerHide(false)
+//                .setFrameCornerHide(true)
+//                .setFrameHide(true)
 //                .setLaserMoveFullScreen(false)
 
-                .setViewfinderCallback(new ScannerOptions.ViewfinderCallback() {
-                    @Override
-                    public void onDraw(View view, Canvas canvas, Rect frame) {
-                        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.connect_logo);
-                        canvas.drawBitmap(bmp, frame.right / 2, frame.top - bmp.getHeight(), null);
-                    }
-                })
+//                .setViewfinderCallback(new ScannerOptions.ViewfinderCallback() {
+//                    @Override
+//                    public void onDraw(View view, Canvas canvas, Rect frame) {
+//                        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.connect_logo);
+//                        canvas.drawBitmap(bmp, frame.right / 2, frame.top - bmp.getHeight(), null);
+//                    }
+//                })
 
                 .setScanMode(BarcodeFormat.QR_CODE)
                 .setTipText("请联系其它已添加该设备用户获取二维码")

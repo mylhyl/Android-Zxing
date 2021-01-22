@@ -43,6 +43,13 @@ public class ScannerView extends RelativeLayout {
         init(context, attrs, defStyle);
     }
 
+    private static void drawLine(Canvas canvas, Paint paint, ResultPoint a, ResultPoint b, float scaleFactor) {
+        if (a != null && b != null) {
+            canvas.drawLine(scaleFactor * a.getX(), scaleFactor * a.getY(), scaleFactor * b.getX(),
+                    scaleFactor * b.getY(), paint);
+        }
+    }
+
     private void init(Context context, AttributeSet attrs, int defStyle) {
         mSurfaceView = new CameraSurfaceView(context, this);
         mSurfaceView.setId(android.R.id.list);
@@ -71,7 +78,6 @@ public class ScannerView extends RelativeLayout {
         if (mBeepManager != null) mBeepManager.close();
         mViewfinderView.laserLineBitmapRecycle();
     }
-
 
     /**
      * A valid barcode has been found, so give an indication of success and show
@@ -135,12 +141,6 @@ public class ScannerView extends RelativeLayout {
         }
     }
 
-    private static void drawLine(Canvas canvas, Paint paint, ResultPoint a, ResultPoint b, float scaleFactor) {
-        if (a != null && b != null) {
-            canvas.drawLine(scaleFactor * a.getX(), scaleFactor * a.getY(), scaleFactor * b.getX(), scaleFactor * b.getY(), paint);
-        }
-    }
-
     /**
      * 设置扫描成功监听器
      *
@@ -182,7 +182,7 @@ public class ScannerView extends RelativeLayout {
      */
     @Deprecated
     public ScannerView setLaserColor(int color) {
-        mScannerOptionsBuilder.setLaserStyle(ScannerOptions.LaserStyle.COLOR_LINE, color);
+        mScannerOptionsBuilder.setLaserLine(ScannerOptions.LaserStyle.COLOR_LINE, color);
         return this;
     }
 
@@ -193,7 +193,7 @@ public class ScannerView extends RelativeLayout {
      */
     @Deprecated
     public ScannerView setLaserLineResId(int resId) {
-        mScannerOptionsBuilder.setLaserStyle(ScannerOptions.LaserStyle.RES_LINE, resId);
+        mScannerOptionsBuilder.setLaserLine(ScannerOptions.LaserStyle.RES_LINE, resId);
         return this;
     }
 
@@ -204,7 +204,7 @@ public class ScannerView extends RelativeLayout {
      */
     @Deprecated
     public ScannerView setLaserGridLineResId(int resId) {
-        mScannerOptionsBuilder.setLaserStyle(ScannerOptions.LaserStyle.RES_GRID, resId);
+        mScannerOptionsBuilder.setLaserLine(ScannerOptions.LaserStyle.RES_GRID, resId);
         return this;
     }
 

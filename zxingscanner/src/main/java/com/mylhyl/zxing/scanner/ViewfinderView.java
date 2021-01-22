@@ -43,10 +43,8 @@ final class ViewfinderView extends View {
 
     private static final int CURRENT_POINT_OPACITY = 0xA0;
     private static final int POINT_SIZE = 6;
-
-
-    private CameraManager cameraManager;
     private final Paint paint;
+    private CameraManager cameraManager;
     private Bitmap resultBitmap;
 
     private int animationDelay = 0;
@@ -217,30 +215,43 @@ final class ViewfinderView extends View {
             // 左上角，上
             canvas.drawRect(frame.left, frame.top, frame.left + frameCornerLength, frame.top + frameCornerWidth, paint);
             // 右上角，右
-            canvas.drawRect(frame.right - frameCornerWidth, frame.top, frame.right, frame.top + frameCornerLength, paint);
+            canvas.drawRect(frame.right - frameCornerWidth, frame.top, frame.right, frame.top + frameCornerLength,
+                    paint);
             // 右上角，上
-            canvas.drawRect(frame.right - frameCornerLength, frame.top, frame.right, frame.top + frameCornerWidth, paint);
+            canvas.drawRect(frame.right - frameCornerLength, frame.top, frame.right, frame.top + frameCornerWidth,
+                    paint);
             // 左下角，左
-            canvas.drawRect(frame.left, frame.bottom - frameCornerLength, frame.left + frameCornerWidth, frame.bottom, paint);
+            canvas.drawRect(frame.left, frame.bottom - frameCornerLength, frame.left + frameCornerWidth, frame.bottom
+                    , paint);
             // 左下角，下
-            canvas.drawRect(frame.left, frame.bottom - frameCornerWidth, frame.left + frameCornerLength, frame.bottom, paint);
+            canvas.drawRect(frame.left, frame.bottom - frameCornerWidth, frame.left + frameCornerLength, frame.bottom
+                    , paint);
             // 右下角，右
-            canvas.drawRect(frame.right - frameCornerWidth, frame.bottom - frameCornerLength, frame.right, frame.bottom, paint);
+            canvas.drawRect(frame.right - frameCornerWidth, frame.bottom - frameCornerLength, frame.right,
+                    frame.bottom, paint);
             // 右下角，下
-            canvas.drawRect(frame.right - frameCornerLength, frame.bottom - frameCornerWidth, frame.right, frame.bottom, paint);
+            canvas.drawRect(frame.right - frameCornerLength, frame.bottom - frameCornerWidth, frame.right,
+                    frame.bottom, paint);
         } else {
             // 左上角
             canvas.drawRect(frame.left - frameCornerWidth, frame.top, frame.left, frame.top + frameCornerLength, paint);
-            canvas.drawRect(frame.left - frameCornerWidth, frame.top - frameCornerWidth, frame.left + frameCornerLength, frame.top, paint);
+            canvas.drawRect(frame.left - frameCornerWidth, frame.top - frameCornerWidth,
+                    frame.left + frameCornerLength, frame.top, paint);
             // 右上角
-            canvas.drawRect(frame.right, frame.top, frame.right + frameCornerWidth, frame.top + frameCornerLength, paint);
-            canvas.drawRect(frame.right - frameCornerLength, frame.top - frameCornerWidth, frame.right + frameCornerWidth, frame.top, paint);
+            canvas.drawRect(frame.right, frame.top, frame.right + frameCornerWidth, frame.top + frameCornerLength,
+                    paint);
+            canvas.drawRect(frame.right - frameCornerLength, frame.top - frameCornerWidth,
+                    frame.right + frameCornerWidth, frame.top, paint);
             // 左下角
-            canvas.drawRect(frame.left - frameCornerWidth, frame.bottom - frameCornerLength, frame.left, frame.bottom, paint);
-            canvas.drawRect(frame.left - frameCornerWidth, frame.bottom, frame.left + frameCornerLength, frame.bottom + frameCornerWidth, paint);
+            canvas.drawRect(frame.left - frameCornerWidth, frame.bottom - frameCornerLength, frame.left, frame.bottom
+                    , paint);
+            canvas.drawRect(frame.left - frameCornerWidth, frame.bottom, frame.left + frameCornerLength,
+                    frame.bottom + frameCornerWidth, paint);
             // 右下角
-            canvas.drawRect(frame.right, frame.bottom - frameCornerLength, frame.right + frameCornerWidth, frame.bottom, paint);
-            canvas.drawRect(frame.right - frameCornerLength, frame.bottom, frame.right + frameCornerWidth, frame.bottom + frameCornerWidth, paint);
+            canvas.drawRect(frame.right, frame.bottom - frameCornerLength, frame.right + frameCornerWidth,
+                    frame.bottom, paint);
+            canvas.drawRect(frame.right - frameCornerLength, frame.bottom, frame.right + frameCornerWidth,
+                    frame.bottom + frameCornerWidth, paint);
         }
     }
 
@@ -264,33 +275,37 @@ final class ViewfinderView extends View {
      * @param frame
      */
     private void drawLaserLine(Canvas canvas, Rect frame) {
-        if (scannerOptions.getLaserStyle() == ScannerOptions.LaserStyle.COLOR_LINE) {
+        ScannerOptions.LaserStyle laserLineStyle = scannerOptions.getLaserStyle();
+        if (laserLineStyle == ScannerOptions.LaserStyle.COLOR_LINE) {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(scannerOptions.getLaserLineColor());// 设置扫描线颜色
-            canvas.drawRect(frame.left, laserLineTop, frame.right
-                    , laserLineTop + laserLineHeight, paint);
-        } else {
-            if (laserLineBitmap == null)//图片资源文件转为 Bitmap
+            canvas.drawRect(frame.left, laserLineTop, frame.right, laserLineTop + laserLineHeight, paint);
+            return;
+        }
+        // 图片资源文件转为 Bitmap
+        if (laserLineBitmap == null) {
+            if (laserLineStyle == ScannerOptions.LaserStyle.DRAWABLE_LINE ||
+                    laserLineStyle == ScannerOptions.LaserStyle.DRAWABLE_GRID) {
+                laserLineBitmap = Scanner.drawableToBitmap(scannerOptions.getLaserLineDrawable());
+            } else {
                 laserLineBitmap = BitmapFactory.decodeResource(getResources(), scannerOptions.getLaserLineResId());
-            int height = laserLineBitmap.getHeight();//取原图高
-            //网格图片
-            if (scannerOptions.getLaserStyle() == ScannerOptions.LaserStyle.RES_GRID) {
-                RectF dstRectF = new RectF(frame.left, frame.top, frame.right, laserLineTop);
-                Rect srcRect = new Rect(0, (int) (height - dstRectF.height())
-                        , laserLineBitmap.getWidth(), height);
-                canvas.drawBitmap(laserLineBitmap, srcRect, dstRectF, paint);
-            }
-            //线条图片
-            else {
-                //如果没有设置线条高度，则用图片原始高度
-                if (laserLineHeight == dp2px(ScannerOptions.DEFAULT_LASER_LINE_HEIGHT)) {
-                    laserLineHeight = laserLineBitmap.getHeight() / 2;
-                }
-                Rect laserRect = new Rect(frame.left, laserLineTop, frame.right
-                        , laserLineTop + laserLineHeight);
-                canvas.drawBitmap(laserLineBitmap, null, laserRect, paint);
             }
         }
+        int height = laserLineBitmap.getHeight();//取原图高
+        // 网格图片
+        if (laserLineStyle == ScannerOptions.LaserStyle.RES_GRID ||
+                laserLineStyle == ScannerOptions.LaserStyle.DRAWABLE_GRID) {
+            RectF dstRectF = new RectF(frame.left, frame.top, frame.right, laserLineTop);
+            Rect srcRect = new Rect(0, (int) (height - dstRectF.height()), laserLineBitmap.getWidth(), height);
+            canvas.drawBitmap(laserLineBitmap, srcRect, dstRectF, paint);
+            return;
+        }
+        // 线条图片，如果没有设置线条高度，则用图片原始高度
+        if (laserLineHeight == dp2px(ScannerOptions.DEFAULT_LASER_LINE_HEIGHT)) {
+            laserLineHeight = laserLineBitmap.getHeight() / 2;
+        }
+        Rect laserRect = new Rect(frame.left, laserLineTop, frame.right, laserLineTop + laserLineHeight);
+        canvas.drawBitmap(laserLineBitmap, null, laserRect, paint);
     }
 
 

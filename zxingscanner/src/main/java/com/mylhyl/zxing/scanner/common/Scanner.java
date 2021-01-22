@@ -1,6 +1,10 @@
 package com.mylhyl.zxing.scanner.common;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
 import com.google.zxing.Result;
@@ -18,6 +22,33 @@ public final class Scanner {
     public static final int LAUNCH_PRODUCT_QUERY = 4;
     public static final int DECODE = 5;
     public static final int QUIT = 6;
+
+    public static ParsedResult parseResult(Result rawResult) {
+        if (rawResult == null) return null;
+        return ResultParser.parseResult(rawResult);
+    }
+
+    public static int dp2px(Context context, float dpValue) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue
+                , context.getResources().getDisplayMetrics());
+    }
+
+    public static int sp2px(Context context, float spValue) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spValue
+                , context.getResources().getDisplayMetrics());
+    }
+
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        int w = drawable.getIntrinsicWidth();
+        int h = drawable.getIntrinsicHeight();
+        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ?
+                Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
+        Bitmap bitmap = Bitmap.createBitmap(w, h, config);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, w, h);
+        drawable.draw(canvas);
+        return bitmap;
+    }
 
     public static class color {
         public static final int VIEWFINDER_MASK = 0x60000000;
@@ -55,20 +86,5 @@ public final class Scanner {
          * Decode only Data Matrix codes.
          */
         public static final String DATA_MATRIX_MODE = "DATA_MATRIX_MODE";
-    }
-
-    public static ParsedResult parseResult(Result rawResult) {
-        if (rawResult == null) return null;
-        return ResultParser.parseResult(rawResult);
-    }
-
-    public static int dp2px(Context context, float dpValue) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue
-                , context.getResources().getDisplayMetrics());
-    }
-
-    public static int sp2px(Context context, float spValue) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spValue
-                , context.getResources().getDisplayMetrics());
     }
 }
