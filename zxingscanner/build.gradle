@@ -25,7 +25,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    api 'com.google.zxing:core:3.3.3'
+    api 'com.google.zxing:core:3.4.0'
 }
 
 
