@@ -1,15 +1,31 @@
-### 一、概述
-
-相信Adnroid开发都知道，有四款扫描器，[Zxing](https://github.com/zxing/zxing) 、[Zbar](https://github.com/zbar/zbar) ，[Barcode4J](https://sourceforge.net/projects/barcode4j/files/)、[OkapiBarcode](https://github.com/woo-j/OkapiBarcode) 前二者应用较广泛，至于介绍与区别就在此阐述，网上有很多。此文主要介绍在在使用过程中，官方客户端各种达不到需求。相信很多童鞋都有此体会，所以借此机会就在Zxing 官方客户端基础上修改，去除无用功能并二次封装达到可扩展。
-- 官方客户端目前问题汇总
- - 设置功能多余
- - 竖屏后不能正向扫描条形码
- - 扫描框大小、颜色、扫描线配置不够灵活
- - 无生成二维码、主动识别二维码功能
-- 介于以上问题，于是该库就华丽的诞生
- - 修复竖屏不能正向扫描条形码
- - 可定制扫描框与扫描线样式
- - 加入创建二维码、识别图片中的二维码功能
+### JCenter迁移说明
+ `JCenter`服务已经宣布停止维护，对于`旧版本`大家可以使用阿里云镜像引用，以后`新版本`将会发布在`JitPack`
+ #### 1、旧版本阿里云镜像引用方式
+ 在项目根目录下的`build.gradle`文件中加入
+```
+ allprojects {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+    }
+ }
+```
+ #### 1、新版本JitPack引用方式
+ 在项目根目录下的`build.gradle`文件中加入
+```
+ allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+ }
+```
+ 
+### 一、功能
+ - 支持全屏或局部扫描
+ - 定制扫描框颜色
+ - 扫描线样式
+ - 扫描提示语
+ - 创建二维码
+ - 识别图片中二维码
   
 ### 二、效果图
 <img src="preview/gif.gif" width="240px"/>
