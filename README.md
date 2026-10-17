@@ -185,6 +185,3 @@ Bitmap bitmap = new QREncode.Builder(this)
 	    	break;
         }
 ```
-
-### 联系方式
- * 可能会因为工作忙碌原因没有及时回复，大家方便的话可以加我个人微信号：48025211，备注：github
